@@ -1,0 +1,80 @@
+<div fxLayout="row" fxLayoutAlign="center" class="ml-230">
+    <div fxLayout="column" fxFlex="850px">
+        <form class="mt-20" #dia_da_festa_CadFrm="ngForm" (ngSubmit)="salvar()">
+            <mat-card>
+                <mat-card-header fxLayoutAlign="center">
+                    <mat-card-title class="color-blue">Dia da Festa</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div fxLayout="row" fxLayoutAlign="end" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="100px" fxLayoutAlign="end" class="mt-20 mb-40 mr-35" >
+                            <mat-icon fontIcon="delete" class="img-card color-red" fxFlex="50px" fxLayoutAlign="center"  style="font-size: 50px;"></mat-icon>
+                            <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir <br>cadastro</mat-label>
+                        </div>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="200px">
+                            <mat-form-field class="full-width"  appearance="outline">
+                                <mat-label>Dia da Festa: *</mat-label>
+                                <input  type="date" 
+                                        name="dia"
+                                        [(ngModel)]="dia_da_festa.dia"
+                                        placeholder="Ex: 28/08/2026" 
+                                        matInput/>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="column" fxFlex="200px">
+                            <mat-form-field class="full-width ml-35" appearance="outline">
+                                <mat-label>Horário de início: </mat-label>
+                                <input  type="time" 
+                                        name="hora_inicio"
+                                        [(ngModel)]="dia_da_festa.hora_inicio"
+                                        placeholder="Digite o horário de início da festa" 
+                                        matInput/>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="column" fxFlex="200px" class="ml-35">
+                            <mat-form-field class="full-width ml-35" appearance="outline">
+                                <mat-label>Horário de Término: </mat-label>
+                                <input  type="time" 
+                                        name="hora_fim"
+                                        [(ngModel)]="dia_da_festa.hora_fim"
+                                        placeholder="Digite o horario de termino da festa" 
+                                        matInput/>
+                            </mat-form-field>
+                        </div>                        
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="800px">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Dia da semana: </mat-label>
+                                <mat-select [(value)]="dia_da_festa.dia_semana" >
+                                <mat-option *ngFor="let dia of diasSemana" [value]="dia">
+                                    {{dia}}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>                        
+                    </div>                    
+                </mat-card-content>
+                <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
+                    <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/diadafesta">
+                        <mat-icon fontIcon="backspace"></mat-icon>
+                        Descartar
+                    </button>                     
+                    @if(!atualizando){
+                        <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="submit">
+                            <mat-icon fontIcon="save"></mat-icon>
+                            Salvar
+                        </button>                     
+                    }@else{
+                        <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="submit">
+                            <mat-icon fontIcon="refresh"></mat-icon>
+                            Atualizar
+                        </button>                     
+                    }
+                </mat-card-actions>
+            </mat-card>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div fxLayout="row" fxLayoutAlign="center" class="ml-230">
+    <div fxLayout="column" fxFlex="100%">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">
+                <mat-card-title class="color-blue" fxLayoutAlign="center"><h1>Barracas cadastradas</h1></mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="mt-20  ml-35">
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <div fxLayout="column" fxFlex="50px" fxLayoutAlign="center" >
+                        <button mat-icon-button class="img-card" fxFlex="50px" fxLayoutAlign="center" type="button" routerLink="/barracas_cadastro" >
+                            <mat-icon fontIcon="add" class="img-card color-font-icon" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Cadastrar barraca</mat-label>
+                    </div>
+                </div>
+                <mat-grid-list cols="3" rowHeight="300px">
+                    <mat-grid-tile *ngFor="let card of cards">
+                        <mat-card  >
+                            <img mat-card-lg-image  src="assets/sem_imagem.png">
+                            <mat-card-content class="quebra-linha">
+                                {{ card.nome }}
+                            </mat-card-content>
+                        </mat-card>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

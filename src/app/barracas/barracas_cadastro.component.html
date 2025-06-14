@@ -1,0 +1,66 @@
+<div fxLayout="row" fxLayoutAlign="center" class="ml-230">
+    <div fxLayout="column" fxFlex="900px">
+        <form class="mt-20" #barracas_cadFrm="ngForm" (ngSubmit)="salvar()">
+            <mat-card>
+                <mat-card-header fxLayoutAlign="center">
+                    <mat-card-title class="color-blue">Barraca</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="200px" >
+                            <img mat-card-image class="img-card mt-20 mb-40" src="assets/sem_imagem.png">
+                        </div>
+                        <div fxLayout="column" fxFlex="100px" fxLayoutAlign="center" >
+                            <button mat-icon-button (click)="alterarFoto($event)" class="img-card" fxFlex="70px" fxLayoutAlign="center"  >
+                                <mat-icon fontIcon="add_a_photo" class="img-card color-font" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
+                            </button>
+                            <mat-label fxLayoutAlign="center" class="label-foto color-font">Alterar foto</mat-label>
+                        </div>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="800px">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Nome da barraca: *</mat-label>
+                                <input  type="text" 
+                                        name="nome"
+                                        [(ngModel)]="barraca.nome"
+                                        placeholder="Ex: Barraca do açaí" 
+                                        matInput/>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="800px">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Localização: </mat-label>
+                                <input  type="text" 
+                                        name="localizacao"
+                                        [(ngModel)]="barraca.localizacao"
+                                        placeholder="Digite a localização da barraca" 
+                                        matInput/>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    
+                </mat-card-content>
+                <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
+                    <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/barracas">
+                        <mat-icon fontIcon="backspace"></mat-icon>
+                        Descartar
+                    </button>                     
+                    @if(!atualizando){
+                        <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="submit">
+                            <mat-icon fontIcon="save"></mat-icon>
+                            Salvar
+                        </button>                     
+                    }@else{
+                        <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="submit">
+                            <mat-icon fontIcon="refresh"></mat-icon>
+                            Atualizar
+                        </button>                     
+                    }
+                </mat-card-actions>
+            </mat-card>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+<div fxLayout="row" fxLayoutAlign="center"  class="ml-230">
+    <div fxLayout="column" fxFlex="100%">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">
+                <mat-card-title class="color-blue" fxLayoutAlign="center"><h1>Dia da Festa</h1></mat-card-title>
+            </mat-card-header>
+            <mat-card-content >
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
+                        <button mat-icon-button class="img-card" fxFlex="50px" fxLayoutAlign="center" type="button" routerLink="/diadafesta_cadastro" >
+                            <mat-icon fontIcon="add" class="img-card color-font-icon" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Cadastrar<br>Dia da Festa</mat-label>
+                    </div>
+                    <span class="spacer"></span>
+                    <mat-form-field style="height: 70px;">
+                        <mat-select>
+                            <mat-option *ngFor="let data of datas" [value]="data.data">
+                                {{data.data}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <span class="spacer2"></span>
+                    <mat-form-field style="height: 70px;">
+                        <mat-select>
+                            <mat-option *ngFor="let barraca of barracas" [value]="barraca.nome">
+                                {{barraca.nome}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <span class="spacer"></span>                    
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
+                        <button mat-icon-button class="img-card" fxFlex="50px" fxLayoutAlign="center" type="button" routerLink="/diadafesta_cadastro" >
+                            <mat-icon fontIcon="edit" class="img-card color-font-icon" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Alterar<br>Dia da Festa</mat-label>
+                    </div>
+                </div>
+             </mat-card-content>
+        </mat-card>
+    </div>
+</div>

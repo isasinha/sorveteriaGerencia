@@ -1,0 +1,34 @@
+.example-icon {
+  padding: 0 14px;
+}
+
+.example-icon-pos {
+  padding: 14px 14px;
+}
+
+.titulo{
+    font-size: larger;
+}
+
+.widht-height-menu{
+    width: 230px;
+    height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* Para preencher toda a tela */
+}
+
+.menu {
+  flex-basis: 250px; /* Largura fixa do menu */
+  //background-color: #f0f0f0;
+  padding: 10px;
+  position: fixed;
+}
+
+.content {
+  flex-grow: 1; /* Ocupa o espaço restante */
+  padding: 20px;
+}
