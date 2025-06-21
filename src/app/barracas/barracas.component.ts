@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { BarracaService } from './barraca.service';
-import { BarracaModel } from './barraca.model';
 
 @Component({
   selector: 'app-barracas',
@@ -19,26 +18,31 @@ import { BarracaModel } from './barraca.model';
             MatButtonModule, 
             RouterLink,
           ],
+  providers: [BarracaService],
   templateUrl: './barracas.component.html',
   styleUrl: './barracas.component.scss'
 })
 export class BarracasComponent {
+  dataSource: any;
 
   constructor(
+    private barracaService: BarracaService,
     private route: ActivatedRoute,
     private router: Router,
-    private myService: BarracaService
-  ){
+  ){}   
 
-   }
-   
+  cards: any
 
-  cards = [
-    { nome: 'Açaí'},
-    { nome: 'Casquinha'},
-    { nome: 'Coxinha'},
-    { nome: 'Carrinhos'},
-    { nome: 'Taça de frutas vermelhas'}
-  ];
+  ngOnInit(){
+    this.barracaService.listar()
+      .subscribe({
+        next: (response) => {
+          this.cards = response;
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
 
 }

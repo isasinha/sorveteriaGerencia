@@ -38,7 +38,7 @@ export class LoginComponent {
   ){}
 
   logar(){
-     console.log("dados da barraca: ", this.login)
+     console.log("dados de login: ", this.login)
   }
 
 }

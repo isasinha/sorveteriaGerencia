@@ -16,17 +16,17 @@ export class Barracas_DetalheComponent {
 
   getData() {
     console.log("passei aqui component");
-    this.myService.getSomeData(2).subscribe({
-      next: (response:BarracaModel[]) => {
-        this.data = response;//JSON.stringify(response);
-        console.log("passei aqui component com dados")
-        console.log("barracas", this.data)
-      },
-      error: (error: any) => {
-        console.log("passei aqui component com erro");
-        console.error('Error:', error);
-      },
-    });
+    // this.myService.getSomeData(2).subscribe({
+    //   next: (response:BarracaModel[]) => {
+    //     this.data = response;//JSON.stringify(response);
+    //     console.log("passei aqui component com dados")
+    //     console.log("barracas", this.data)
+    //   },
+    //   error: (error: any) => {
+    //     console.log("passei aqui component com erro");
+    //     console.error('Error:', error);
+    //   },
+    // });
   }
 
 }

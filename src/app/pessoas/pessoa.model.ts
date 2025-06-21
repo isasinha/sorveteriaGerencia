@@ -1,5 +1,5 @@
 export class PessoaModel{
-    id?: number;
+    idPessoa?: number;
     nome?: string;
     data_nascimento?: string;
     telefone?: string;

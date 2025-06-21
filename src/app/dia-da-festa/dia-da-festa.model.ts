@@ -1,4 +1,5 @@
 export class DiaDaFestaModel{
+    idDia?: number;
     dia?: string;
     hora_inicio?: string;
     hora_fim?: string;

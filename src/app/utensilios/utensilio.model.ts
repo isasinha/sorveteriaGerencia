@@ -1,5 +1,5 @@
 export class UtensilioModel{
-    id?: number;
+    idUtensilio?: number;
     nome?: string;
     marca?: string;
     quantidade?: number;
