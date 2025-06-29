@@ -23,10 +23,10 @@
                 <ng-container *ngIf="exibirEmGrade">
                     <mat-grid-list cols="6" rowHeight="300px">
                         <mat-grid-tile *ngFor="let card of cards">
-                            <mat-card  >
+                            <mat-card [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor" >
                                 <img mat-card-lg-image  src="assets/sem_imagem.png">
                                 <mat-card-content>
-                                    #{{ card.id }}
+                                    #{{ card.idPessoa }}
                                 </mat-card-content>
                                 <mat-card-content class="quebra-linha">
                                     {{ card.nome }}
@@ -38,41 +38,35 @@
 
                 <ng-container *ngIf="!exibirEmGrade">
                     <table mat-table [dataSource]="cards" class="mat-elevation-z8">
-                        <ng-container matColumnDef="id">
+                        <ng-container matColumnDef="idPessoa">
                             <th mat-header-cell *matHeaderCellDef> # </th>
-                            <td mat-cell *matCellDef="let card"> {{card.id}} </td>
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor"> {{card.idPessoa}} </td>
                         </ng-container>
                         <ng-container matColumnDef="nome">
                             <th mat-header-cell *matHeaderCellDef> Nome Completo </th>
-                            <td mat-cell *matCellDef="let card"> {{card.nome}} </td>
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor"> {{card.nome}} </td>
                         </ng-container>
                         <ng-container matColumnDef="sexta">
                             <th mat-header-cell *matHeaderCellDef> Sexta </th>
-                            <td mat-cell *matCellDef="let card"> 
-                                @if(!card.sexta){
-                                    
-                                }@else{
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor"> 
+                                @if(card.sexta){
                                     <mat-icon fontIcon="check"></mat-icon>
-                                } 
+                                }
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="sabado">
                             <th mat-header-cell *matHeaderCellDef> Sábado </th>
-                            <td mat-cell *matCellDef="let card">         
-                                @if(!card.sabado){
-                                    
-                                }@else{
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor">         
+                                @if(card.sabado){
                                     <mat-icon fontIcon="check"></mat-icon>
-                                } </td>
+                                }
                         </ng-container>
                         <ng-container matColumnDef="domingo">
                             <th mat-header-cell *matHeaderCellDef> Domingo </th>
-                            <td mat-cell *matCellDef="let card">      
-                                @if(!card.domingo){
-                                    
-                                }@else{
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor">      
+                                @if(card.domingo){
                                     <mat-icon fontIcon="check"></mat-icon>
-                                } 
+                                }
                             </td>
                         </ng-container>  
                         <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>

@@ -34,7 +34,7 @@ export class BarracaService {
     return addDoc(barracaRef, barraca);
   }
 
-  atualizar(barraca: BarracaModel, firebaseId: string) {
+  alterar(barraca: BarracaModel, firebaseId: string) {
     const barracaDocRef = doc(this.firestore, `barracas/${firebaseId}`);
     return updateDoc(barracaDocRef, { ...barraca });
   }
@@ -54,7 +54,7 @@ export class BarracaService {
     var novoValor: number
     this.listaBarracas = await firstValueFrom(this.listar())
     idsBarracas = this.listaBarracas.map(b => b.idBarraca);
-    novoValor = Math.max(...idsBarracas) + 1;
+    novoValor = idsBarracas.length === 0 ? 1 : Math.max(...idsBarracas) + 1;
     return novoValor;
   }
 

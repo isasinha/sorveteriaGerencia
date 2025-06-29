@@ -1,1 +1,77 @@
-<p>pessoas_detalhe works!</p>
+<div fxLayout="row" fxLayoutAlign="center" class="ml-230">
+    <div fxLayout="column" fxFlex="900px">
+        <mat-card class="mt-20  min-height">
+            <mat-card-header fxLayoutAlign="center">
+                <mat-card-title class="color-blue label-foto">{{pessoa.nome}}<br>#{{pessoa.idPessoa}} </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <div fxLayout="column" fxFlex="200px" >
+                        <img mat-card-image class="img-card mt-20 mb-40" src="assets/sem_imagem.png">
+                    </div>                     
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" class="ml-15" [routerLink]="['/pessoas_cadastro', firebaseId]">
+                        <button mat-icon-button class="img-card" fxFlex="55px" fxLayoutAlign="center" type="button">
+                            <mat-icon fontIcon="change_circle" class="img-card color-font-icon" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Alterar informações</mat-label>
+                    </div>
+                    <span class="spacer"></span>
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
+                        <button mat-icon-button class="img-card " fxFlex="55px" fxLayoutAlign="center" type="button" (click)="excluir()" >
+                            <mat-icon fontIcon="delete" class="img-card color-red" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir cadastro</mat-label>
+                    </div>
+                </div>
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <mat-list>
+                        <mat-list-item>
+                            <span matListItemTitle>Nome da pessoa</span>
+                            <span matListItemLine>{{pessoa.nome}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Data de Nascimento</span>
+                            <span matListItemLine>{{pessoa.data_nascimento}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Telefone</span>
+                            <span matListItemLine>{{pessoa.telefone}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>E-mail</span>
+                            <span matListItemLine>{{pessoa.email}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Logradouro</span>
+                            <span matListItemLine>{{pessoa.endereco_logradouro}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Número</span>
+                            <span matListItemLine>{{pessoa.endereco_numero}}</span>
+                        </mat-list-item>              
+                        <mat-list-item>
+                            <span matListItemTitle>Complemento</span>
+                            <span matListItemLine>{{pessoa.endereco_complemento}}</span>
+                        </mat-list-item>        
+                        <mat-list-item>
+                            <span matListItemTitle>Bairro</span>
+                            <span matListItemLine>{{pessoa.endereco_bairro}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>CEP</span>
+                            <span matListItemLine>{{pessoa.endereco_cep}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Cidade</span>
+                            <span matListItemLine>{{pessoa.endereco_cidade}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>UF</span>
+                            <span matListItemLine>{{pessoa.endereco_uf}}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </div>                              
+            </mat-card-content>                
+        </mat-card>
+    </div>
+</div>

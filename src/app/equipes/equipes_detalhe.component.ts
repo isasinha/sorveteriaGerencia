@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UtensilioService } from './utensilio.service';
-import { UtensilioModel } from './utensilio.model';
+import { EquipeService } from './equipe.service';
+import { EquipeModel } from './equipe.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -13,9 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
 
-
 @Component({
-  selector: 'app-utensilios_detalhe',
+  selector: 'app-equipes_detalhe',
   imports: [ 
             RouterLink,
             CommonModule,
@@ -28,41 +27,33 @@ import { MatListModule } from '@angular/material/list';
             MatSelectModule,
             MatListModule
           ],
-  templateUrl: './utensilios_detalhe.component.html',
-  styleUrl: './utensilios_detalhe.component.scss'
+  templateUrl: './equipes_detalhe.component.html',
+  styleUrl: './equipes_detalhe.component.scss'
 })
+export class Equipes_DetalheComponent implements OnInit {
 
-export class Utensilios_DetalheComponent implements OnInit{
-
-  utensilio: UtensilioModel = {
-    idUtensilio: 0,
+  equipe: EquipeModel = {
+    idEquipe: 0,
     nome: '',
-    marca: '',
-    quantidade: 0,
-    garantia: '',
-    fonecedor: '',
-    descartavel: false
   };
-
   firebaseId: string | null = null;
   snack: MatSnackBar = inject(MatSnackBar);
 
   constructor(
-              private utensilioService: UtensilioService,
+              private equipeService: EquipeService,
               private route: ActivatedRoute,
               private router: Router
             ) { }
 
   ngOnInit(): void {
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
-    console.log("passei aqui", this.firebaseId)
     if (this.firebaseId) {
-      this.utensilioService.buscarPorId(this.firebaseId).subscribe({
+      this.equipeService.buscarPorId(this.firebaseId).subscribe({
         next: (res) => {
-          this.utensilio = res;
+          this.equipe = res;
         },
         error: (err) => {
-          console.error('Erro ao buscar utensílio: ', err);
+          console.error('Erro ao buscar equipe: ', err);
         }
       });
     }
@@ -70,11 +61,11 @@ export class Utensilios_DetalheComponent implements OnInit{
 
   excluir() {
     if (this.firebaseId) {
-      this.utensilioService.deletar(this.firebaseId)
+      this.equipeService.deletar(this.firebaseId)
         .then(() => {
-          this.mostrarMensagem('Utensilio excluído com sucesso!');
+          this.mostrarMensagem('Equipe excluída com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
-          this.router.navigate(['/utensilios']);
+          this.router.navigate(['/equipes']);
         })
         .catch(err => {
           console.error('Erro ao excluir: ', err);

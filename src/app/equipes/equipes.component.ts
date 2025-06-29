@@ -6,26 +6,26 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { BarracaService } from './barraca.service';
+import { EquipeService } from './equipe.service';
 
 @Component({
-  selector: 'app-barracas',
+  selector: 'app-equipes',
   imports: [MatCardModule, 
             MatGridListModule, 
             CommonModule, 
             FlexLayoutModule, 
             MatIconModule, 
             MatButtonModule, 
-            RouterLink,
+            RouterLink
           ],
-  providers: [BarracaService],
-  templateUrl: './barracas.component.html',
-  styleUrl: './barracas.component.scss'
+  providers: [EquipeService],          
+  templateUrl: './equipes.component.html',
+  styleUrl: './equipes.component.scss'
 })
-export class BarracasComponent {
+export class EquipesComponent {
   
   constructor(
-    private barracaService: BarracaService,
+    private equipeService: EquipeService,
     private route: ActivatedRoute,
     private router: Router,
   ){}   
@@ -33,7 +33,7 @@ export class BarracasComponent {
   cards: any
 
   ngOnInit(){
-    this.barracaService.listar()
+    this.equipeService.listar()
       .subscribe({
         next: (response) => {
           this.cards = response;

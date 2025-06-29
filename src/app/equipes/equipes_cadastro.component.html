@@ -1,9 +1,9 @@
 <div fxLayout="row" fxLayoutAlign="center" class="ml-230">
     <div fxLayout="column" fxFlex="900px">
-        <form class="mt-20" #barracas_cadFrm="ngForm" (ngSubmit)="salvar()">
+        <form class="mt-20" #equipes_cadFrm="ngForm" (ngSubmit)="salvar()">
             <mat-card>
                 <mat-card-header fxLayoutAlign="center">
-                    <mat-card-title class="color-blue">Barraca</mat-card-title>
+                    <mat-card-title class="color-blue">Equipe</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
@@ -20,31 +20,19 @@
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
                         <div fxLayout="column" fxFlex="800px">
                             <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Nome da barraca: *</mat-label>
+                                <mat-label>Nome da equipe: *</mat-label>
                                 <input  type="text" 
                                         name="nome"
-                                        [(ngModel)]="barraca.nome"
-                                        placeholder="Ex: Barraca do açaí" 
+                                        [(ngModel)]="equipe.nome"
+                                        placeholder="Ex: Equipe laranja" 
                                         matInput/>
                             </mat-form-field>
                         </div>
                     </div>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="800px">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Localização: </mat-label>
-                                <input  type="text" 
-                                        name="localizacao"
-                                        [(ngModel)]="barraca.localizacao"
-                                        placeholder="Digite a localização da barraca" 
-                                        matInput/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    
+                                        
                 </mat-card-content>
                 <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
-                    <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/barracas">
+                    <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/equipes">
                         <mat-icon fontIcon="backspace"></mat-icon>
                         Descartar
                     </button>                     

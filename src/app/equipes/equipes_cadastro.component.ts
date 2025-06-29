@@ -8,12 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { BarracaModel } from './barraca.model';
-import { BarracaService } from './barraca.service'; 
+import { EquipeModel } from './equipe.model';
+import { EquipeService } from './equipe.service'; 
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-barracas-cadastro',
+  selector: 'app-equipes_cadastro',
   imports: [ 
             RouterLink,
             CommonModule,
@@ -25,22 +25,21 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
             MatIconModule,
             MatButtonModule,
           ],
-  templateUrl: './barracas_cadastro.component.html',
-  styleUrl: './barracas_cadastro.component.scss'
+  templateUrl: './equipes_cadastro.component.html',
+  styleUrl: './equipes_cadastro.component.scss'
 })
-export class Barracas_CadastroComponent implements OnInit{
+export class Equipes_CadastroComponent implements OnInit{
 
-  barraca: BarracaModel = {
-    idBarraca: 0,
+  equipe: EquipeModel = {
+    idEquipe: 0,
     nome: '',
-    localizacao: '',
   };
   firebaseId: string | null = null;
   atualizando: boolean = false;
   snack: MatSnackBar = inject(MatSnackBar);
 
   constructor(
-    private barracaService: BarracaService,
+    private equipeService: EquipeService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -49,12 +48,12 @@ export class Barracas_CadastroComponent implements OnInit{
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
     this.atualizando = !!this.firebaseId;    
     if (this.atualizando && this.firebaseId) {
-      this.barracaService.buscarPorId(this.firebaseId).subscribe({
+      this.equipeService.buscarPorId(this.firebaseId).subscribe({
         next: (res) => {
-          this.barraca = res;
+          this.equipe = res;
         },
         error: (err) => {
-          console.error('Erro ao buscar barraca: ', err);
+          console.error('Erro ao buscar equipe: ', err);
         }
       });
     }
@@ -65,21 +64,21 @@ export class Barracas_CadastroComponent implements OnInit{
 
   salvar(): void {
     if (this.atualizando && this.firebaseId) {
-      this.barracaService.alterar(this.barraca, this.firebaseId)
+      this.equipeService.alterar(this.equipe, this.firebaseId)
         .then(() => {
-          this.mostrarMensagem('Barraca atualizada com sucesso!');
+          this.mostrarMensagem('Equipe atualizada com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
-          this.router.navigate(['/barracas']);
+          this.router.navigate(['/equipes']);
         })
         .catch(err => {
           console.error('Erro ao alterar cadastro: ', err);
         });
     } else {
-      this.barracaService.salvar(this.barraca)
+      this.equipeService.salvar(this.equipe)
         .then(() => {
-          this.mostrarMensagem('Barraca cadastrada com sucesso!');
+          this.mostrarMensagem('Equipe cadastrada com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
-          this.router.navigate(['/barracas']);
+          this.router.navigate(['/equipes']);
         })
         .catch(err => {
           console.error('Erro ao salvar: ', err);
@@ -93,8 +92,8 @@ export class Barracas_CadastroComponent implements OnInit{
 
   async gerarId(){
     try{
-      const proximoId = await this.barracaService.gerarProximoId()
-      this.barraca.idBarraca = proximoId;
+      const proximoId = await this.equipeService.gerarProximoId()
+      this.equipe.idEquipe = proximoId;
     } catch (error){
       console.error('Erro ao gerar ID: ', error)
     }

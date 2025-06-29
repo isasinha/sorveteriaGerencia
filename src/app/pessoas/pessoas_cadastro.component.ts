@@ -35,36 +35,71 @@ import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
   styleUrl: './pessoas_cadastro.component.scss'
 })
 export class Pessoas_CadastroComponent implements OnInit{
+
+  pessoa: PessoaModel = {
+    idPessoa: 0,
+    nome: '',
+    data_nascimento: '',
+    telefone: '',
+    email: '',
+    endereco_logradouro: '',
+    endereco_numero: '',
+    endereco_complemento: '',
+    endereco_bairro: '',
+    endereco_cep: '',
+    endereco_cidade: '',
+    endereco_uf: ''
+    };
+  firebaseId: string | null = null;
   atualizando: boolean = false;
-  pessoa: PessoaModel = PessoaModel.newPessoa();
   snack: MatSnackBar = inject(MatSnackBar);
   estados: Estado[] = [];
   municipios: Municipio[] = [];
 
   constructor(
-    private service: PessoaService,
+    private pessoaService: PessoaService,
     private brasilApiService: BrasilapiService,    
     private route: ActivatedRoute,
     private router: Router
   ){}
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((query:any) => {
-      const params = query['params']
-      const id = params['id']
-      if(id){
-        let pessoaEncontrada = this.service.buscarPorId(id);
-        if(pessoaEncontrada){
-          this.atualizando = true;
-          this.pessoa = pessoaEncontrada;
-           if(this.pessoa.endereco_uf){
+    this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
+    this.atualizando = !!this.firebaseId;    
+    if (this.atualizando && this.firebaseId) {
+      this.pessoaService.buscarPorId(this.firebaseId).subscribe({
+        next: (res) => {
+          this.pessoa = res;
+          if(this.pessoa.endereco_uf){
               const event = {value: this.pessoa.endereco_uf}
               this.carregarMunicipios(event as MatSelectChange);
-            }        
+            }     
+        },
+        error: (err) => {
+          console.error('Erro ao buscar utensílio: ', err);
         }
-      }
-    })
+      });
+    }
+    else {
+      this.gerarId();
+    }
     this.carregarUFs();
+    // this.route.queryParamMap.subscribe((query:any) => {
+    //   const params = query['params']
+    //   const id = params['id']
+    //   if(id){
+    //     let pessoaEncontrada = this.pessoaService.buscarPorId(id);
+    //     if(pessoaEncontrada){
+    //       this.atualizando = true;
+    //       this.pessoa = pessoaEncontrada;
+    //        if(this.pessoa.endereco_uf){
+    //           const event = {value: this.pessoa.endereco_uf}
+    //           this.carregarMunicipios(event as MatSelectChange);
+    //         }        
+    //     }
+    //   }
+    // })
+    // this.carregarUFs();
   }
 
   carregarUFs(){
@@ -95,7 +130,6 @@ export class Pessoas_CadastroComponent implements OnInit{
     return listaEstados;
   }
 
-
   destacarMunicipio(listaMunicipios: Municipio[]){
     const municipioDestacado = 'SÃO PAULO'; 
     const index = listaMunicipios.findIndex(municipio => municipio.nome === municipioDestacado);
@@ -107,21 +141,41 @@ export class Pessoas_CadastroComponent implements OnInit{
     return listaMunicipios;
   }
 
-  alterarFoto(event: any){
-
+  salvar(): void {
+    if (this.atualizando && this.firebaseId) {
+      this.pessoaService.alterar(this.pessoa, this.firebaseId)
+        .then(() => {
+          this.mostrarMensagem('Pessoa atualizada com sucesso!');
+          //await new Promise(f => setTimeout(f, 1000));
+          this.router.navigate(['/pessoas']);
+        })
+        .catch(err => {
+          console.error('Erro ao alterar cadastro: ', err);
+        });
+    } else {
+      this.pessoaService.salvar(this.pessoa)
+        .then(() => {
+          this.mostrarMensagem('Pessoa cadastrada com sucesso!');
+          //await new Promise(f => setTimeout(f, 1000));
+          this.router.navigate(['/pessoas']);
+        })
+        .catch(err => {
+          console.error('Erro ao salvar: ', err);
+        });
+    }
   }
-  
-  async salvar(){
-    if(!this.atualizando){
-      this.service.salvar(this.pessoa);
-      this.pessoa = PessoaModel.newPessoa();
-      this.mostrarMensagem('Salvo com sucesso!');
-    }else{
-      this.service.atualizar(this.pessoa);
-      this.mostrarMensagem('Atualizado!');
-    }    
-    await new Promise(f => setTimeout(f, 1000));
-    this.router.navigate(['/pessoas']);
+
+  alterarFoto(event: Event) {
+    //event.preventDefault();    
+  }
+
+  async gerarId(){
+    try{
+      const proximoId = await this.pessoaService.gerarProximoId()
+      this.pessoa.idPessoa = proximoId;
+    } catch (error){
+      console.error('Erro ao gerar ID: ', error)
+    }
   }
 
   mostrarMensagem(mensagem: string){

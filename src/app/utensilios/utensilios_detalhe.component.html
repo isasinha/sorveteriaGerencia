@@ -1,1 +1,57 @@
-<p>utensilios_detalhe works!</p>
+<div fxLayout="row" fxLayoutAlign="center" class="ml-230">
+    <div fxLayout="column" fxFlex="900px">
+        <mat-card class="mt-20  min-height">
+            <mat-card-header fxLayoutAlign="center">
+                <mat-card-title class="color-blue">{{utensilio.nome}}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <div fxLayout="column" fxFlex="200px" >
+                        <img mat-card-image class="img-card mt-20 mb-40" src="assets/sem_imagem.png">
+                    </div>                     
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" class="ml-15" [routerLink]="['/utensilios_cadastro', firebaseId]">
+                        <button mat-icon-button class="img-card" fxFlex="55px" fxLayoutAlign="center" type="button">
+                            <mat-icon fontIcon="change_circle" class="img-card color-font-icon" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Alterar informações</mat-label>
+                    </div>
+                    <span class="spacer"></span>
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
+                        <button mat-icon-button class="img-card " fxFlex="55px" fxLayoutAlign="center" type="button" (click)="excluir()" >
+                            <mat-icon fontIcon="delete" class="img-card color-red" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir cadastro</mat-label>
+                    </div>
+                </div>
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <mat-list>
+                        <mat-list-item>
+                            <span matListItemTitle>Nome do utensílio</span>
+                            <span matListItemLine>{{utensilio.nome}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Marca</span>
+                            <span matListItemLine>{{utensilio.marca}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Quantidade</span>
+                            <span matListItemLine>{{utensilio.quantidade}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Garantia</span>
+                            <span matListItemLine>{{utensilio.garantia}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Fornecedor</span>
+                            <span matListItemLine>{{utensilio.fonecedor}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Descartável</span>
+                            <span matListItemLine>{{utensilio.descartavel}}</span>
+                        </mat-list-item>              
+                    </mat-list>
+                </div>                              
+            </mat-card-content>                
+        </mat-card>
+    </div>
+</div>

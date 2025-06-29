@@ -34,7 +34,7 @@ export class LoginService {
   
     }
   
-    atualizar(login: LoginModel){
+    alterar(login: LoginModel){
   
     }
   

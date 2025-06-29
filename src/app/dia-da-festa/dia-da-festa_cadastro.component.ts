@@ -64,7 +64,7 @@ export class DiaDaFesta_CadastroComponent implements OnInit{
       this.dia_da_festa = DiaDaFestaModel.newDiaDaFesta();
       this.mostrarMensagem('Salvo com sucesso!');
     }else{
-      this.service.atualizar(this.dia_da_festa);
+      this.service.alterar(this.dia_da_festa);
       this.router.navigate(['/diadafesta']);
       this.mostrarMensagem('Atualizado!');
     }    

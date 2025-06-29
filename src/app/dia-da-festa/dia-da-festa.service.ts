@@ -29,7 +29,7 @@ export class DiaDaFestaService {
 
   }
 
-  atualizar(dia_da_festa: DiaDaFestaModel){
+  alterar(dia_da_festa: DiaDaFestaModel){
 
   }
 

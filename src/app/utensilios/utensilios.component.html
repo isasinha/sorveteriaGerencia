@@ -23,7 +23,7 @@
                 <ng-container *ngIf="exibirEmGrade">
                     <mat-grid-list cols="6" rowHeight="300px">
                         <mat-grid-tile *ngFor="let card of cards">
-                            <mat-card  >
+                            <mat-card [routerLink]="['/utensilios_detalhe', card.firebaseId]" class="cursor" >
                                 <img mat-card-lg-image  src="assets/sem_imagem.png">
                                 <mat-card-content class="quebra-linha">
                                     {{ card.nome }}
@@ -34,22 +34,22 @@
                 </ng-container>
 
                 <ng-container *ngIf="!exibirEmGrade">
-                    <table mat-table [dataSource]="cards" class="mat-elevation-z8">
-                        <ng-container matColumnDef="id">
+                    <table mat-table [dataSource]="cards" class="mat-elevation-z8" >
+                        <ng-container matColumnDef="idUtensilio" >
                             <th mat-header-cell *matHeaderCellDef> # </th>
-                            <td mat-cell *matCellDef="let card"> {{card.id}} </td>
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/utensilios_detalhe', card.firebaseId]" class="cursor"> {{card.idUtensilio}} </td>
                         </ng-container>
                         <ng-container matColumnDef="nome">
                             <th mat-header-cell *matHeaderCellDef> Utensílio </th>
-                            <td mat-cell *matCellDef="let card"> {{card.nome}} </td>
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/utensilios_detalhe', card.firebaseId]" class="cursor"> {{card.nome}} </td>
                         </ng-container>
                         <ng-container matColumnDef="marca">
                             <th mat-header-cell *matHeaderCellDef> Marca </th>
-                            <td mat-cell *matCellDef="let card"> {{card.marca}} </td>
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/utensilios_detalhe', card.firebaseId]" class="cursor"> {{card.marca}} </td>
                         </ng-container>
                         <ng-container matColumnDef="quantidade">
                             <th mat-header-cell *matHeaderCellDef> Quantidade </th>
-                            <td mat-cell *matCellDef="let card"> {{card.quantidade}} </td>
+                            <td mat-cell *matCellDef="let card" [routerLink]="['/utensilios_detalhe', card.firebaseId]" class="cursor"> {{card.quantidade}} </td>
                         </ng-container>
                         
                         <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>

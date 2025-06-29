@@ -34,45 +34,79 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   styleUrl: './utensilios_cadastro.component.scss'
 })
 export class Utensilios_CadastroComponent implements OnInit{
+  
+  utensilio: UtensilioModel = {
+    idUtensilio: 0,
+    nome: '',
+    marca: '',
+    quantidade: 0,
+    garantia: '',
+    fonecedor: '',
+    descartavel: false
+  };
+  firebaseId: string | null = null;
   atualizando: boolean = false;
-  utensilio: UtensilioModel = UtensilioModel.newUtensilio();
   snack: MatSnackBar = inject(MatSnackBar);
 
   constructor(
-    private service: UtensilioService,
+    private utensilioService: UtensilioService,
     private route: ActivatedRoute,
     private router: Router
   ){}
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((query:any) => {
-      const params = query['params']
-      const id = params['id']
-      if(id){
-        let utensilioEncontrado = this.service.buscarPorId(id);
-        if(utensilioEncontrado){
-          this.atualizando = true;
-          this.utensilio = utensilioEncontrado;          
+    this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
+    this.atualizando = !!this.firebaseId;    
+    if (this.atualizando && this.firebaseId) {
+      this.utensilioService.buscarPorId(this.firebaseId).subscribe({
+        next: (res) => {
+          this.utensilio = res;
+        },
+        error: (err) => {
+          console.error('Erro ao buscar utensílio: ', err);
         }
-      }
-    })
+      });
+    }
+    else {
+      this.gerarId();
+    }
   }
 
-  alterarFoto(event: any){
-
+  salvar(): void {
+    if (this.atualizando && this.firebaseId) {
+      this.utensilioService.alterar(this.utensilio, this.firebaseId)
+        .then(() => {
+          this.mostrarMensagem('Utensílio atualizado com sucesso!');
+          //await new Promise(f => setTimeout(f, 1000));
+          this.router.navigate(['/utensilios']);
+        })
+        .catch(err => {
+          console.error('Erro ao alterar cadastro: ', err);
+        });
+    } else {
+      this.utensilioService.salvar(this.utensilio)
+        .then(() => {
+          this.mostrarMensagem('Utensílio cadastrado com sucesso!');
+          //await new Promise(f => setTimeout(f, 1000));
+          this.router.navigate(['/utensilios']);
+        })
+        .catch(err => {
+          console.error('Erro ao salvar: ', err);
+        });
+    }
   }
-  async salvar(){
-    if(!this.atualizando){
-      this.service.salvar(this.utensilio);
-      this.utensilio = UtensilioModel.newUtensilio();
-      this.mostrarMensagem('Salvo com sucesso!');
-    }else{
-      this.service.atualizar(this.utensilio);
-      this.router.navigate(['/utensilios']);
-      this.mostrarMensagem('Atualizado!');
-    }    
-    await new Promise(f => setTimeout(f, 1000));
-    this.router.navigate(['/utensilios']);
+
+  alterarFoto(event: Event) {
+    //event.preventDefault();    
+  }
+
+  async gerarId(){
+    try{
+      const proximoId = await this.utensilioService.gerarProximoId()
+      this.utensilio.idUtensilio = proximoId;
+    } catch (error){
+      console.error('Erro ao gerar ID: ', error)
+    }
   }
 
   mostrarMensagem(mensagem: string){
