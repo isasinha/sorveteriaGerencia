@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout'
@@ -35,6 +35,8 @@ import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
   styleUrl: './pessoas_cadastro.component.scss'
 })
 export class Pessoas_CadastroComponent implements OnInit{
+  
+  @ViewChild('inputImagem') inputImagem!: ElementRef<HTMLInputElement>;
 
   pessoa: PessoaModel = {
     idPessoa: 0,
@@ -84,26 +86,9 @@ export class Pessoas_CadastroComponent implements OnInit{
       this.gerarId();
     }
     this.carregarUFs();
-    // this.route.queryParamMap.subscribe((query:any) => {
-    //   const params = query['params']
-    //   const id = params['id']
-    //   if(id){
-    //     let pessoaEncontrada = this.pessoaService.buscarPorId(id);
-    //     if(pessoaEncontrada){
-    //       this.atualizando = true;
-    //       this.pessoa = pessoaEncontrada;
-    //        if(this.pessoa.endereco_uf){
-    //           const event = {value: this.pessoa.endereco_uf}
-    //           this.carregarMunicipios(event as MatSelectChange);
-    //         }        
-    //     }
-    //   }
-    // })
-    // this.carregarUFs();
   }
 
   carregarUFs(){
-    //observable notifica o subscriber (porque a requisição é assíncrona)
     this.brasilApiService.listarUFs().subscribe({
       next: listaEstados => this.estados = this.destacarEstado(listaEstados.sort((a, b) => (a.sigla < b.sigla) ? -1 : 1)),
       error: erro => console.log("ocorreu um erro ao buscar UFs: ", erro)
@@ -117,12 +102,10 @@ export class Pessoas_CadastroComponent implements OnInit{
       error: erro => console.log('ocorreu um erro ao buscar municípios: ', erro)
     })
   }
-
   
   destacarEstado(listaEstados: Estado[]){
     const estadoDestacado = 'SP'; 
     const index = listaEstados.findIndex(municipio => municipio.sigla === estadoDestacado);
-
     if (index > -1) {
       const municipio = listaEstados.splice(index, 1)[0];
       listaEstados.unshift(municipio); // Move para o início
@@ -133,7 +116,6 @@ export class Pessoas_CadastroComponent implements OnInit{
   destacarMunicipio(listaMunicipios: Municipio[]){
     const municipioDestacado = 'SÃO PAULO'; 
     const index = listaMunicipios.findIndex(municipio => municipio.nome === municipioDestacado);
-
     if (index > -1) {
       const municipio = listaMunicipios.splice(index, 1)[0];
       listaMunicipios.unshift(municipio); // Move para o início
@@ -165,10 +147,6 @@ export class Pessoas_CadastroComponent implements OnInit{
     }
   }
 
-  alterarFoto(event: Event) {
-    //event.preventDefault();    
-  }
-
   async gerarId(){
     try{
       const proximoId = await this.pessoaService.gerarProximoId()
@@ -181,5 +159,38 @@ export class Pessoas_CadastroComponent implements OnInit{
   mostrarMensagem(mensagem: string){
     this.snack.open(mensagem, "Ok", {duration: 2000});
   }
-  
+
+  carregarImagem() {
+    this.inputImagem.nativeElement.click();
+  }
+
+  ajustarSalvarImagem(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const arquivo = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const img = new Image();
+      img.src = reader.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const maxDim = 200;
+        const ratio = img.width / img.height;
+        if (ratio > 1) {
+          canvas.width = maxDim;
+          canvas.height = maxDim / ratio;
+        } else {
+          canvas.height = maxDim;
+          canvas.width = maxDim * ratio;
+        }
+        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const base64Compactada = canvas.toDataURL('image/jpeg', 0.7); // qualidade 70%
+        this.pessoa.imagem = base64Compactada;        
+      };
+    };
+    reader.readAsDataURL(arquivo);
+  }
 }

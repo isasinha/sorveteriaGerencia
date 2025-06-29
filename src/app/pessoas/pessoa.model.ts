@@ -11,7 +11,8 @@ export interface PessoaModel{
     endereco_bairro: string,
     endereco_cep: string,
     endereco_cidade: string,
-    endereco_uf: string
+    endereco_uf: string,
+    imagem?: string
 }
 
 
@@ -29,7 +30,8 @@ export function newPessoa(): PessoaModel{
     endereco_bairro: "",
     endereco_cep: "",
     endereco_cidade: "",
-    endereco_uf: ""
+    endereco_uf: "",
+    imagem: ""
     }
     return pessoa;
 }

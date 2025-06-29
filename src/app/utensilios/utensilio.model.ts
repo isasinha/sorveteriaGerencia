@@ -6,7 +6,8 @@ export interface UtensilioModel{
     quantidade: number,
     garantia: string,
     fonecedor: string,
-    descartavel: boolean
+    descartavel: boolean,
+    imagem?: string
 }
 
 
@@ -19,8 +20,8 @@ export function newUtensilio(): UtensilioModel{
         quantidade: 0,
         garantia: "",
         fonecedor: "",
-        descartavel: false
-
+        descartavel: false,
+        imagem: ""
     }
     return utensilio;
 }

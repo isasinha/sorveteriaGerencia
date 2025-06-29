@@ -7,7 +7,10 @@
             <mat-card-content>
                 <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
                     <div fxLayout="column" fxFlex="200px" >
-                        <img mat-card-image class="img-card mt-20 mb-40" src="assets/sem_imagem.png">
+                        <img mat-card-image class="img-card mt-20 mb-40"
+                            [src]="barraca.imagem"
+                            (error)="barraca.imagem = 'assets/sem_imagem.png'"
+                        >
                     </div>                     
                     <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" class="ml-15" [routerLink]="['/barracas_cadastro', firebaseId]">
                         <button mat-icon-button class="img-card" fxFlex="55px" fxLayoutAlign="center" type="button" >

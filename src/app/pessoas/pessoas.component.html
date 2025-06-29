@@ -21,10 +21,13 @@
                 </div><br>
 
                 <ng-container *ngIf="exibirEmGrade">
-                    <mat-grid-list cols="6" rowHeight="300px">
+                    <mat-grid-list cols="6" rowHeight="400px">
                         <mat-grid-tile *ngFor="let card of cards">
                             <mat-card [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor" >
-                                <img mat-card-lg-image  src="assets/sem_imagem.png">
+                                <img mat-card-image class="img-card mt-20 mb-40"
+                                    [src]="card.imagem"
+                                    (error)="card.imagem = 'assets/sem_imagem.png'"
+                                >
                                 <mat-card-content>
                                     #{{ card.idPessoa }}
                                 </mat-card-content>

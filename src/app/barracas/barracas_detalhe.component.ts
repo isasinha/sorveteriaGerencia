@@ -41,6 +41,7 @@ export class Barracas_DetalheComponent implements OnInit{
   };
   firebaseId: string | null = null;
   snack: MatSnackBar = inject(MatSnackBar);
+  imagemCarregada: string | null = null;
 
   constructor(
               private barracaService: BarracaService,

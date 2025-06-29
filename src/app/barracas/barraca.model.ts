@@ -1,8 +1,9 @@
 export interface BarracaModel{
     firebaseId?: string,
     idBarraca: number,
-    nome: string
-    localizacao: string
+    nome: string,
+    localizacao: string,
+    imagem?: string
 }
 
 export function newBarraca(): BarracaModel{
@@ -10,7 +11,8 @@ export function newBarraca(): BarracaModel{
         firebaseId: "",
         idBarraca: 0,
         nome: "",
-        localizacao: ""
+        localizacao: "",
+        imagem: ""
     }
     return barraca;
 }

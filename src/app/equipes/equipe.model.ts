@@ -1,7 +1,8 @@
 export interface EquipeModel{
     firebaseId?: string,
     idEquipe: number,
-    nome: string
+    nome: string,
+    imagem?: string
 }
 
 export function newBarraca(): EquipeModel{
@@ -9,6 +10,7 @@ export function newBarraca(): EquipeModel{
         firebaseId: "",
         idEquipe: 0,
         nome: "",
+        imagem: ""
     }
     return equipe;
 }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout'
@@ -34,6 +34,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   styleUrl: './utensilios_cadastro.component.scss'
 })
 export class Utensilios_CadastroComponent implements OnInit{
+
+  @ViewChild('inputImagem') inputImagem!: ElementRef<HTMLInputElement>;  
   
   utensilio: UtensilioModel = {
     idUtensilio: 0,
@@ -96,10 +98,6 @@ export class Utensilios_CadastroComponent implements OnInit{
     }
   }
 
-  alterarFoto(event: Event) {
-    //event.preventDefault();    
-  }
-
   async gerarId(){
     try{
       const proximoId = await this.utensilioService.gerarProximoId()
@@ -113,4 +111,37 @@ export class Utensilios_CadastroComponent implements OnInit{
     this.snack.open(mensagem, "Ok", {duration: 2000});
   }
  
+  carregarImagem() {
+    this.inputImagem.nativeElement.click();
+  }
+
+  ajustarSalvarImagem(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const arquivo = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const img = new Image();
+      img.src = reader.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const maxDim = 200;
+        const ratio = img.width / img.height;
+        if (ratio > 1) {
+          canvas.width = maxDim;
+          canvas.height = maxDim / ratio;
+        } else {
+          canvas.height = maxDim;
+          canvas.width = maxDim * ratio;
+        }
+        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const base64Compactada = canvas.toDataURL('image/jpeg', 0.7); // qualidade 70%
+        this.utensilio.imagem = base64Compactada;        
+      };
+    };
+    reader.readAsDataURL(arquivo);
+  }
 }

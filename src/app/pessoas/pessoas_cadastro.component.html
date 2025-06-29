@@ -8,11 +8,15 @@
                 <mat-card-content>
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
                         <div fxLayout="column" fxFlex="200px" >
-                            <img mat-card-image class="img-card mt-20 mb-40" src="assets/sem_imagem.png" >
+                            <img mat-card-image class="img-card mt-20 mb-40"
+                                [src]="pessoa.imagem"
+                                (error)="pessoa.imagem = 'assets/sem_imagem.png'"
+                            >
                         </div>
                         <div fxLayout="column" fxFlex="100px" fxLayoutAlign="center" >
-                            <button mat-icon-button class="img-card" fxFlex="70px" fxLayoutAlign="center" type="button" (click)="alterarFoto($event)"  >
+                            <button mat-icon-button class="img-card" fxFlex="70px" fxLayoutAlign="center" type="button" (click)="carregarImagem()"  >
                                 <mat-icon fontIcon="add_a_photo" class="img-card color-font" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
+                            <input type="file" #inputImagem accept="image/*" style="display: none;" (change)="ajustarSalvarImagem($event)">                                
                             </button>
                             <mat-label fxLayoutAlign="center" class="label-foto color-font">Alterar foto</mat-label>
                         </div>
