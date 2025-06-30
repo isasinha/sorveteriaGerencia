@@ -18,7 +18,7 @@ import { Equipes_CadastroComponent } from './equipes/equipes_cadastro.component'
 import { Equipes_DetalheComponent } from './equipes/equipes_detalhe.component';
 
 export const routes: Routes = [
-    {path:'', component: LoginComponent },
+    {path:'', loadComponent: () => import('./login/login.component').then(m => m.LoginComponent) },
     {path:'diadafesta', component: DiaDaFestaComponent },
     {path:'diadafesta_cadastro', component: DiaDaFesta_CadastroComponent },
     {path:'diadafesta_cadastro/:firebaseId', component: DiaDaFesta_CadastroComponent },
