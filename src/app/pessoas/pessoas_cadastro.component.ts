@@ -91,7 +91,7 @@ export class Pessoas_CadastroComponent implements OnInit{
   carregarUFs(){
     this.brasilApiService.listarUFs().subscribe({
       next: listaEstados => this.estados = this.destacarEstado(listaEstados.sort((a, b) => (a.sigla < b.sigla) ? -1 : 1)),
-      error: erro => console.log("ocorreu um erro ao buscar UFs: ", erro)
+      error: erro => console.error("ocorreu um erro ao buscar UFs: ", erro)
     });
   }
 
@@ -99,7 +99,7 @@ export class Pessoas_CadastroComponent implements OnInit{
     const ufSelecionada = event.value;
     this.brasilApiService.listarMunicipios(ufSelecionada).subscribe({
       next: listaMunicipios => this.municipios = this.destacarMunicipio(listaMunicipios),
-      error: erro => console.log('ocorreu um erro ao buscar municípios: ', erro)
+      error: erro => console.error('ocorreu um erro ao buscar municípios: ', erro)
     })
   }
   

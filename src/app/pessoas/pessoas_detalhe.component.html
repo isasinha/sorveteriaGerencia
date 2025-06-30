@@ -1,5 +1,5 @@
 <div fxLayout="row" fxLayoutAlign="center" class="ml-230">
-    <div fxLayout="column" fxFlex="900px">
+    <div fxLayout="column" fxFlex="1200px">
         <mat-card class="mt-20  min-height">
             <mat-card-header fxLayoutAlign="center">
                 <mat-card-title class="color-blue label-foto">{{pessoa.nome}}<br>#{{pessoa.idPessoa}} </mat-card-title>
@@ -20,13 +20,20 @@
                     </div>
                     <span class="spacer"></span>
                     <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
+                        <button mat-icon-button class="img-card " fxFlex="65px" fxLayoutAlign="center" type="button" [routerLink]="['/pessoas_imprimircracha', firebaseId]" >
+                            <mat-icon fontIcon="qr_code_2" class="img-card" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
+                        </button>
+                        <mat-label fxLayoutAlign="center" class="label-foto color-font">Ver crachá</mat-label>
+                    </div>                    
+                    <span class="spacer"></span>
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
                         <button mat-icon-button class="img-card " fxFlex="55px" fxLayoutAlign="center" type="button" (click)="excluir()" >
                             <mat-icon fontIcon="delete" class="img-card color-red" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
                         </button>
                         <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir cadastro</mat-label>
                     </div>
                 </div>
-                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px" class="color-font">
                     <mat-list>
                         <mat-list-item>
                             <span matListItemTitle>Nome da pessoa</span>
@@ -43,37 +50,114 @@
                         <mat-list-item>
                             <span matListItemTitle>E-mail</span>
                             <span matListItemLine>{{pessoa.email}}</span>
-                        </mat-list-item>       
-                        <mat-list-item>
-                            <span matListItemTitle>Logradouro</span>
-                            <span matListItemLine>{{pessoa.endereco_logradouro}}</span>
-                        </mat-list-item>       
-                        <mat-list-item>
-                            <span matListItemTitle>Número</span>
-                            <span matListItemLine>{{pessoa.endereco_numero}}</span>
-                        </mat-list-item>              
-                        <mat-list-item>
-                            <span matListItemTitle>Complemento</span>
-                            <span matListItemLine>{{pessoa.endereco_complemento}}</span>
-                        </mat-list-item>        
-                        <mat-list-item>
-                            <span matListItemTitle>Bairro</span>
-                            <span matListItemLine>{{pessoa.endereco_bairro}}</span>
                         </mat-list-item>
                         <mat-list-item>
-                            <span matListItemTitle>CEP</span>
-                            <span matListItemLine>{{pessoa.endereco_cep}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <span matListItemTitle>Cidade</span>
-                            <span matListItemLine>{{pessoa.endereco_cidade}}</span>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <span matListItemTitle>UF</span>
-                            <span matListItemLine>{{pessoa.endereco_uf}}</span>
-                        </mat-list-item>
+                            <span matListItemTitle class="background-yellow">DAQUI PARA BAIXO AINDA NÃO ESTÁ FUNCIONAL, OS DADOS ESTÃO MOCKADOS</span>
+                        </mat-list-item>   
                     </mat-list>
-                </div>                              
+                </div>
+                <div fxLayout="row" fxLayoutAlign="center" fxLyoutGap="16px" class="color-font">
+                    <div fxLayout="column" fxFlex="550px" >
+                        <mat-card class="background-light-light-gray">
+                            <mat-card-header>
+                                <mat-card-title>Dia da festa</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content class="mt-20">
+                                <mat-form-field style="height: 70px;">
+                                    <mat-select placeholder="data da festa" [value]="'30/08/2025'">
+                                        <mat-option *ngFor="let data of datas" [value]="data.data" >
+                                            {{data.data}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                                    <div fxLayout="column" fxFlex="250px" >
+                                        <mat-card class="background-light-gray">
+                                            <mat-card-header>
+                                                <mat-card-title>Previsão</mat-card-title>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <mat-checkbox checked="true" disabled="true">Participará</mat-checkbox><br>
+                                                <mat-form-field style="height: 70px;" class="mt-10">
+                                                    <mat-select placeholder="equipe">
+                                                        <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome" >
+                                                            {{equipe.nome}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>                                                
+                                                <mat-list-item>
+                                                    <span matListItemTitle>Chegada</span>
+                                                    <span matListItemLine>12:00</span>
+                                                </mat-list-item>       
+                                                <mat-list-item>
+                                                    <span matListItemTitle>Saída</span>
+                                                    <span matListItemLine>17:00</span>
+                                                </mat-list-item>    
+                                            </mat-card-content>
+                                        </mat-card>
+                                    </div>
+                                    <div fxLayout="column" fxFlex="250px" class="ml-20">
+                                        <mat-card class="background-light-gray">
+                                            <mat-card-header>
+                                                <mat-card-title>Concretizado</mat-card-title>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <mat-checkbox checked="true" disabled="true">Participou</mat-checkbox><br>
+                                                <mat-form-field style="height: 70px;" class="mt-10">
+                                                    <mat-select placeholder="equipe">
+                                                        <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome" >
+                                                            {{equipe.nome}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>                                                
+                                                <mat-list-item>
+                                                    <span matListItemTitle>Chegada</span>
+                                                    <span matListItemLine>12:00</span>
+                                                </mat-list-item>       
+                                                <mat-list-item>
+                                                    <span matListItemTitle>Saída</span>
+                                                    <span matListItemLine>17:00</span>
+                                                </mat-list-item>    
+                                            </mat-card-content>
+                                        </mat-card>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>    
+                    </div>
+                    <div fxLayout="column" fxFlex="550px" class="ml-50" >
+                        <mat-card class="background-light-light-gray min-height-card2" >
+                            <mat-card-header>
+                                <mat-card-title>Utensílios</mat-card-title>
+                            </mat-card-header>
+
+                            <mat-card-content class="mt-25">
+                                <table mat-table [dataSource]="listaUtensiliosPessoaDia" class="mat-elevation-z8 background-light-gray">
+                                    <ng-container matColumnDef="entregue">
+                                        <th mat-header-cell *matHeaderCellDef> Utensílio entregue </th>
+                                        <td mat-cell *matCellDef="let utensilioPessoaDia"> {{utensilioPessoaDia.entregue}} </td>
+                                    </ng-container>
+                                    <ng-container class="center-content"  matColumnDef="quantidade">
+                                        <th mat-header-cell class="center-content"  *matHeaderCellDef> Quantidade </th>
+                                        <td mat-cell class="center-content" *matCellDef="let utensilioPessoaDia" > {{utensilioPessoaDia.quantidade}} </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="devolvido">
+                                        <th mat-header-cell class="center-content"  *matHeaderCellDef> Devolvido </th>
+                                        <td mat-cell class="center-content"  *matCellDef="let utensilioPessoaDia"> 
+                                            @if(utensilioPessoaDia.devolvido){
+                                                <mat-checkbox checked="true" disabled="true"></mat-checkbox>
+                                            }@else if(!utensilioPessoaDia.devolvido) {
+                                                <mat-checkbox checked="false" disabled="true"></mat-checkbox>
+                                            }
+                                        </td>
+                                    </ng-container>                                    
+                                    <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: colunasTable;"></tr>
+                                </table>
+                            </mat-card-content>
+                        </mat-card>    
+                    </div>
+                </div>                 
             </mat-card-content>                
         </mat-card>
     </div>

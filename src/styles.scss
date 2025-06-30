@@ -2,9 +2,16 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.mt-10{
+    margin-top: 10px;;
+}
 
 .mt-20{
     margin-top: 20px;;
+}
+
+.mt-25{
+    margin-top: 25px;;
 }
 
 .mt-40{
@@ -23,11 +30,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin-left: 15px;
 }
 
+.ml-20{
+    margin-left: 20px;
+}
 
 .ml-35{
     margin-left: 35px;
 }
 
+.ml-50{
+    margin-left: 50px;
+}
 
 .ml-230{
     margin-left: 230px;

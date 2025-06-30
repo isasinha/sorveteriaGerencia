@@ -44,7 +44,6 @@ export class UtensiliosComponent {
     .subscribe({
       next: (response) => {
         this.cards = response;
-        console.log("cards",this.cards)
       },
       error: (err) => {
         console.error(err);

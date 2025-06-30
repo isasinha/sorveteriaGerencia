@@ -15,6 +15,21 @@ export interface PessoaModel{
     imagem?: string
 }
 
+export interface PessoaDiaModel{
+    firebaseId?: string,
+    idPessoaDia: number,
+    idPessoa: number,
+    idDia: number
+}
+
+export interface PessoaDiaUtensilioModel{
+    firebaseId?: string,
+    idPessoaDiaUtensilio: number,
+    idPessoaDia: number,
+    idUtensilio: number,
+    quantidade: number,
+    devolvido: boolean
+}
 
 export function newPessoa(): PessoaModel{
     const pessoa: PessoaModel = {

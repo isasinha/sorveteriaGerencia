@@ -26,7 +26,7 @@ export const routes: Routes = [
     {path:'pessoas_cadastro', component: Pessoas_CadastroComponent },
     {path:'pessoas_cadastro/:firebaseId', component: Pessoas_CadastroComponent },
     {path:'pessoas_detalhe/:firebaseId', component: Pessoas_DetalheComponent },
-    {path:'pessoas_imprimircracha', component: Pessoas_ImprimirCrachaComponent },
+    {path:'pessoas_imprimircracha/:firebaseId', component: Pessoas_ImprimirCrachaComponent },
     {path:'pessoas_imprimirlista', component: Pessoas_ImprimirListaComponent },
     {path:'equipes', component: EquipesComponent },
     {path:'equipes_cadastro', component: Equipes_CadastroComponent },

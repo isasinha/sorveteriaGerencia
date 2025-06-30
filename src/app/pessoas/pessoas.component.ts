@@ -43,7 +43,6 @@ export class PessoasComponent {
     .subscribe({
       next: (response) => {
         this.cards = response;
-        console.log("cards",this.cards)
       },
       error: (err) => {
         console.error(err);

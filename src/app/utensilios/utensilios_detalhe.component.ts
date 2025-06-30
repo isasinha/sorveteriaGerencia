@@ -7,11 +7,13 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 
 @Component({
@@ -22,11 +24,13 @@ import { MatListModule } from '@angular/material/list';
             FlexLayoutModule, 
             MatCardModule, 
             MatIconModule,
+            MatTableModule,
             MatButtonModule,
             MatInputModule,
             FormsModule,
             MatSelectModule,
-            MatListModule
+            MatListModule,
+            MatCheckbox
           ],
   templateUrl: './utensilios_detalhe.component.html',
   styleUrl: './utensilios_detalhe.component.scss'
@@ -46,6 +50,7 @@ export class Utensilios_DetalheComponent implements OnInit{
 
   firebaseId: string | null = null;
   snack: MatSnackBar = inject(MatSnackBar);
+  colunasTable: string[] = ["pessoa", "quantidade", "devolvido"];
 
   constructor(
               private utensilioService: UtensilioService,
@@ -53,9 +58,24 @@ export class Utensilios_DetalheComponent implements OnInit{
               private router: Router
             ) { }
 
+  
+    datas=[
+      {data: '29/08/2025'},
+      {data: '30/08/2025'},
+      {data: '31/08/2025'}
+    ]
+
+
+    listaUtensiliosPessoaDia = [
+      {pessoa: "Carlos Eduardo Ramos", quantidade: 1, devolvido: true},
+      {pessoa: "Maria das Dores Rodrigues", quantidade: 1, devolvido: false},
+      {pessoa: "Ana Paula Nogueira", quantidade: 1, devolvido: false},
+      {pessoa: "Eloá da Silva", quantidade: 1, devolvido: true},
+    ]
+
+
   ngOnInit(): void {
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
-    console.log("passei aqui", this.firebaseId)
     if (this.firebaseId) {
       this.utensilioService.buscarPorId(this.firebaseId).subscribe({
         next: (res) => {
