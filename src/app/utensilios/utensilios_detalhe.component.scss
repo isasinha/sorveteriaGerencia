@@ -56,3 +56,30 @@
     background-color: yellow;
     padding: 10px;
 }
+
+
+.mini-card{
+    width: 90%;
+    max-width: 1200px;
+}
+
+
+.micro-card{
+    width: 48%;
+    //max-width: 2000px;
+}
+
+.spacer2{
+    flex: 1 1 auto;
+   
+}
+
+.spacer3{
+    flex: auto;
+   
+}
+
+.width-select{
+    width: 80%;
+    
+}

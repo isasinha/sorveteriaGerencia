@@ -12,13 +12,6 @@
 
 .widht-height-menu{
     width: 230px;
-    height: 100%;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  height: 100vh; /* Para preencher toda a tela */
 }
 
 .menu {
@@ -26,6 +19,11 @@
   //background-color: #f0f0f0;
   padding: 10px;
   position: fixed;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Para preencher toda a tela */
+  //overflow-y: auto;
+  
 }
 
 .content {

@@ -1,5 +1,5 @@
 <div fxLayout="row" fxLayoutAlign="center" class="ml-230">
-    <div fxLayout="column" fxFlex="1200px">
+    <div fxLayout="column" fxFlex="100%">
         <mat-card class="mt-20  min-height">
             <mat-card-header fxLayoutAlign="center">
                 <mat-card-title class="color-blue label-foto">{{pessoa.nome}}<br>#{{pessoa.idPessoa}} </mat-card-title>
@@ -56,8 +56,8 @@
                         </mat-list-item>   
                     </mat-list>
                 </div>
-                <div fxLayout="row" fxLayoutAlign="center" fxLyoutGap="16px" class="color-font">
-                    <div fxLayout="column" fxFlex="550px" >
+                <div fxLayout="row" fxLayoutAlign="center" fxLyoutGap="16px" class="color-font mini-card">
+                    <div fxLayout="column" fxFlex="48%" >
                         <mat-card class="background-light-light-gray">
                             <mat-card-header>
                                 <mat-card-title>Dia da festa</mat-card-title>
@@ -70,15 +70,15 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                                    <div fxLayout="column" fxFlex="250px" >
-                                        <mat-card class="background-light-gray">
+                                <div fxLayout="row" fxLayoutAlign="center">
+                                    <div fxLayout="column" class=" micro-card" >
+                                        <mat-card class="background-light-gray" >
                                             <mat-card-header>
                                                 <mat-card-title>Previsão</mat-card-title>
                                             </mat-card-header>
-                                            <mat-card-content>
+                                            <mat-card-content >
                                                 <mat-checkbox checked="true" disabled="true">Participará</mat-checkbox><br>
-                                                <mat-form-field style="height: 70px;" class="mt-10">
+                                                <mat-form-field style="height: 70px;" class="mt-10  width-select">
                                                     <mat-select placeholder="equipe">
                                                         <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome" >
                                                             {{equipe.nome}}
@@ -96,14 +96,15 @@
                                             </mat-card-content>
                                         </mat-card>
                                     </div>
-                                    <div fxLayout="column" fxFlex="250px" class="ml-20">
-                                        <mat-card class="background-light-gray">
+                                    <span class="spacer2"></span>
+                                    <div fxLayout="column" class=" micro-card" >
+                                        <mat-card class="background-light-gray" >
                                             <mat-card-header>
                                                 <mat-card-title>Concretizado</mat-card-title>
                                             </mat-card-header>
                                             <mat-card-content>
                                                 <mat-checkbox checked="true" disabled="true">Participou</mat-checkbox><br>
-                                                <mat-form-field style="height: 70px;" class="mt-10">
+                                                <mat-form-field style="height: 70px;" class="mt-10 width-select" >
                                                     <mat-select placeholder="equipe">
                                                         <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome" >
                                                             {{equipe.nome}}
@@ -125,7 +126,7 @@
                             </mat-card-content>
                         </mat-card>    
                     </div>
-                    <div fxLayout="column" fxFlex="550px" class="ml-50" >
+                    <div fxLayout="column" fxFlex="48%" class="ml-20 mini-card" >
                         <mat-card class="background-light-light-gray min-height-card2" >
                             <mat-card-header>
                                 <mat-card-title>Utensílios</mat-card-title>
