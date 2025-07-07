@@ -148,6 +148,18 @@
                             </mat-form-field>
                         </div>
                     </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="800px">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Equipe: </mat-label>
+                                <mat-select [(value)]="equipeNome">
+                                    <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome">
+                                        {{equipe.nome}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
                 </mat-card-content>
                 <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
                     <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/pessoas">

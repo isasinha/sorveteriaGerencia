@@ -12,7 +12,7 @@
                                 (error)="pessoa.imagem = 'assets/sem_imagem.png'"
                             >
                     </div>                     
-                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" class="ml-15" [routerLink]="['/pessoas_cadastro', firebaseId]">
+                    <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" class="ml-15" [routerLink]="['/pessoas_cadastro', firebaseIdPessoa]">
                         <button mat-icon-button class="img-card" fxFlex="55px" fxLayoutAlign="center" type="button">
                             <mat-icon fontIcon="change_circle" class="img-card color-font-icon" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
                         </button>
@@ -20,7 +20,7 @@
                     </div>
                     <span class="spacer"></span>
                     <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
-                        <button mat-icon-button class="img-card " fxFlex="65px" fxLayoutAlign="center" type="button" [routerLink]="['/pessoas_imprimircracha', firebaseId]" >
+                        <button mat-icon-button class="img-card " fxFlex="65px" fxLayoutAlign="center" type="button" [routerLink]="['/pessoas_imprimircracha', firebaseIdPessoa]" >
                             <mat-icon fontIcon="qr_code_2" class="img-card" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
                         </button>
                         <mat-label fxLayoutAlign="center" class="label-foto color-font">Ver crachá</mat-label>
@@ -52,114 +52,191 @@
                             <span matListItemLine>{{pessoa.email}}</span>
                         </mat-list-item>
                         <mat-list-item>
-                            <span matListItemTitle class="background-yellow">DAQUI PARA BAIXO AINDA NÃO ESTÁ FUNCIONAL, OS DADOS ESTÃO MOCKADOS</span>
+                            <span matListItemTitle>Equipe</span>
+                            <span matListItemLine>{{nomeEquipe}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle class="background-yellow">DAQUI PARA BAIXO: NECESSÁRIO AJUSTAR LÓGICA E PERSISTÊNCIA EM BD</span>
                         </mat-list-item>   
                     </mat-list>
                 </div>
                 <div fxLayout="row" fxLayoutAlign="center" fxLyoutGap="16px" class="color-font mini-card">
                     <div fxLayout="column" fxFlex="48%" >
-                        <mat-card class="background-light-light-gray">
-                            <mat-card-header>
-                                <mat-card-title>Dia da festa</mat-card-title>
-                            </mat-card-header>
-                            <mat-card-content class="mt-20">
-                                <mat-form-field style="height: 70px;">
-                                    <mat-select placeholder="data da festa" [value]="'30/08/2025'">
-                                        <mat-option *ngFor="let data of datas" [value]="data.data" >
-                                            {{data.data}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <div fxLayout="row" fxLayoutAlign="center">
-                                    <div fxLayout="column" class=" micro-card" >
-                                        <mat-card class="background-light-gray" >
-                                            <mat-card-header>
-                                                <mat-card-title>Previsão</mat-card-title>
-                                            </mat-card-header>
-                                            <mat-card-content >
-                                                <mat-checkbox checked="true" disabled="true">Participará</mat-checkbox><br>
-                                                <mat-form-field style="height: 70px;" class="mt-10  width-select">
-                                                    <mat-select placeholder="equipe">
-                                                        <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome" >
-                                                            {{equipe.nome}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>                                                
-                                                <mat-list-item>
-                                                    <span matListItemTitle>Chegada</span>
-                                                    <span matListItemLine>12:00</span>
-                                                </mat-list-item>       
-                                                <mat-list-item>
-                                                    <span matListItemTitle>Saída</span>
-                                                    <span matListItemLine>17:00</span>
-                                                </mat-list-item>    
-                                            </mat-card-content>
-                                        </mat-card>
-                                    </div>
-                                    <span class="spacer2"></span>
-                                    <div fxLayout="column" class=" micro-card" >
-                                        <mat-card class="background-light-gray" >
-                                            <mat-card-header>
-                                                <mat-card-title>Concretizado</mat-card-title>
-                                            </mat-card-header>
-                                            <mat-card-content>
-                                                <mat-checkbox checked="true" disabled="true">Participou</mat-checkbox><br>
-                                                <mat-form-field style="height: 70px;" class="mt-10 width-select" >
-                                                    <mat-select placeholder="equipe">
-                                                        <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome" >
-                                                            {{equipe.nome}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>                                                
-                                                <mat-list-item>
-                                                    <span matListItemTitle>Chegada</span>
-                                                    <span matListItemLine>12:00</span>
-                                                </mat-list-item>       
-                                                <mat-list-item>
-                                                    <span matListItemTitle>Saída</span>
-                                                    <span matListItemLine>17:00</span>
-                                                </mat-list-item>    
-                                            </mat-card-content>
-                                        </mat-card>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                        </mat-card>    
+                        <form #pessoaDia_cadFrm="ngForm" (ngSubmit)="salvarPessoaDia()">
+                            <mat-card class="background-light-light-gray min-height-card2">
+                                <mat-card-header>
+                                    <mat-card-title>Dia da festa</mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content class="mt-20">
+                                    <mat-form-field style="height: 70px;">
+                                        <mat-select placeholder="data da festa" (selectionChange)="selecionarData($event)">
+                                            <mat-option *ngFor="let data of datas" [value]="data.dia" >
+                                                {{ data.dia | date:'dd/MM/yyyy' }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    @if(atualizando){
+                                        <div fxLayout="row" fxLayoutAlign="center">
+                                            <div fxLayout="column" class=" micro-card" >
+                                                <mat-card class="background-light-gray" >
+                                                    <mat-card-header>
+                                                        <mat-card-title>Previsão</mat-card-title>
+                                                    </mat-card-header>
+                                                    <mat-card-content >
+                                                        <mat-checkbox [(ngModel)]="pessoaDia.previsaoParticipacao" (change)="participara()" >Participará</mat-checkbox><br>
+                                                        @if(pessoaDia.previsaoParticipacao){
+                                                            <div fxLayout="row" fxLayoutAlign="start" class="mt-20">
+                                                                <div fxLayout="column" fxFlex="100px" class="ml-10">
+                                                                    <mat-form-field class="full-width" appearance="outline">
+                                                                        <mat-label>Chegada</mat-label>
+                                                                        <input  type="time" 
+                                                                        name="concretoChegada"
+                                                                        [(ngModel)]="pessoaDia.previsaoChegada"                                                                                
+                                                                        mask="00:00"
+                                                                        matInput/>
+                                                                    </mat-form-field>
+                                                                </div>
+                                                            </div>
+                                                            <div fxLayout="row" fxLayoutAlign="start" class="mt-20">
+                                                                <div fxLayout="column" fxFlex="100px" class="ml-10">
+                                                                    <mat-form-field class="full-width" appearance="outline">
+                                                                        <mat-label>Saída</mat-label>
+                                                                        <input  type="time" 
+                                                                        name="concretoChegada"
+                                                                        [(ngModel)]="pessoaDia.previsaoSaida"                                                                                
+                                                                        mask="00:00"
+                                                                        matInput/>
+                                                                    </mat-form-field>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </mat-card-content>
+                                                </mat-card>
+                                            </div>
+                                            <span class="spacer2"></span>
+                                            @if(pessoaDia.previsaoParticipacao){
+                                                <div fxLayout="column" class=" micro-card" >
+                                                    <mat-card class="background-light-gray" >
+                                                        <mat-card-header>
+                                                            <mat-card-title>Concretizado</mat-card-title>
+                                                        </mat-card-header>
+                                                        <mat-card-content>
+                                                            <div fxLayout="row" fxLayoutAlign="start">
+                                                                <mat-checkbox (change)="participou()" >Participou</mat-checkbox><br>
+                                                            </div>
+                                                            @if(pessoaDia.concretoParticipacao){
+                                                                <div fxLayout="row" fxLayoutAlign="start" class="mt-20">
+                                                                    <div fxLayout="column" fxFlex="100px" class="ml-10">
+                                                                        <mat-form-field class="full-width" appearance="outline">
+                                                                            <mat-label>Chegada</mat-label>
+                                                                            <input  type="time" 
+                                                                            name="concretoChegada"
+                                                                            [(ngModel)]="pessoaDia.concretoChegada"                                                                                
+                                                                            mask="00:00"
+                                                                            matInput/>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                </div>
+                                                                <div fxLayout="row" fxLayoutAlign="start" class="mt-20">
+                                                                    <div fxLayout="column" fxFlex="100px" class="ml-10">
+                                                                        <mat-form-field class="full-width" appearance="outline">
+                                                                            <mat-label>Saída</mat-label>
+                                                                            <input  type="time" 
+                                                                            name="concretoChegada"
+                                                                            [(ngModel)]="pessoaDia.concretoSaida"                                                                                
+                                                                            mask="00:00"
+                                                                            matInput/>
+                                                                        </mat-form-field>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </mat-card-content>
+                                                    </mat-card>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </mat-card-content>
+                            </mat-card>    
+                        </form>
                     </div>
                     <div fxLayout="column" fxFlex="48%" class="ml-20 mini-card" >
-                        <mat-card class="background-light-light-gray min-height-card2" >
-                            <mat-card-header>
-                                <mat-card-title>Utensílios</mat-card-title>
-                            </mat-card-header>
-
-                            <mat-card-content class="mt-25">
-                                <table mat-table [dataSource]="listaUtensiliosPessoaDia" class="mat-elevation-z8 background-light-gray">
-                                    <ng-container matColumnDef="entregue">
-                                        <th mat-header-cell *matHeaderCellDef> Utensílio entregue </th>
-                                        <td mat-cell *matCellDef="let utensilioPessoaDia"> {{utensilioPessoaDia.entregue}} </td>
-                                    </ng-container>
-                                    <ng-container class="center-content"  matColumnDef="quantidade">
-                                        <th mat-header-cell class="center-content"  *matHeaderCellDef> Quantidade </th>
-                                        <td mat-cell class="center-content" *matCellDef="let utensilioPessoaDia" > {{utensilioPessoaDia.quantidade}} </td>
-                                    </ng-container>
-                                    <ng-container matColumnDef="devolvido">
-                                        <th mat-header-cell class="center-content"  *matHeaderCellDef> Devolvido </th>
-                                        <td mat-cell class="center-content"  *matCellDef="let utensilioPessoaDia"> 
-                                            @if(utensilioPessoaDia.devolvido){
-                                                <mat-checkbox checked="true" disabled="true"></mat-checkbox>
-                                            }@else if(!utensilioPessoaDia.devolvido) {
-                                                <mat-checkbox checked="false" disabled="true"></mat-checkbox>
-                                            }
-                                        </td>
-                                    </ng-container>                                    
-                                    <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: colunasTable;"></tr>
-                                </table>
-                            </mat-card-content>
-                        </mat-card>    
+                        <form #pessoaDiaUtensilio_cadFrm="ngForm" (ngSubmit)="salvarPessoaDiaUtensilio()">
+                            <mat-card class="background-light-light-gray min-height-card2" >
+                                <mat-card-header>
+                                    <mat-card-title>Utensílios</mat-card-title>
+                                </mat-card-header>
+                                @if(atualizando && pessoaDia.previsaoParticipacao){
+                                    <mat-card-content class="mt-20">
+                                        <table mat-table [dataSource]="utensiliosSelecionados" class="mat-elevation-z8 background-light-gray">
+                                            <ng-container matColumnDef="entregue">
+                                                <th mat-header-cell *matHeaderCellDef> Utensílio entregue </th>
+                                                <td mat-cell *matCellDef="let utensilioSelec"> {{utensilioSelec.nome}} 
+                                                <!-- @if(alterarLinha){
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-select [(value)]="utensilioSelec.nome" placeholder="Selecione">
+                                                            <mat-option *ngFor="let utensilio of utensiliosCadastrados" [value]="utensilio.nome">
+                                                                {{ utensilio.nome }}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                } -->
+                                                </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="quantidade">
+                                                <th mat-header-cell *matHeaderCellDef> Quantidade </th>
+                                                <td mat-cell *matCellDef="let utensilioSelec"> {{utensilioSelec.quantidade}}
+                                                <!-- @if(alterarLinha){
+                                                    <mat-form-field appearance="fill">
+                                                        <input matInput type="number" [(ngModel)]="utensilioSelec.quantidade" min="1">
+                                                    </mat-form-field>
+                                                } -->
+                                                </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="devolvido">
+                                                <th mat-header-cell *matHeaderCellDef> Devolvido </th>
+                                                <td mat-cell *matCellDef="let utensilioSelec">
+                                                    <!-- @if(alterarLinha){
+                                                        <mat-checkbox [(ngModel)]="utensilioSelec.devolvido"></mat-checkbox>
+                                                    } -->
+                                                </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="remover">
+                                                <th mat-header-cell class="center-content" *matHeaderCellDef> Excluir</th>
+                                                <td mat-cell *matCellDef="let element; let i = index">
+                                                    <button mat-icon-button color="warn" (click)="removerLinha(i)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </td>
+                                            </ng-container>
+                                            <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>
+                                            <tr mat-row *matRowDef="let row; columns: colunasTable;"></tr>
+                                        </table>
+                                        <div fxLayout="row" fxLayoutAlign="end" class="mt-10">
+                                            <button mat-flat-button color="primary" (click)="adicionarLinha()">
+                                                <mat-icon>add</mat-icon>
+                                                Adicionar utensílio
+                                            </button>
+                                        </div>                               
+                                    </mat-card-content>
+                                }
+                            </mat-card>    
+                        </form> 
                     </div>
                 </div>                 
-            </mat-card-content>                
+            </mat-card-content>
+            <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
+                <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/pessoas">
+                    <mat-icon fontIcon="backspace"></mat-icon>
+                    Voltar
+                </button>                     
+                @if(atualizando){
+                    <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="submit">
+                        <mat-icon fontIcon="save"></mat-icon>
+                        Salvar alterações
+                    </button>                     
+                }
+            </mat-card-actions>          
         </mat-card>
     </div>
 </div>

@@ -39,7 +39,7 @@ export class PessoasComponent {
   colunasTable: string[] = ["idPessoa", "nome",  "sexta", "sabado", "domingo"];
     
   ngOnInit(){
-    this.pessoaService.listar()
+    this.pessoaService.listarPessoas()
     .subscribe({
       next: (response) => {
         this.cards = response;

@@ -6,9 +6,13 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { DiaDaFestaModel } from './dia-da-festa.model';
+import { DiaDaFestaService } from './dia-da-festa.service';
+import { EquipeModel } from '../equipes/equipe.model';
+import { EquipeService } from '../equipes/equipe.service';
 
 @Component({
   selector: 'app-dia-da-festa',
@@ -28,21 +32,44 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 })
 export class DiaDaFestaComponent {
   constructor(
+    private diaDaFestaService: DiaDaFestaService,
+    private equipeService: EquipeService,
     private route: ActivatedRoute,
     private router: Router
   ){}
-  
-  datas=[
-        {data: '29/08/2025'},
-        {data: '30/08/2025'},
-        {data: '31/08/2025'}
-      ]
 
-  barracas=[
-    { nome: 'Açaí'},
-    { nome: 'Casquinha'},
-    { nome: 'Coxinha'},
-    { nome: 'Carrinhos'},
-    { nome: 'Taça de frutas vermelhas'}
-    ]
+  datas: DiaDaFestaModel[] = []
+  equipes: EquipeModel[] = []
+  firebaseId: string | null = ""
+
+  ngOnInit(){
+    this.diaDaFestaService.listar()
+      .subscribe({
+        next: (response) => {
+          this.datas = response;
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+    this.equipeService.listar()
+      .subscribe({
+        next: (response) => {
+          this.equipes = response;
+        },
+        error: (err) => {
+          console.error(err);
+        }
+    });
   }
+
+  selecionarData(event: MatSelectChange){
+    const dataSelecionada = event.value;
+    const diaDaFestaSelecionado = this.datas.find(data => data.dia === dataSelecionada)
+    this.firebaseId = diaDaFestaSelecionado?.firebaseId ?? '';
+  }
+
+  alterarDiadaFesta(){
+    this.router.navigate(['diadafesta_cadastro/', this.firebaseId]);
+  }
+}

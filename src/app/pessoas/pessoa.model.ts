@@ -1,6 +1,9 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface PessoaModel{
     firebaseId?: string,
     idPessoa: number,
+    idEquipe?: number,
     nome: string,
     data_nascimento: string,
     telefone: string,
@@ -19,7 +22,13 @@ export interface PessoaDiaModel{
     firebaseId?: string,
     idPessoaDia: number,
     idPessoa: number,
-    idDia: number
+    idDia: number,
+    previsaoParticipacao: boolean,
+    previsaoChegada: string,
+    previsaoSaida: string
+    concretoParticipacao: boolean,
+    concretoChegada: string,
+    concretoSaida: string
 }
 
 export interface PessoaDiaUtensilioModel{
@@ -28,13 +37,14 @@ export interface PessoaDiaUtensilioModel{
     idPessoaDia: number,
     idUtensilio: number,
     quantidade: number,
-    devolvido: boolean
+    devolvido?: boolean
 }
 
 export function newPessoa(): PessoaModel{
     const pessoa: PessoaModel = {
     firebaseId: "",
     idPessoa: 0,
+    idEquipe: 0,
     nome: "",
     data_nascimento: "",
     telefone: "",

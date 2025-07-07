@@ -8,8 +8,12 @@
                 <mat-card-content>
                     <div fxLayout="row" fxLayoutAlign="end" fxLyoutGap="16px">
                         <div fxLayout="column" fxFlex="100px" fxLayoutAlign="end" class="mt-20 mb-40 mr-35" >
-                            <mat-icon fontIcon="delete" class="img-card color-red" fxFlex="50px" fxLayoutAlign="center"  style="font-size: 50px;"></mat-icon>
-                            <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir <br>cadastro</mat-label>
+                            @if(atualizando){
+                                <button mat-icon-button class="img-card " fxFlex="55px" fxLayoutAlign="center" type="button" (click)="excluir()" >
+                                    <mat-icon fontIcon="delete" class="img-card color-red" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                                </button>
+                                <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir <br>cadastro</mat-label>
+                            }
                         </div>
                     </div>
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
@@ -18,7 +22,7 @@
                                 <mat-label>Dia da Festa: *</mat-label>
                                 <input  type="date" 
                                         name="dia"
-                                        [(ngModel)]="dia_da_festa.dia"
+                                        [(ngModel)]="diaDaFesta.dia"
                                         placeholder="Ex: 28/08/2026" 
                                         matInput/>
                             </mat-form-field>
@@ -28,7 +32,7 @@
                                 <mat-label>Horário de início: </mat-label>
                                 <input  type="time" 
                                         name="hora_inicio"
-                                        [(ngModel)]="dia_da_festa.hora_inicio"
+                                        [(ngModel)]="diaDaFesta.hora_inicio"
                                         placeholder="Digite o horário de início da festa" 
                                         matInput/>
                             </mat-form-field>
@@ -38,7 +42,7 @@
                                 <mat-label>Horário de Término: </mat-label>
                                 <input  type="time" 
                                         name="hora_fim"
-                                        [(ngModel)]="dia_da_festa.hora_fim"
+                                        [(ngModel)]="diaDaFesta.hora_fim"
                                         placeholder="Digite o horario de termino da festa" 
                                         matInput/>
                             </mat-form-field>
@@ -48,7 +52,7 @@
                         <div fxLayout="column" fxFlex="800px">
                             <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Dia da semana: </mat-label>
-                                <mat-select [(value)]="dia_da_festa.dia_semana" >
+                                <mat-select [(value)]="diaDaFesta.dia_semana" >
                                 <mat-option *ngFor="let dia of diasSemana" [value]="dia">
                                     {{dia}}
                                 </mat-option>

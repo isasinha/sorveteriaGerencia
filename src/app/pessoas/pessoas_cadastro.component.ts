@@ -10,6 +10,8 @@ import { MatButtonModule} from '@angular/material/button'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { PessoaModel } from './pessoa.model';
 import { PessoaService } from './pessoa.service'; 
+import { EquipeModel } from '../equipes/equipe.model';
+import { EquipeService } from '../equipes/equipe.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { BrasilapiService } from '../brasilapi.service';
@@ -40,6 +42,7 @@ export class Pessoas_CadastroComponent implements OnInit{
 
   pessoa: PessoaModel = {
     idPessoa: 0,
+    idEquipe: 0,
     nome: '',
     data_nascimento: '',
     telefone: '',
@@ -57,9 +60,12 @@ export class Pessoas_CadastroComponent implements OnInit{
   snack: MatSnackBar = inject(MatSnackBar);
   estados: Estado[] = [];
   municipios: Municipio[] = [];
+  equipes: EquipeModel[] = [];
+  equipeNome: string = "";
 
   constructor(
     private pessoaService: PessoaService,
+    private equipeService: EquipeService,
     private brasilApiService: BrasilapiService,    
     private route: ActivatedRoute,
     private router: Router
@@ -67,25 +73,31 @@ export class Pessoas_CadastroComponent implements OnInit{
 
   ngOnInit(): void {
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
-    this.atualizando = !!this.firebaseId;    
+    this.atualizando = !!this.firebaseId;
+    this.carregarUFs();
+    this.carregarEquipes();
     if (this.atualizando && this.firebaseId) {
-      this.pessoaService.buscarPorId(this.firebaseId).subscribe({
+      this.pessoaService.buscarPorIdPessoa(this.firebaseId).subscribe({
         next: (res) => {
           this.pessoa = res;
           if(this.pessoa.endereco_uf){
-              const event = {value: this.pessoa.endereco_uf}
-              this.carregarMunicipios(event as MatSelectChange);
-            }     
+            const event = {value: this.pessoa.endereco_uf}
+            this.carregarMunicipios(event as MatSelectChange);
+          }
+          if (this.pessoa.idEquipe) {
+            const equipeCadastrada = this.equipes.find(e => e.idEquipe === this.pessoa.idEquipe);
+            this.equipeNome = equipeCadastrada?.nome ?? '';
+          }
         },
         error: (err) => {
-          console.error('Erro ao buscar utensílio: ', err);
+          console.error('Erro ao buscar pessoa: ', err);
         }
       });
     }
     else {
       this.gerarId();
+      this.equipeNome = "Temporariamente sem equipe";    
     }
-    this.carregarUFs();
   }
 
   carregarUFs(){
@@ -95,14 +107,6 @@ export class Pessoas_CadastroComponent implements OnInit{
     });
   }
 
-  carregarMunicipios(event: MatSelectChange){
-    const ufSelecionada = event.value;
-    this.brasilApiService.listarMunicipios(ufSelecionada).subscribe({
-      next: listaMunicipios => this.municipios = this.destacarMunicipio(listaMunicipios),
-      error: erro => console.error('ocorreu um erro ao buscar municípios: ', erro)
-    })
-  }
-  
   destacarEstado(listaEstados: Estado[]){
     const estadoDestacado = 'SP'; 
     const index = listaEstados.findIndex(municipio => municipio.sigla === estadoDestacado);
@@ -113,6 +117,14 @@ export class Pessoas_CadastroComponent implements OnInit{
     return listaEstados;
   }
 
+  carregarMunicipios(event: MatSelectChange){
+    const ufSelecionada = event.value;
+    this.brasilApiService.listarMunicipios(ufSelecionada).subscribe({
+      next: listaMunicipios => this.municipios = this.destacarMunicipio(listaMunicipios),
+      error: erro => console.error('ocorreu um erro ao buscar municípios: ', erro)
+    })
+  }
+  
   destacarMunicipio(listaMunicipios: Municipio[]){
     const municipioDestacado = 'SÃO PAULO'; 
     const index = listaMunicipios.findIndex(municipio => municipio.nome === municipioDestacado);
@@ -123,9 +135,32 @@ export class Pessoas_CadastroComponent implements OnInit{
     return listaMunicipios;
   }
 
-  salvar(): void {
+  carregarEquipes(){
+    this.equipeService.listar().subscribe({
+      next: listaEquipes => this.equipes = this.destacarEquipe(listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1)),
+      error: erro => console.error("ocorreu um erro ao buscar Equipes: ", erro)
+    });
+  }
+
+  destacarEquipe(listaEquipesNomes: EquipeModel[]){
+    const equipeDestacada = 'Temporariamente sem equipe'; 
+    const index = listaEquipesNomes.findIndex(equipe => equipe.nome === equipeDestacada);
+    if (index > -1) {
+      const equipe = listaEquipesNomes.splice(index, 1)[0];
+      listaEquipesNomes.unshift(equipe); // Move para o início
+    }
+    return listaEquipesNomes;
+  }
+
+  async salvar() {
+    if(!this.pessoa.imagem?.startsWith('data:image')){
+      const texto:string = this.pessoa.imagem || ''
+      await this.ajustarSalvarImagem(undefined,texto)
+    }
+    const equipeCadastrada = this.equipes.find(e => e.nome === this.equipeNome);
+    this.pessoa.idEquipe = equipeCadastrada?.idEquipe ?? 0;
     if (this.atualizando && this.firebaseId) {
-      this.pessoaService.alterar(this.pessoa, this.firebaseId)
+      this.pessoaService.alterarPessoa(this.pessoa, this.firebaseId)
         .then(() => {
           this.mostrarMensagem('Pessoa atualizada com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
@@ -135,7 +170,7 @@ export class Pessoas_CadastroComponent implements OnInit{
           console.error('Erro ao alterar cadastro: ', err);
         });
     } else {
-      this.pessoaService.salvar(this.pessoa)
+      this.pessoaService.salvarPessoa(this.pessoa)
         .then(() => {
           this.mostrarMensagem('Pessoa cadastrada com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
@@ -149,48 +184,74 @@ export class Pessoas_CadastroComponent implements OnInit{
 
   async gerarId(){
     try{
-      const proximoId = await this.pessoaService.gerarProximoId()
+      const proximoId = await this.pessoaService.gerarProximoIdPessoas()
       this.pessoa.idPessoa = proximoId;
     } catch (error){
       console.error('Erro ao gerar ID: ', error)
     }
   }
-
-  mostrarMensagem(mensagem: string){
-    this.snack.open(mensagem, "Ok", {duration: 2000});
-  }
-
+  
   carregarImagem() {
     this.inputImagem.nativeElement.click();
   }
 
-  ajustarSalvarImagem(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
+  async ajustarSalvarImagem(event?: Event, url?: string){
+    let blob: Blob | null = null;
+    try {
+      if(event){
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) return;
+        blob = input.files[0];
+      }else if(url){
+        blob = await this.obterBlobDaImagem(url);
+      }
+      if (blob){
+        const imagemCompactada = await this.compactarImagemDoBlob(blob);
+        this.pessoa.imagem = imagemCompactada;
+      }else{
+        console.warn('Nenhuma imagem fornecida.');
+      }
+    } catch (error) {
+      console.error('Erro ao processar imagem:', error);
+    }
+  }
 
-    const arquivo = input.files[0];
-    const reader = new FileReader();
+  async obterBlobDaImagem(url: string): Promise<Blob> {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Erro ao buscar imagem');
+    return await response.blob();
+  }
 
-    reader.onload = () => {
-      const img = new Image();
-      img.src = reader.result as string;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const maxDim = 200;
-        const ratio = img.width / img.height;
-        if (ratio > 1) {
-          canvas.width = maxDim;
-          canvas.height = maxDim / ratio;
-        } else {
-          canvas.height = maxDim;
-          canvas.width = maxDim * ratio;
-        }
-        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const base64Compactada = canvas.toDataURL('image/jpeg', 0.7); // qualidade 70%
-        this.pessoa.imagem = base64Compactada;        
+  async compactarImagemDoBlob(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();      
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result as string;        
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxDim = 200;
+          const ratio = img.width / img.height;
+          if (ratio > 1) {
+            canvas.width = maxDim;
+            canvas.height = maxDim / ratio;
+          } else {
+            canvas.height = maxDim;
+            canvas.width = maxDim * ratio;
+          }          
+          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const base64Compactada = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(base64Compactada);
+        };
+        img.onerror = reject;
       };
-    };
-    reader.readAsDataURL(arquivo);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }  
+
+  mostrarMensagem(mensagem: string){
+    this.snack.open(mensagem, "Ok", {duration: 2000});
   }
 }

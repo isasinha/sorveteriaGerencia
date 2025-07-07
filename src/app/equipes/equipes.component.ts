@@ -35,8 +35,12 @@ export class EquipesComponent {
   ngOnInit(){
     this.equipeService.listar()
       .subscribe({
-        next: (response) => {
-          this.cards = response;
+        next: lista => {
+          this.cards = lista.sort((a, b) => {
+            if (a.idEquipe === 1) return 1;
+            if (b.idEquipe === 1) return -1;
+            return a.idEquipe - b.idEquipe;
+          })
         },
         error: (err) => {
           console.error(err);

@@ -15,15 +15,17 @@
                 </div>
                 <mat-grid-list cols="3" rowHeight="300px">
                     <mat-grid-tile *ngFor="let card of cards">
-                        <mat-card [routerLink]="['/equipes_detalhe', card.firebaseId]" class="cursor">
-                            <img mat-card-image class="img-card mt-20 mb-40"
-                                [src]="card.imagem"
-                                (error)="card.imagem = 'assets/sem_imagem.png'"
-                            >
-                            <mat-card-content class="quebra-linha">
-                                {{ card.nome }}
-                            </mat-card-content>
-                        </mat-card>
+                        @if(card.nome != "Temporariamente sem equipe"){
+                            <mat-card [routerLink]="['/equipes_detalhe', card.firebaseId]" class="cursor">
+                                <img mat-card-image class="img-card mt-20 mb-40"
+                                    [src]="card.imagem"
+                                    (error)="card.imagem = 'assets/sem_imagem.png'"
+                                >
+                                <mat-card-content class="quebra-linha">
+                                    {{ card.nome }}
+                                </mat-card-content>
+                            </mat-card>
+                        }
                     </mat-grid-tile>
                 </mat-grid-list>
             </mat-card-content>

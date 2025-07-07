@@ -5,6 +5,7 @@ import {  Firestore,
           collectionData, 
           orderBy, 
           addDoc, 
+          getDocs,
           updateDoc, 
           deleteDoc, 
           doc, 
@@ -13,6 +14,7 @@ import {  Firestore,
         } from "@angular/fire/firestore"
 import { firstValueFrom, Observable } from 'rxjs';
 import { EquipeModel } from './equipe.model';
+import { where } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +49,19 @@ export class EquipeService {
   buscarPorId(firebaseId: string): Observable<EquipeModel> {
     const equipeDocRef = doc(this.firestore, `equipes/${firebaseId}`);
     return docData(equipeDocRef, { idField: 'firebaseId' }) as Observable<EquipeModel>;
+  }
+
+  async buscarNomeEquipe(idEquipe: number): Promise<string | null>{
+    const listaEquipes = collection(this.firestore, 'equipes');
+    const q = query(listaEquipes, where('idEquipe', '==', idEquipe));
+    const querySnapshot = await getDocs(q);
+
+    if(!querySnapshot.empty){
+      const doc = querySnapshot.docs[0];
+      const data = doc.data() as EquipeModel;
+      return data.nome;
+    }
+    return null;
   }
 
   async gerarProximoId(): Promise<number> {
