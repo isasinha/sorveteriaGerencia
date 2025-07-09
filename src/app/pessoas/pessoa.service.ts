@@ -27,16 +27,16 @@ export class PessoaService {
   
     listarPessoas(): Observable<PessoaModel[]> {
       const pessoaRef = collection(this.firestore, 'pessoas');
-      const q = query(pessoaRef, orderBy('idPessoa'));
+      const q = query(pessoaRef, orderBy('nome'));
       return collectionData(q, { idField: 'firebaseId' }) as Observable<PessoaModel[]>;  
     }
 
     listarPessoaDia(idPessoa?: number, idDia?: number): Observable<PessoaDiaModel[]>{
       let q: any | null = null;
       const pessoaRef = collection(this.firestore, 'pessoaDia');
-      if(idPessoa && idDia){q = query(pessoaRef, where('idPessoa', '==', idPessoa), where('idDia', '==', idDia), orderBy('idPessoa'), orderBy('idDia'));}
+      if(idPessoa && idDia){q = query(pessoaRef, where('idPessoa', '==', idPessoa), where('idDia', '==', idDia), orderBy('nome'), orderBy('idDia'));}
       else if(idPessoa)    {q = query(pessoaRef, where('idPessoa', '==', idPessoa), orderBy('idDia'));}
-      else if(idDia)       {q = query(pessoaRef, where('idDia', '==', idDia), orderBy('idPessoa'));}
+      else if(idDia)       {q = query(pessoaRef, where('idDia', '==', idDia), orderBy('nome'));}
       else                 {q = query(pessoaRef, orderBy('idPessoa'), orderBy('idDia'));}
       return collectionData(q, { idField: 'firebaseId' }) as Observable<PessoaDiaModel[] >;  
     }
