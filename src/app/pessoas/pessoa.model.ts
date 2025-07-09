@@ -2,7 +2,7 @@ export interface PessoaModel{
     firebaseId?: string,
     idPessoa: number,
     idEquipe?: number,
-    idFuncao?: [],
+    idFuncao?: number[],
     nome: string,
     data_nascimento: string,
     idade: number,

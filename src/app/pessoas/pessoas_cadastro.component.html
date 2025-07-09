@@ -112,11 +112,10 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-
                         <div fxLayout="column" fxFlex="350px" class="ml-2p">
                             <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Função: </mat-label>
-                                <mat-select [(value)]="funcaoNome">
+                                <mat-select [(value)]="funcoesNomes" multiple>
                                     <mat-option [value]="null">-- não selecionar --</mat-option>
                                     <mat-option *ngFor="let funcao of funcoes" [value]="funcao.nome">
                                         {{funcao.nome}}

@@ -42,6 +42,7 @@ export class Pessoas_CadastroComponent implements OnInit{
   pessoa: PessoaModel = {
     idPessoa: 0,
     idEquipe: 0,
+    idFuncao: [],
     nome: '',
     data_nascimento: '',
     idade: 0,
@@ -57,7 +58,7 @@ export class Pessoas_CadastroComponent implements OnInit{
   equipes: EquipeModel[] = [];
   equipeNome: string = "";
   funcoes: FuncaoModel[] = [];
-  funcaoNome: string = "";
+  funcoesNomes: string[] = [];
 
   constructor(
     private pessoaService: PessoaService,
@@ -71,6 +72,7 @@ export class Pessoas_CadastroComponent implements OnInit{
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
     this.atualizando = !!this.firebaseId;
     this.carregarEquipes();
+    this.carregarFuncoes();
     if (this.atualizando && this.firebaseId) {
       this.pessoaService.buscarPorIdPessoa(this.firebaseId).subscribe({
         next: (res) => {
@@ -79,9 +81,11 @@ export class Pessoas_CadastroComponent implements OnInit{
             const equipeCadastrada = this.equipes.find(e => e.idEquipe === this.pessoa.idEquipe);
             this.equipeNome = equipeCadastrada?.nome ?? '';
           }
-          if (this.pessoa.idEquipe) {
-            const equipeCadastrada = this.equipes.find(e => e.idEquipe === this.pessoa.idEquipe);
-            this.equipeNome = equipeCadastrada?.nome ?? '';
+          if (this.pessoa.idFuncao) {
+            for (const id of this.pessoa.idFuncao) {
+              const funcaoCadastrada = this.funcoes.find(e => e.idFuncao === id);
+              this.funcoesNomes.push(funcaoCadastrada?.nome ?? '')
+            }
           }
         },
         error: (err) => {
@@ -97,28 +101,30 @@ export class Pessoas_CadastroComponent implements OnInit{
   carregarEquipes(){
     this.equipeService.listarEquipes().subscribe({
       next: listaEquipes => this.equipes = listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
-      // next: listaEquipes => this.equipes = this.destacarEquipe(listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1)),
       error: erro => console.error("ocorreu um erro ao buscar Equipes: ", erro)
     });
   }
 
-  // destacarEquipe(listaEquipesNomes: EquipeModel[]){
-  //   const equipeDestacada = 'Temporariamente sem equipe'; 
-  //   const index = listaEquipesNomes.findIndex(equipe => equipe.nome === equipeDestacada);
-  //   if (index > -1) {
-  //     const equipe = listaEquipesNomes.splice(index, 1)[0];
-  //     listaEquipesNomes.unshift(equipe); // Move para o início
-  //   }
-  //   return listaEquipesNomes;
-  // }
+  carregarFuncoes(){
+    this.equipeService.listarFuncoes().subscribe({
+      next: listaFuncoes => this.funcoes = listaFuncoes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
+      error: erro => console.error("ocorreu um erro ao buscar Funções: ", erro)
+    });
+  }
 
   async salvar() {
+    console.log('funções: ', this.pessoa.idFuncao)    
     if(!this.pessoa.imagem?.startsWith('data:image')){
       const texto:string = this.pessoa.imagem || ''
       await this.ajustarSalvarImagem(undefined,texto)
     }
     const equipeCadastrada = this.equipes.find(e => e.nome === this.equipeNome);
     this.pessoa.idEquipe = equipeCadastrada?.idEquipe ?? 0;
+    for (const nome of this.funcoesNomes) {
+      const funcaoCadastrada = this.funcoes.find(e => e.nome === nome);
+        this.pessoa.idFuncao ??= [];
+        this.pessoa.idFuncao.push(funcaoCadastrada?.idFuncao ?? 0)
+    }
     if (this.atualizando && this.firebaseId) {
       this.pessoaService.alterarPessoa(this.pessoa, this.firebaseId)
         .then(() => {

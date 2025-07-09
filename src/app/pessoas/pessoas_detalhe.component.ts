@@ -83,6 +83,7 @@ export class Pessoas_DetalheComponent implements OnInit{
   
   ngOnInit(): void {
     this.firebaseIdPessoa = this.route.snapshot.paramMap.get('firebaseId');
+    
     if (this.firebaseIdPessoa) {
       this.pessoaService.buscarPorIdPessoa(this.firebaseIdPessoa).subscribe({
         next: (res) => {
