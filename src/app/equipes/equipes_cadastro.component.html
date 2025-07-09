@@ -3,37 +3,45 @@
         <form class="mt-20" #equipes_cadFrm="ngForm" (ngSubmit)="salvar()">
             <mat-card>
                 <mat-card-header fxLayoutAlign="center">
-                    <mat-card-title class="color-blue">Equipe</mat-card-title>
+                    <mat-card-title class="color-blue">{{tipo}}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="200px" >
-                            <img mat-card-image class="img-card mt-20 mb-40"
-                                [src]="equipe.imagem"
-                                (error)="equipe.imagem = 'assets/sem_imagem.png'"
-                            >
-                        </div>
+                    <div fxLayout="row" fxLayoutAlign="end" fxLyoutGap="16px">
                         <div fxLayout="column" fxFlex="100px" fxLayoutAlign="center" >
-                            <button mat-icon-button class="img-card" fxFlex="70px" fxLayoutAlign="center" (click)="carregarImagem()" type="button" >
-                                <mat-icon fontIcon="add_a_photo" class="img-card color-font" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
-                            </button>
-                            <mat-label fxLayoutAlign="center" class="label-foto color-font">Alterar foto</mat-label>
-                            <input type="file" #inputImagem accept="image/*" style="display: none;" (change)="ajustarSalvarImagem($event)">                            
+                            <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" >
+                                @if(atualizando){
+                                    <button mat-icon-button class="img-card " fxFlex="55px" fxLayoutAlign="center" type="button" (click)="excluir()" >
+                                        <mat-icon fontIcon="delete" class="img-card color-red" style="font-size: 35px;" fxLayoutAlign="center center"></mat-icon>
+                                    </button>
+                                    <mat-label fxLayoutAlign="center" class="label-foto color-font">Excluir cadastro</mat-label>
+                                }       
+                            </div>
                         </div>
                     </div>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px" class="mt-40">
                         <div fxLayout="column" fxFlex="800px">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Nome da equipe: *</mat-label>
-                                <input  type="text" 
-                                        name="nome"
-                                        [(ngModel)]="equipe.nome"
-                                        placeholder="Ex: Equipe laranja" 
-                                        matInput/>
-                            </mat-form-field>
+                            @if(tipo=='Equipe'){
+                                <mat-form-field class="full-width" appearance="outline">
+                                    <mat-label>Nome da {{tipo}}: *</mat-label>
+                                    <input  type="text" 
+                                    name="nome"
+                                    [(ngModel)]="equipe.nome"
+                                    placeholder="Ex: Decoração" 
+                                    matInput/>
+                                </mat-form-field>
+                            }
+                            @if(tipo=='Função'){
+                                <mat-form-field class="full-width" appearance="outline">
+                                    <mat-label>Nome da {{tipo}}: *</mat-label>
+                                    <input  type="text" 
+                                    name="nome"
+                                    [(ngModel)]="funcao.nome"
+                                    placeholder="Ex: Coordenador" 
+                                    matInput/>
+                                </mat-form-field>
+                            }
                         </div>
-                    </div>
-                                        
+                    </div>                                        
                 </mat-card-content>
                 <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
                     <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink="/equipes">
@@ -56,3 +64,5 @@
         </form>
     </div>
 </div>
+
+

@@ -43,21 +43,54 @@
                                          matInput/>
                             </mat-form-field>
                         </div>
+                        <div fxLayout="column" fxFlex="200px" class="ml-35">
+                            <mat-form-field class="full-width"  appearance="outline">
+                                <mat-label>Idade: </mat-label>
+                                <input  type="number" 
+                                        name="idade"
+                                        [(ngModel)]="pessoa.idade"
+                                         matInput/>
+                            </mat-form-field>
+                        </div>
                     </div>
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
                         <div fxLayout="column" fxFlex="200px">
                             <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Telefone: *</mat-label>
+                                <mat-label>Telefone residencial:</mat-label>
                                 <input  type="text" 
-                                        name="telefone"
-                                        placeholder="Ex: (99) 99999-9999" 
-                                        mask="(99) 99999-9999"
-                                        [(ngModel)]="pessoa.telefone"
+                                        name="telefone_res"
+                                        placeholder="Ex: (99) 9999-9999" 
+                                        mask="(99) 9999-9999"
+                                        [(ngModel)]="pessoa.telefone_res"
                                         matInput/>
                             </mat-form-field>
                         </div>
-                        <div fxLayout="column" fxFlex="565px" class="ml-35">
-                            <mat-form-field class="full-width"  appearance="outline">
+                        <div fxLayout="column" fxFlex="200px"  class="ml-35">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Telefone celular:</mat-label>
+                                <input  type="text" 
+                                        name="telefone_cel"
+                                        placeholder="Ex: (99) 99999-9999" 
+                                        mask="(99) 99999-9999"
+                                        [(ngModel)]="pessoa.telefone_cel"
+                                        matInput/>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="column" fxFlex="200px"  class="ml-35">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Telefone de recados:</mat-label>
+                                <input  type="text" 
+                                        name="telefone_rec"
+                                        placeholder="Ex: (99) 99999-9999" 
+                                        mask="(99) 99999-9999"
+                                        [(ngModel)]="pessoa.telefone_rec"
+                                        matInput/>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="800px">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>E-mail: </mat-label>
                                 <input  type="text" 
                                         name="email"
@@ -68,95 +101,40 @@
                         </div>
                     </div>
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="800px">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Endereço: </mat-label>
-                                <input  type="text" 
-                                        name="endereco_logradouro"
-                                        [(ngModel)]="pessoa.endereco_logradouro"
-                                        placeholder="Ex: Rua das Flores" 
-                                        matInput/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="200px">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Número:</mat-label>
-                                <input  type="text" 
-                                        name="endereco_numero"
-                                        [(ngModel)]="pessoa.endereco_numero"
-                                        placeholder="Ex: 999" 
-                                        matInput/>
-                            </mat-form-field>
-                        </div>
-                        <div fxLayout="column" fxFlex="565px" class="ml-35">
-                            <mat-form-field class="full-width"  appearance="outline">
-                                <mat-label>Complemento: </mat-label>
-                                <input  type="text" 
-                                        name="endereco_complemento"
-                                        [(ngModel)]="pessoa.endereco_complemento"
-                                        placeholder="Ex: Apto 99" 
-                                        matInput/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="550px">
-                            <mat-form-field class="full-width"  appearance="outline">
-                                <mat-label>Bairro: </mat-label>
-                                <input  type="text" 
-                                        name="endereco_bairro"
-                                        [(ngModel)]="pessoa.endereco_bairro"
-                                        placeholder="Digite o bairro" 
-                                        matInput/>
-                            </mat-form-field>
-                        </div>
-                        <div fxLayout="column" fxFlex="215px" class="ml-35">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>CEP: </mat-label>
-                                <input  type="text" 
-                                        name="endereco_cep"
-                                        [(ngModel)]="pessoa.endereco_cep"
-                                        mask="99999-999"
-                                        placeholder="Ex: 99999-999" 
-                                        matInput/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="150px">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>UF: </mat-label>
-                                <mat-select [(value)]="pessoa.endereco_uf" 
-                                            (selectionChange)="carregarMunicipios($event)">
-                                    <mat-option *ngFor="let uf of estados" [value]="uf.sigla">
-                                        {{uf.sigla}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div fxLayout="column" fxFlex="615px" class="ml-35">
-                            <mat-form-field class="full-width" appearance="outline">
-                                <mat-label>Cidade:</mat-label>
-                                <mat-select [(value)]="pessoa.endereco_cidade" >
-                                    <mat-option *ngFor="let m of municipios" [value]="m.nome">
-                                        {{m.nome}}
-                                    </mat-option>
-                                </mat-select>
-                                <mat-hint>Selecione uma UF para disponibilizar a lista de cidades</mat-hint>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                        <div fxLayout="column" fxFlex="800px">
+                        <div fxLayout="column" fxFlex="350px">
                             <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Equipe: </mat-label>
                                 <mat-select [(value)]="equipeNome">
+                                    <mat-option [value]="null">-- não selecionar --</mat-option>
                                     <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome">
                                         {{equipe.nome}}
                                     </mat-option>
                                 </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div fxLayout="column" fxFlex="350px" class="ml-2p">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Função: </mat-label>
+                                <mat-select [(value)]="funcaoNome">
+                                    <mat-option [value]="null">-- não selecionar --</mat-option>
+                                    <mat-option *ngFor="let funcao of funcoes" [value]="funcao.nome">
+                                        {{funcao.nome}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
+                        <div fxLayout="column" fxFlex="800px">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Comentários: </mat-label>
+                                <textarea   matInput 
+                                            rows="5"
+                                            placeholder="Digite aqui observações que achar importante guardar..."
+                                            name="comentarios"
+                                            [(ngModel)]="pessoa.comentarios">
+                                </textarea>
                             </mat-form-field>
                         </div>
                     </div>

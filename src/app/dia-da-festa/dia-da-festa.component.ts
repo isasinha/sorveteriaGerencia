@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { DiaDaFestaModel } from './dia-da-festa.model';
 import { DiaDaFestaService } from './dia-da-festa.service';
-import { EquipeModel } from '../equipes/equipe.model';
+import { EquipeModel, FuncaoModel } from '../equipes/equipe.model';
 import { EquipeService } from '../equipes/equipe.service';
 
 @Component({
@@ -40,6 +40,7 @@ export class DiaDaFestaComponent {
 
   datas: DiaDaFestaModel[] = []
   equipes: EquipeModel[] = []
+  funcoes: FuncaoModel[] = []
   firebaseId: string | null = ""
 
   ngOnInit(){
@@ -52,10 +53,19 @@ export class DiaDaFestaComponent {
           console.error(err);
         }
       });
-    this.equipeService.listar()
+    this.equipeService.listarEquipes()
       .subscribe({
         next: (response) => {
           this.equipes = response;
+        },
+        error: (err) => {
+          console.error(err);
+        }
+    });
+    this.equipeService.listarFuncoes()
+      .subscribe({
+        next: (response) => {
+          this.funcoes = response;
         },
         error: (err) => {
           console.error(err);

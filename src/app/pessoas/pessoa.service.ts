@@ -13,7 +13,7 @@ import {  Firestore,
           runTransaction 
         } from "@angular/fire/firestore"
 import { firstValueFrom, Observable } from 'rxjs';
-import { PessoaDiaModel, PessoaDiaUtensilioModel, PessoaModel } from './pessoa.model';
+import { PessoaDiaModel, PessoaModel } from './pessoa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ import { PessoaDiaModel, PessoaDiaUtensilioModel, PessoaModel } from './pessoa.m
 export class PessoaService {
   listaPessoas: any[] = []
   listaPessoaDia: any[] = []
-  listaPessoaDiaUtensilio: any[] = []
+  // listaPessoaDiaUtensilio: any[] = []
 
   constructor( private firestore: Firestore) { }
   
@@ -41,13 +41,13 @@ export class PessoaService {
       return collectionData(q, { idField: 'firebaseId' }) as Observable<PessoaDiaModel[] >;  
     }
     
-    listarPessoaDiaUtensilio(idPessoaDia?: number): Observable<PessoaDiaUtensilioModel[]> {
-      let q: any | null = null;
-      const pessoaRef = collection(this.firestore, 'pessoaDiaUtensilio');
-      if(idPessoaDia){q = query(pessoaRef, where('idPessoaDia', '==', idPessoaDia), orderBy('idUtensilio'));}
-      else           {q = query(pessoaRef, orderBy('idPessoaDia'), orderBy('idUtensilio'));}
-      return collectionData(q, { idField: 'firebaseId' }) as Observable<PessoaDiaUtensilioModel[]>;  
-    }
+    // listarPessoaDiaUtensilio(idPessoaDia?: number): Observable<PessoaDiaUtensilioModel[]> {
+    //   let q: any | null = null;
+    //   const pessoaRef = collection(this.firestore, 'pessoaDiaUtensilio');
+    //   if(idPessoaDia){q = query(pessoaRef, where('idPessoaDia', '==', idPessoaDia), orderBy('idUtensilio'));}
+    //   else           {q = query(pessoaRef, orderBy('idPessoaDia'), orderBy('idUtensilio'));}
+    //   return collectionData(q, { idField: 'firebaseId' }) as Observable<PessoaDiaUtensilioModel[]>;  
+    // }
   
     salvarPessoa(pessoa: PessoaModel) {
       const pessoaRef = collection(this.firestore, 'pessoas');
@@ -59,10 +59,10 @@ export class PessoaService {
       return addDoc(pessoaRef, pessoaDia);
     }
 
-    salvarPessoaDiaUtensilio(pessoaDiaUtensilio: PessoaDiaUtensilioModel) {
-      const pessoaRef = collection(this.firestore, 'pessoaDiaUtensilio');
-      return addDoc(pessoaRef, pessoaDiaUtensilio);
-    }
+    // salvarPessoaDiaUtensilio(pessoaDiaUtensilio: PessoaDiaUtensilioModel) {
+    //   const pessoaRef = collection(this.firestore, 'pessoaDiaUtensilio');
+    //   return addDoc(pessoaRef, pessoaDiaUtensilio);
+    // }
 
     alterarPessoa(pessoa: PessoaModel, firebaseId: string) {
       const pessoaDocRef = doc(this.firestore, `pessoas/${firebaseId}`);
@@ -74,10 +74,10 @@ export class PessoaService {
       return updateDoc(pessoaDocRef, { ...pessoaDia });
     }
 
-    alterarPessoaDiaUtensilio(pessoaDiaUtensilio: PessoaDiaUtensilioModel, firebaseId: string) {
-      const pessoaDocRef = doc(this.firestore, `pessoaDiaUtensilio/${firebaseId}`);
-      return updateDoc(pessoaDocRef, { ...pessoaDiaUtensilio });
-    }
+    // alterarPessoaDiaUtensilio(pessoaDiaUtensilio: PessoaDiaUtensilioModel, firebaseId: string) {
+    //   const pessoaDocRef = doc(this.firestore, `pessoaDiaUtensilio/${firebaseId}`);
+    //   return updateDoc(pessoaDocRef, { ...pessoaDiaUtensilio });
+    // }
   
     deletarPessoa(firebaseId: string) {
       const pessoaDocRef = doc(this.firestore, `pessoas/${firebaseId}`);
@@ -104,10 +104,10 @@ export class PessoaService {
       return docData(pessoaDocRef, { idField: 'firebaseId' }) as Observable<PessoaDiaModel>;
     }
 
-    buscarPorIdPessoaDiaUtensilio(firebaseId: string): Observable<PessoaDiaUtensilioModel> {
-      const pessoaDocRef = doc(this.firestore, `pessoaDiaUtensilio/${firebaseId}`);
-      return docData(pessoaDocRef, { idField: 'firebaseId' }) as Observable<PessoaDiaUtensilioModel>;
-    }
+    // buscarPorIdPessoaDiaUtensilio(firebaseId: string): Observable<PessoaDiaUtensilioModel> {
+    //   const pessoaDocRef = doc(this.firestore, `pessoaDiaUtensilio/${firebaseId}`);
+    //   return docData(pessoaDocRef, { idField: 'firebaseId' }) as Observable<PessoaDiaUtensilioModel>;
+    // }
   
     async gerarProximoIdPessoas(): Promise<number> {
       var idsPessoas: number[]
@@ -127,14 +127,14 @@ export class PessoaService {
       return novoValor;
     }
 
-    async gerarProximoIdPessoaDiaUtensilio(): Promise<number> {
-      var idsPessoaDiaUtensilio: number[]
-      var novoValor: number
-      this.listaPessoaDiaUtensilio = await firstValueFrom(this.listarPessoaDiaUtensilio())
-      idsPessoaDiaUtensilio = this.listaPessoaDiaUtensilio.map(b => b.idPessoaDiaUtensilio);
-      novoValor = idsPessoaDiaUtensilio.length === 0 ? 1 : Math.max(...idsPessoaDiaUtensilio) + 1;
-      return novoValor;
-    }
+    // async gerarProximoIdPessoaDiaUtensilio(): Promise<number> {
+    //   var idsPessoaDiaUtensilio: number[]
+    //   var novoValor: number
+    //   this.listaPessoaDiaUtensilio = await firstValueFrom(this.listarPessoaDiaUtensilio())
+    //   idsPessoaDiaUtensilio = this.listaPessoaDiaUtensilio.map(b => b.idPessoaDiaUtensilio);
+    //   novoValor = idsPessoaDiaUtensilio.length === 0 ? 1 : Math.max(...idsPessoaDiaUtensilio) + 1;
+    //   return novoValor;
+    // }
   }
   
   

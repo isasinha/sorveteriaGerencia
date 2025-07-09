@@ -10,12 +10,11 @@ import { MatButtonModule} from '@angular/material/button'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { PessoaModel } from './pessoa.model';
 import { PessoaService } from './pessoa.service'; 
-import { EquipeModel } from '../equipes/equipe.model';
+import { EquipeModel, FuncaoModel } from '../equipes/equipe.model';
 import { EquipeService } from '../equipes/equipe.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { BrasilapiService } from '../brasilapi.service';
-import { Estado, Municipio } from '../brasilapi.model';
 import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
 
 @Component({
@@ -45,23 +44,20 @@ export class Pessoas_CadastroComponent implements OnInit{
     idEquipe: 0,
     nome: '',
     data_nascimento: '',
-    telefone: '',
+    idade: 0,
+    telefone_res: '',
+    telefone_cel: '',
+    telefone_rec: '',
     email: '',
-    endereco_logradouro: '',
-    endereco_numero: '',
-    endereco_complemento: '',
-    endereco_bairro: '',
-    endereco_cep: '',
-    endereco_cidade: '',
-    endereco_uf: ''
+    comentarios: '',
     };
   firebaseId: string | null = null;
   atualizando: boolean = false;
   snack: MatSnackBar = inject(MatSnackBar);
-  estados: Estado[] = [];
-  municipios: Municipio[] = [];
   equipes: EquipeModel[] = [];
   equipeNome: string = "";
+  funcoes: FuncaoModel[] = [];
+  funcaoNome: string = "";
 
   constructor(
     private pessoaService: PessoaService,
@@ -74,15 +70,14 @@ export class Pessoas_CadastroComponent implements OnInit{
   ngOnInit(): void {
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
     this.atualizando = !!this.firebaseId;
-    this.carregarUFs();
     this.carregarEquipes();
     if (this.atualizando && this.firebaseId) {
       this.pessoaService.buscarPorIdPessoa(this.firebaseId).subscribe({
         next: (res) => {
           this.pessoa = res;
-          if(this.pessoa.endereco_uf){
-            const event = {value: this.pessoa.endereco_uf}
-            this.carregarMunicipios(event as MatSelectChange);
+          if (this.pessoa.idEquipe) {
+            const equipeCadastrada = this.equipes.find(e => e.idEquipe === this.pessoa.idEquipe);
+            this.equipeNome = equipeCadastrada?.nome ?? '';
           }
           if (this.pessoa.idEquipe) {
             const equipeCadastrada = this.equipes.find(e => e.idEquipe === this.pessoa.idEquipe);
@@ -96,61 +91,26 @@ export class Pessoas_CadastroComponent implements OnInit{
     }
     else {
       this.gerarId();
-      this.equipeNome = "Temporariamente sem equipe";    
     }
-  }
-
-  carregarUFs(){
-    this.brasilApiService.listarUFs().subscribe({
-      next: listaEstados => this.estados = this.destacarEstado(listaEstados.sort((a, b) => (a.sigla < b.sigla) ? -1 : 1)),
-      error: erro => console.error("ocorreu um erro ao buscar UFs: ", erro)
-    });
-  }
-
-  destacarEstado(listaEstados: Estado[]){
-    const estadoDestacado = 'SP'; 
-    const index = listaEstados.findIndex(municipio => municipio.sigla === estadoDestacado);
-    if (index > -1) {
-      const municipio = listaEstados.splice(index, 1)[0];
-      listaEstados.unshift(municipio); // Move para o início
-    }
-    return listaEstados;
-  }
-
-  carregarMunicipios(event: MatSelectChange){
-    const ufSelecionada = event.value;
-    this.brasilApiService.listarMunicipios(ufSelecionada).subscribe({
-      next: listaMunicipios => this.municipios = this.destacarMunicipio(listaMunicipios),
-      error: erro => console.error('ocorreu um erro ao buscar municípios: ', erro)
-    })
-  }
-  
-  destacarMunicipio(listaMunicipios: Municipio[]){
-    const municipioDestacado = 'SÃO PAULO'; 
-    const index = listaMunicipios.findIndex(municipio => municipio.nome === municipioDestacado);
-    if (index > -1) {
-      const municipio = listaMunicipios.splice(index, 1)[0];
-      listaMunicipios.unshift(municipio); // Move para o início
-    }
-    return listaMunicipios;
   }
 
   carregarEquipes(){
-    this.equipeService.listar().subscribe({
-      next: listaEquipes => this.equipes = this.destacarEquipe(listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1)),
+    this.equipeService.listarEquipes().subscribe({
+      next: listaEquipes => this.equipes = listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
+      // next: listaEquipes => this.equipes = this.destacarEquipe(listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1)),
       error: erro => console.error("ocorreu um erro ao buscar Equipes: ", erro)
     });
   }
 
-  destacarEquipe(listaEquipesNomes: EquipeModel[]){
-    const equipeDestacada = 'Temporariamente sem equipe'; 
-    const index = listaEquipesNomes.findIndex(equipe => equipe.nome === equipeDestacada);
-    if (index > -1) {
-      const equipe = listaEquipesNomes.splice(index, 1)[0];
-      listaEquipesNomes.unshift(equipe); // Move para o início
-    }
-    return listaEquipesNomes;
-  }
+  // destacarEquipe(listaEquipesNomes: EquipeModel[]){
+  //   const equipeDestacada = 'Temporariamente sem equipe'; 
+  //   const index = listaEquipesNomes.findIndex(equipe => equipe.nome === equipeDestacada);
+  //   if (index > -1) {
+  //     const equipe = listaEquipesNomes.splice(index, 1)[0];
+  //     listaEquipesNomes.unshift(equipe); // Move para o início
+  //   }
+  //   return listaEquipesNomes;
+  // }
 
   async salvar() {
     if(!this.pessoa.imagem?.startsWith('data:image')){
@@ -180,6 +140,21 @@ export class Pessoas_CadastroComponent implements OnInit{
           console.error('Erro ao salvar: ', err);
         });
     }
+
+
+//{idPessoa: NOVO, nome:'FELIPE FRANÇA BUENO (filho Denis)', idade:24, telefone_res: '', telefone_cel: '97576-9966', telefone_rec: '', email: 'felipe10bueno@hotmail.com', data_nascimento: '', comentarios: ''},
+//{idPessoa: NOVO, nome:'GILVANA DO NASCIMENTO(filha Luciana)', idade:17, telefone_res: '', telefone_cel: '96606-3117', telefone_rec: '', email: 'gilvanadonascimento@hotmail.com', data_nascimento: '', comentarios: ''},
+//{idPessoa: , nome:'ISA SIMONE', idade:41, telefone_res: '', telefone_cel: '99947-5583', telefone_rec: '', email: 'isasi.simone@gmail.com', data_nascimento: '', comentarios: ''},
+//{idPessoa: NOVO, nome:'LUCAS ESPINOSA DO AMARAL PEREIRA(sobrinho Waldir)', idade:16, telefone_res: '', telefone_cel: '99372-0615', telefone_rec: '', email: 'lucas.espinosa081108@gmail.com', data_nascimento: '', comentarios: ''},
+//{idPessoa: NOVO, nome:'LUIGI BIANCHINI OLIVEIRA(filho Luciana)', idade:16, telefone_res: '', telefone_cel: '94714-1372', telefone_rec: '', email: 'luigibianchini2008@gmail.com', data_nascimento: '', comentarios: ''},
+//{idPessoa: NOVA, nome:'MARCIA PEREIRA DA FONSECA (amiga Rosangela)', idade:63, telefone_res: '', telefone_cel: '', telefone_rec: '', email: 'mpfonse@yahoo.com.br', data_nascimento: '', comentarios: ''},
+//{idPessoa: , nome:'MELISSA BREE RAMOS DA SILVA(filha Rosilândia/José Maria) ', idade:19, telefone_res: '', telefone_cel: '95302-9051', telefone_rec: '', email: 'rosibree@gmail.com', data_nascimento: '', comentarios: ''},
+//{idPessoa: , nome:'SUELI GARCIA', idade: 0, telefone_res: '', telefone_cel: '99172-7497', telefone_rec: '', email: '', data_nascimento: '', comentarios: ''},
+
+    
+
+
+
   }
 
   async gerarId(){

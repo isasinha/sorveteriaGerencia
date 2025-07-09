@@ -50,8 +50,9 @@ export class PessoasComponent {
     });
   }
   
-  alternarExibicao(event: MatButtonToggleChange) {
-    this.exibirEmGrade = !this.exibirEmGrade
+  async alternarExibicao(event: MatButtonToggleChange) {
+    this.exibirEmGrade = !this.exibirEmGrade   
   }
+  
 }
 

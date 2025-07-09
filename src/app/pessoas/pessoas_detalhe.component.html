@@ -44,8 +44,20 @@
                             <span matListItemLine>{{pessoa.data_nascimento}}</span>
                         </mat-list-item>
                         <mat-list-item>
-                            <span matListItemTitle>Telefone</span>
-                            <span matListItemLine>{{pessoa.telefone}}</span>
+                            <span matListItemTitle>Idade</span>
+                            <span matListItemLine>{{pessoa.idade}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Telefone residencial</span>
+                            <span matListItemLine>{{pessoa.telefone_res}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Telefone celular</span>
+                            <span matListItemLine>{{pessoa.telefone_cel}}</span>
+                        </mat-list-item>       
+                        <mat-list-item>
+                            <span matListItemTitle>Telefone de recados</span>
+                            <span matListItemLine>{{pessoa.telefone_rec}}</span>
                         </mat-list-item>       
                         <mat-list-item>
                             <span matListItemTitle>E-mail</span>
@@ -54,6 +66,10 @@
                         <mat-list-item>
                             <span matListItemTitle>Equipe</span>
                             <span matListItemLine>{{nomeEquipe}}</span>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <span matListItemTitle>Comentários</span>
+                            <span matListItemLine>{{pessoa.comentarios}}</span>
                         </mat-list-item>
                         <mat-list-item>
                             <span matListItemTitle class="background-yellow">DAQUI PARA BAIXO: NECESSÁRIO AJUSTAR LÓGICA E PERSISTÊNCIA EM BD</span>
@@ -159,69 +175,6 @@
                                 </mat-card-content>
                             </mat-card>    
                         </form>
-                    </div>
-                    <div fxLayout="column" fxFlex="48%" class="ml-20 mini-card" >
-                        <form #pessoaDiaUtensilio_cadFrm="ngForm" (ngSubmit)="salvarPessoaDiaUtensilio()">
-                            <mat-card class="background-light-light-gray min-height-card2" >
-                                <mat-card-header>
-                                    <mat-card-title>Utensílios</mat-card-title>
-                                </mat-card-header>
-                                @if(atualizando && pessoaDia.previsaoParticipacao){
-                                    <mat-card-content class="mt-20">
-                                        <table mat-table [dataSource]="utensiliosSelecionados" class="mat-elevation-z8 background-light-gray">
-                                            <ng-container matColumnDef="entregue">
-                                                <th mat-header-cell *matHeaderCellDef> Utensílio entregue </th>
-                                                <td mat-cell *matCellDef="let utensilioSelec"> {{utensilioSelec.nome}} 
-                                                <!-- @if(alterarLinha){
-                                                    <mat-form-field appearance="fill">
-                                                        <mat-select [(value)]="utensilioSelec.nome" placeholder="Selecione">
-                                                            <mat-option *ngFor="let utensilio of utensiliosCadastrados" [value]="utensilio.nome">
-                                                                {{ utensilio.nome }}
-                                                            </mat-option>
-                                                        </mat-select>
-                                                    </mat-form-field>
-                                                } -->
-                                                </td>
-                                            </ng-container>
-                                            <ng-container matColumnDef="quantidade">
-                                                <th mat-header-cell *matHeaderCellDef> Quantidade </th>
-                                                <td mat-cell *matCellDef="let utensilioSelec"> {{utensilioSelec.quantidade}}
-                                                <!-- @if(alterarLinha){
-                                                    <mat-form-field appearance="fill">
-                                                        <input matInput type="number" [(ngModel)]="utensilioSelec.quantidade" min="1">
-                                                    </mat-form-field>
-                                                } -->
-                                                </td>
-                                            </ng-container>
-                                            <ng-container matColumnDef="devolvido">
-                                                <th mat-header-cell *matHeaderCellDef> Devolvido </th>
-                                                <td mat-cell *matCellDef="let utensilioSelec">
-                                                    <!-- @if(alterarLinha){
-                                                        <mat-checkbox [(ngModel)]="utensilioSelec.devolvido"></mat-checkbox>
-                                                    } -->
-                                                </td>
-                                            </ng-container>
-                                            <ng-container matColumnDef="remover">
-                                                <th mat-header-cell class="center-content" *matHeaderCellDef> Excluir</th>
-                                                <td mat-cell *matCellDef="let element; let i = index">
-                                                    <button mat-icon-button color="warn" (click)="removerLinha(i)">
-                                                        <mat-icon>delete</mat-icon>
-                                                    </button>
-                                                </td>
-                                            </ng-container>
-                                            <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>
-                                            <tr mat-row *matRowDef="let row; columns: colunasTable;"></tr>
-                                        </table>
-                                        <div fxLayout="row" fxLayoutAlign="end" class="mt-10">
-                                            <button mat-flat-button color="primary" (click)="adicionarLinha()">
-                                                <mat-icon>add</mat-icon>
-                                                Adicionar utensílio
-                                            </button>
-                                        </div>                               
-                                    </mat-card-content>
-                                }
-                            </mat-card>    
-                        </form> 
                     </div>
                 </div>                 
             </mat-card-content>

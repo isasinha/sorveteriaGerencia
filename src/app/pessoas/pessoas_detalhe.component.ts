@@ -1,7 +1,7 @@
 import { Component, inject, model, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PessoaService } from './pessoa.service';
-import { PessoaModel, PessoaDiaModel, PessoaDiaUtensilioModel } from './pessoa.model';
+import { PessoaModel, PessoaDiaModel } from './pessoa.model';
 import { EquipeService } from '../equipes/equipe.service';
 import { DiaDaFestaService } from '../dia-da-festa/dia-da-festa.service';
 import { DiaDaFestaModel } from '../dia-da-festa/dia-da-festa.model';
@@ -45,15 +45,12 @@ export class Pessoas_DetalheComponent implements OnInit{
     idEquipe: 0,
     nome: '',
     data_nascimento: '',
-    telefone: '',
+    idade: 0,
+    telefone_res: '',
+    telefone_cel: '',
+    telefone_rec: '',
     email: '',
-    endereco_logradouro: '',
-    endereco_numero: '',
-    endereco_complemento: '',
-    endereco_bairro: '',
-    endereco_cep: '',
-    endereco_cidade: '',
-    endereco_uf: ''
+    comentarios: '',
   };
   pessoaDia: PessoaDiaModel = {
     idPessoaDia: 0,
@@ -67,55 +64,24 @@ export class Pessoas_DetalheComponent implements OnInit{
     concretoSaida: this.formataHora('01/01/2001 00:00')
   }
 
-  // pessoaDiaUtensilio: PessoaDiaUtensilioModel = {
-  //   idPessoaDiaUtensilio: 0,
-  //   idPessoaDia: 0,
-  //   idUtensilio: 0,
-  //   quantidade: 0,
-  //   devolvido: false
-  // }
-
-  utensilioSelecionado = {
-    nome: "",
-    quantidade: 0,
-    devolvido: false
-  }
-
   nomeEquipe: string = '';
+  nomesFuncoes: string [] = [];
   datas: DiaDaFestaModel [] = []
-  utensiliosCadastrados: UtensilioModel [] = []
-  utensiliosSelecionados: any[] = []
-  pessoaDiaUtensilios: PessoaDiaUtensilioModel [] = []
   firebaseIdPessoa: string | null = null;
   idDia: number | null = 0;
   snack: MatSnackBar = inject(MatSnackBar);
-  colunasTable: string[] = ["entregue", "quantidade", "devolvido", "remover"];
   atualizando: boolean = false  // isa padrão false
   //disabledParticipara: boolean = true // isa padrão true
-  alterarLinha: boolean = false
     
   constructor(
               private pessoaService: PessoaService,
               private equipeService: EquipeService,
               private diaDaFestaService: DiaDaFestaService,
-              private utensilioService: UtensilioService,
               private route: ActivatedRoute,
               private router: Router
             ) {}
   
   ngOnInit(): void {
-    console.log(
-      "no init ......",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
-
     this.firebaseIdPessoa = this.route.snapshot.paramMap.get('firebaseId');
     if (this.firebaseIdPessoa) {
       this.pessoaService.buscarPorIdPessoa(this.firebaseIdPessoa).subscribe({
@@ -123,6 +89,8 @@ export class Pessoas_DetalheComponent implements OnInit{
           this.pessoa = res;
           this.equipeService.buscarNomeEquipe(this.pessoa?.idEquipe ?? 0)
           .then(nomeEquipe => this.nomeEquipe = nomeEquipe ?? '');          
+          this.equipeService.buscarNomesFuncoes(this.pessoa?.idFuncao ?? [])
+          .then(nomesFuncoes => this.nomesFuncoes = nomesFuncoes ?? []);          
         },
         error: (err) => {
           console.error('Erro ao buscar pessoa ou equipe: ', err);
@@ -137,25 +105,6 @@ export class Pessoas_DetalheComponent implements OnInit{
         console.error(err);
       }
     });
-    this.utensilioService.listar().subscribe({
-      next: (response) => {
-        this.utensiliosCadastrados = response;
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-    console.log(
-      "no final do init: ......",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
   }
 
   formataHora(hora:string){
@@ -177,18 +126,6 @@ export class Pessoas_DetalheComponent implements OnInit{
   }
 
   selecionarData(event: MatSelectChange){
-    console.log("entrei")
-    console.log(
-      "no selecionar data:.......",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
     //zerando variáveis
     this.idDia = 0;
     this.pessoaDia = {
@@ -202,167 +139,38 @@ export class Pessoas_DetalheComponent implements OnInit{
       concretoChegada: this.formataHora('01/01/2001 00:00'),
       concretoSaida: this.formataHora('01/01/2001 00:00')
     }
-    this.pessoaDiaUtensilios = []
-    this.utensiliosSelecionados = []
-    
-    console.log(
-      "no selecionar data: zerando variaveis : .......",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
+
     const dataSelecionada = event.value;
-    console.log("dataSelecionada", dataSelecionada)
     const diaDaFestaSelecionado = this.datas.find(data => data.dia === dataSelecionada)
-    console.log("diaDaFestaSelecionado", diaDaFestaSelecionado)
     this.idDia = diaDaFestaSelecionado?.idDia ?? 0;
     console.log("idDia", this.idDia)
     //this.disabledParticipara = false
-
     this.atualizando = true
-    console.log(
-      "no meio de selecionar data: .......",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
     if(this.pessoa.idPessoa && this.idDia){
-      console.log("entrei aqui também")
       this.pessoaService.listarPessoaDia(this.pessoa.idPessoa, this.idDia).subscribe({
         next: (response) => {
           this.pessoaDia = response[0];
-          console.log("this.pessoaDia", this.pessoaDia)
-          if(this.pessoaDia.idPessoaDia){
-            this.pessoaService.listarPessoaDiaUtensilio(this.pessoaDia.idPessoaDia).subscribe({
-              next: (response) => {
-                this.pessoaDiaUtensilios = response;
-                console.log("this.pessoaDiaUtensilios", this.pessoaDiaUtensilios)
-                if(this.pessoaDiaUtensilios){
-                  this.pessoaDiaUtensilios.forEach(element => {
-                    const utensilioEncontrado = this.utensiliosCadastrados.find(u => u.idUtensilio === element.idUtensilio)
-                    this.utensilioSelecionado.nome = utensilioEncontrado?.nome || ''
-                    this.utensilioSelecionado.quantidade = element.quantidade || 0
-                    this.utensilioSelecionado.devolvido = element.devolvido || false
-                    this.utensiliosSelecionados.push(this.utensilioSelecionado);
-                    this.utensilioSelecionado = {
-                      nome: "",
-                      quantidade: 0,
-                      devolvido: false
-                    }
-                  });
-                }
-              },
-              error: (err) => {
-                console.error(err);
-              }
-            });
-          }
         },
         error: (err) => {
           console.error(err);
         }
       });
-
     }
-    console.log(
-      "no final de selecionar data: ........",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
   }
 
   salvarPessoaDia(){
     console.log("pessoaDia",this.pessoaDia)
   }
 
-  salvarPessoaDiaUtensilio(){
-    console.log("pessoaDia",this.pessoaDia)
-  }
-
   participara(){
-    console.log(
-      "no participara: .......",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
     if(!this.pessoaDia.previsaoParticipacao){
       this.pessoaDia.concretoParticipacao = false
     }
-    console.log(
-      "no final do participara: .........",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
   }
 
   participou(){
-    console.log(
-      "no participou: .........",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
     this.pessoaDia.concretoParticipacao = !this.pessoaDia.concretoParticipacao
     //console.log("this.pessoaDia.concretoParticipacao",this.pessoaDia.concretoParticipacao)
-    console.log(
-      "no final do participou: .........",
-      "pessoa: Maria: ...... ",this.pessoa,
-      "pessoaDia dia1, pessoa1: ......",this.pessoaDia,
-      "utensilioSelecionado auxiliar não usado: ......",this.utensilioSelecionado,
-      "utensiliosCadastrados lista de utensilios no BD: ......",this.utensiliosCadastrados,
-      "utensiliosSelecionados para listar não usado: ......",this.utensiliosSelecionados,
-      "pessoaDiaUtensilios está no BD não usado no front: ......",this.pessoaDiaUtensilios,
-      "idDia pega o dia selecionado no front: ......",this.idDia,
-      //"disabledParticipara", this.disabledParticipara,
-    )
-  }
-
-  async adicionarLinha() {
-    this.utensiliosSelecionados.push({
-      // idPessoaDiaUtensilio: await this.pessoaService.gerarProximoIdPessoaDiaUtensilio(),
-      // idPessoaDia: this.pessoaDia.idPessoaDia,
-      // idUtensilio: 0,
-      nome: '',
-      quantidade: 0,
-      devolvido: false
-    });
-  }
-
-  removerLinha(index: number): void {
-    this.utensiliosSelecionados.splice(index, 1);
   }
 
   mostrarMensagem(mensagem: string){

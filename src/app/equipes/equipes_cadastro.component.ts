@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { EquipeModel } from './equipe.model';
+import { EquipeModel, FuncaoModel } from './equipe.model';
 import { EquipeService } from './equipe.service'; 
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 
@@ -30,35 +30,51 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 })
 export class Equipes_CadastroComponent implements OnInit{
 
-  @ViewChild('inputImagem') inputImagem!: ElementRef<HTMLInputElement>;  
-
   equipe: EquipeModel = {
     idEquipe: 0,
     nome: '',
   };
+  funcao: FuncaoModel = {
+    idFuncao: 0,
+    nome: '',
+  };
+  tipo: string | null = null;
   firebaseId: string | null = null;
   atualizando: boolean = false;
   snack: MatSnackBar = inject(MatSnackBar);
-  imagemCarregada: string | null = null;
 
   constructor(
     private equipeService: EquipeService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    //private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.tipo = this.route.snapshot.paramMap.get('tipo');
     this.firebaseId = this.route.snapshot.paramMap.get('firebaseId');
     this.atualizando = !!this.firebaseId;    
     if (this.atualizando && this.firebaseId) {
-      this.equipeService.buscarPorId(this.firebaseId).subscribe({
-        next: (res) => {
-          this.equipe = res;
-        },
-        error: (err) => {
-          console.error('Erro ao buscar equipe: ', err);
-        }
-      });
+      if(this.tipo == 'Equipe'){
+        this.equipeService.buscarEquipePorId(this.firebaseId).subscribe({
+          next: (res) => {
+            this.equipe = res;
+          },
+          error: (err) => {
+            console.error('Erro ao buscar equipe: ', err);
+          }
+        });
+      }
+      if(this.tipo == 'Função'){
+        this.equipeService.buscarFuncaoPorId(this.firebaseId).subscribe({
+          next: (res) => {
+            this.funcao = res;
+          },
+          error: (err) => {
+            console.error('Erro ao buscar função: ', err);
+          }
+        });
+      }
     }
     else {
       this.gerarId();
@@ -66,12 +82,9 @@ export class Equipes_CadastroComponent implements OnInit{
   }
 
   async salvar() {
-    if(!this.equipe.imagem?.startsWith('data:image')){
-      const texto:string = this.equipe.imagem || ''
-      await this.ajustarSalvarImagem(undefined,texto)
-    }
-    if (this.atualizando && this.firebaseId) {
-      this.equipeService.alterar(this.equipe, this.firebaseId)
+    if(this.tipo=='Equipe'){
+      if (this.atualizando && this.firebaseId) {
+        this.equipeService.alterarEquipe(this.equipe, this.firebaseId)
         .then(() => {
           this.mostrarMensagem('Equipe atualizada com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
@@ -80,8 +93,8 @@ export class Equipes_CadastroComponent implements OnInit{
         .catch(err => {
           console.error('Erro ao alterar cadastro: ', err);
         });
-    } else {
-      this.equipeService.salvar(this.equipe)
+      } else {
+        this.equipeService.salvarEquipe(this.equipe)
         .then(() => {
           this.mostrarMensagem('Equipe cadastrada com sucesso!');
           //await new Promise(f => setTimeout(f, 1000));
@@ -90,77 +103,78 @@ export class Equipes_CadastroComponent implements OnInit{
         .catch(err => {
           console.error('Erro ao salvar: ', err);
         });
+      }
+    } else if(this.tipo=='Função'){
+      if (this.atualizando && this.firebaseId) {
+        this.equipeService.alterarFuncao(this.funcao, this.firebaseId)
+        .then(() => {
+          this.mostrarMensagem('Função atualizada com sucesso!');
+          //await new Promise(f => setTimeout(f, 1000));
+          this.router.navigate(['/equipes']);
+        })
+        .catch(err => {
+          console.error('Erro ao alterar cadastro: ', err);
+        });
+      } else {
+        this.equipeService.salvarFuncao(this.funcao)
+        .then(() => {
+          this.mostrarMensagem('Função cadastrada com sucesso!');
+          //await new Promise(f => setTimeout(f, 1000));
+          this.router.navigate(['/equipes']);
+        })
+        .catch(err => {
+          console.error('Erro ao salvar: ', err);
+        });
+      }
     }
+
   }
 
   async gerarId(){
-    try{
-      const proximoId = await this.equipeService.gerarProximoId()
-      this.equipe.idEquipe = proximoId;
-    } catch (error){
-      console.error('Erro ao gerar ID: ', error)
+    if(this.tipo == "Equipe"){
+      try{
+        const proximoId = await this.equipeService.gerarProximoIdEquipe()
+        this.equipe.idEquipe = proximoId;
+      } catch (error){
+        console.error('Erro ao gerar ID: ', error)
+      }
+    }
+    if(this.tipo == "Função"){
+      try{
+        const proximoId = await this.equipeService.gerarProximoIdFuncao()
+        this.funcao.idFuncao = proximoId;
+      } catch (error){
+        console.error('Erro ao gerar ID: ', error)
+      }
     }
   }  
-  
-  carregarImagem() {
-    this.inputImagem.nativeElement.click();
-  }
-  
-  async ajustarSalvarImagem(event?: Event, url?: string){
-    let blob: Blob | null = null;
-    try {
-      if(event){
-        const input = event.target as HTMLInputElement;
-        if (!input.files || input.files.length === 0) return;
-        blob = input.files[0];
-      }else if(url){
-        blob = await this.obterBlobDaImagem(url);
+
+  excluir() {
+    if (this.firebaseId) {
+      if(this.tipo == 'Equipe'){
+        this.equipeService.deletarEquipe(this.firebaseId)
+          .then(() => {
+            this.mostrarMensagem('Equipe excluída com sucesso!');
+            //await new Promise(f => setTimeout(f, 1000));
+            this.router.navigate(['/equipes']);
+          })
+          .catch(err => {
+            console.error('Erro ao excluir: ', err);
+          });
       }
-      if (blob){
-        const imagemCompactada = await this.compactarImagemDoBlob(blob);
-        this.equipe.imagem = imagemCompactada;
-      }else{
-        console.warn('Nenhuma imagem fornecida.');
+      if(this.tipo == 'Função'){
+        this.equipeService.deletarFuncao(this.firebaseId)
+          .then(() => {
+            this.mostrarMensagem('Função excluída com sucesso!');
+            //await new Promise(f => setTimeout(f, 1000));
+            this.router.navigate(['/equipes']);
+          })
+          .catch(err => {
+            console.error('Erro ao excluir: ', err);
+          });
       }
-    } catch (error) {
-      console.error('Erro ao processar imagem:', error);
     }
   }
-  
-  async obterBlobDaImagem(url: string): Promise<Blob> {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Erro ao buscar imagem');
-    return await response.blob();
-  }
-  
-  async compactarImagemDoBlob(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();      
-      reader.onload = () => {
-        const img = new Image();
-        img.src = reader.result as string;        
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const maxDim = 200;
-          const ratio = img.width / img.height;
-          if (ratio > 1) {
-            canvas.width = maxDim;
-            canvas.height = maxDim / ratio;
-          } else {
-            canvas.height = maxDim;
-            canvas.width = maxDim * ratio;
-          }          
-          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const base64Compactada = canvas.toDataURL('image/jpeg', 0.7);
-          resolve(base64Compactada);
-        };
-        img.onerror = reject;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }  
   
   mostrarMensagem(mensagem: string){
     this.snack.open(mensagem, "Ok", {duration: 2000});

@@ -13,20 +13,31 @@
                         <mat-label fxLayoutAlign="center" class="label-foto color-font">Cadastrar<br>Dia da Festa</mat-label>
                     </div>
                     <span class="spacer"></span>
-                    <mat-form-field style="height: 70px; width: 30%;">
+                    <mat-form-field style="height: 70px; width: 20%;">
                         <mat-select placeholder="Escolha uma Data"
                                     (selectionChange)="selecionarData($event)"
                         >
+                            <mat-option [value]="null">-- não selecionar --</mat-option>
                             <mat-option *ngFor="let data of datas" [value]="data.dia">
                                 {{ data.dia | date:'dd/MM/yyyy' }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                     <span class="spacer2"></span>
-                    <mat-form-field style="height: 70px; width: 30%;">
+                    <mat-form-field style="height: 70px; width: 20%;">
                         <mat-select placeholder="Escolha uma Equipe">
+                            <mat-option [value]="null">-- não selecionar --</mat-option>
                             <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome">
                                 {{equipe.nome}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <span class="spacer2"></span>
+                    <mat-form-field style="height: 70px; width: 20%;">
+                        <mat-select placeholder="Escolha uma Função">
+                            <mat-option [value]="null">-- não selecionar --</mat-option>
+                            <mat-option *ngFor="let funcao of funcoes" [value]="funcao.nome">
+                                {{funcao.nome}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

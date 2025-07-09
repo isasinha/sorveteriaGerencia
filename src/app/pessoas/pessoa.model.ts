@@ -1,20 +1,23 @@
-import { Timestamp } from "firebase/firestore";
-
 export interface PessoaModel{
     firebaseId?: string,
     idPessoa: number,
     idEquipe?: number,
+    idFuncao?: [],
     nome: string,
     data_nascimento: string,
-    telefone: string,
+    idade: number,
+    telefone_res: string,
+    telefone_cel: string,
+    telefone_rec: string,
     email: string,
-    endereco_logradouro: string,
-    endereco_numero: string,
-    endereco_complemento: string,
-    endereco_bairro: string,
-    endereco_cep: string,
-    endereco_cidade: string,
-    endereco_uf: string,
+    comentarios: string,
+    // endereco_logradouro: string,
+    // endereco_numero: string,
+    // endereco_complemento: string,
+    // endereco_bairro: string,
+    // endereco_cep: string,
+    // endereco_cidade: string,
+    // endereco_uf: string,
     imagem?: string
 }
 
@@ -31,32 +34,11 @@ export interface PessoaDiaModel{
     concretoSaida: string
 }
 
-export interface PessoaDiaUtensilioModel{
-    firebaseId?: string,
-    idPessoaDiaUtensilio: number,
-    idPessoaDia: number,
-    idUtensilio: number,
-    quantidade: number,
-    devolvido?: boolean
-}
-
-export function newPessoa(): PessoaModel{
-    const pessoa: PessoaModel = {
-    firebaseId: "",
-    idPessoa: 0,
-    idEquipe: 0,
-    nome: "",
-    data_nascimento: "",
-    telefone: "",
-    email: "",
-    endereco_logradouro: "",
-    endereco_numero: "",
-    endereco_complemento: "",
-    endereco_bairro: "",
-    endereco_cep: "",
-    endereco_cidade: "",
-    endereco_uf: "",
-    imagem: ""
-    }
-    return pessoa;
-}
+// export interface PessoaDiaUtensilioModel{
+//     firebaseId?: string,
+//     idPessoaDiaUtensilio: number,
+//     idPessoaDia: number,
+//     idUtensilio: number,
+//     quantidade: number,
+//     devolvido?: boolean
+// }
