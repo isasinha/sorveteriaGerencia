@@ -106,7 +106,7 @@
                                 <mat-label>Equipe: </mat-label>
                                 <mat-select [(value)]="equipeNome">
                                     <mat-option [value]="null">-- não selecionar --</mat-option>
-                                    <mat-option *ngFor="let equipe of equipes" [value]="equipe.nome">
+                                    <mat-option *ngFor="let equipe of equipesCadastradas" [value]="equipe.nome">
                                         {{equipe.nome}}
                                     </mat-option>
                                 </mat-select>
@@ -115,9 +115,8 @@
                         <div fxLayout="column" fxFlex="350px" class="ml-2p">
                             <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Função: </mat-label>
-                                <mat-select [(value)]="funcoesNomes" multiple>
-                                    <mat-option [value]="null">-- não selecionar --</mat-option>
-                                    <mat-option *ngFor="let funcao of funcoes" [value]="funcao.nome">
+                                <mat-select [value]="funcoesNomes" (selectionChange)="atualizarFuncoes($event)" multiple>
+                                    <mat-option *ngFor="let funcao of funcoesCadastradas" [value]="funcao.nome">
                                         {{funcao.nome}}
                                     </mat-option>
                                 </mat-select>

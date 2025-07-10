@@ -55,15 +55,15 @@ export class Pessoas_CadastroComponent implements OnInit{
   firebaseId: string | null = null;
   atualizando: boolean = false;
   snack: MatSnackBar = inject(MatSnackBar);
-  equipes: EquipeModel[] = [];
+  equipesCadastradas: EquipeModel[] = [];
   equipeNome: string = "";
-  funcoes: FuncaoModel[] = [];
+  funcoesCadastradas: FuncaoModel[] = [];
   funcoesNomes: string[] = [];
 
   constructor(
     private pessoaService: PessoaService,
     private equipeService: EquipeService,
-    private brasilApiService: BrasilapiService,    
+    //private brasilApiService: BrasilapiService,    
     private route: ActivatedRoute,
     private router: Router
   ){}
@@ -78,12 +78,13 @@ export class Pessoas_CadastroComponent implements OnInit{
         next: (res) => {
           this.pessoa = res;
           if (this.pessoa.idEquipe) {
-            const equipeCadastrada = this.equipes.find(e => e.idEquipe === this.pessoa.idEquipe);
+            const equipeCadastrada = this.equipesCadastradas.find(e => e.idEquipe === this.pessoa.idEquipe);
             this.equipeNome = equipeCadastrada?.nome ?? '';
           }
           if (this.pessoa.idFuncao) {
+            this.funcoesNomes = []
             for (const id of this.pessoa.idFuncao) {
-              const funcaoCadastrada = this.funcoes.find(e => e.idFuncao === id);
+              const funcaoCadastrada = this.funcoesCadastradas.find(e => e.idFuncao === id);
               this.funcoesNomes.push(funcaoCadastrada?.nome ?? '')
             }
           }
@@ -100,30 +101,33 @@ export class Pessoas_CadastroComponent implements OnInit{
 
   carregarEquipes(){
     this.equipeService.listarEquipes().subscribe({
-      next: listaEquipes => this.equipes = listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
+      next: listaEquipes => this.equipesCadastradas = listaEquipes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
       error: erro => console.error("ocorreu um erro ao buscar Equipes: ", erro)
     });
   }
 
   carregarFuncoes(){
     this.equipeService.listarFuncoes().subscribe({
-      next: listaFuncoes => this.funcoes = listaFuncoes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
+      next: listaFuncoes => this.funcoesCadastradas = listaFuncoes.sort((a, b) => (a.nome < b.nome) ? -1 : 1),
       error: erro => console.error("ocorreu um erro ao buscar Funções: ", erro)
     });
   }
 
+  atualizarFuncoes(event: MatSelectChange) {
+  this.funcoesNomes = event.value;
+}
+
   async salvar() {
-    console.log('funções: ', this.pessoa.idFuncao)    
     if(!this.pessoa.imagem?.startsWith('data:image')){
       const texto:string = this.pessoa.imagem || ''
       await this.ajustarSalvarImagem(undefined,texto)
     }
-    const equipeCadastrada = this.equipes.find(e => e.nome === this.equipeNome);
+    const equipeCadastrada = this.equipesCadastradas.find(e => e.nome === this.equipeNome);
     this.pessoa.idEquipe = equipeCadastrada?.idEquipe ?? 0;
+    this.pessoa.idFuncao = [];
     for (const nome of this.funcoesNomes) {
-      const funcaoCadastrada = this.funcoes.find(e => e.nome === nome);
-        this.pessoa.idFuncao ??= [];
-        this.pessoa.idFuncao.push(funcaoCadastrada?.idFuncao ?? 0)
+      const funcaoCadastrada = this.funcoesCadastradas.find(e => e.nome === nome);
+      this.pessoa.idFuncao.push(funcaoCadastrada?.idFuncao ?? 0)
     }
     if (this.atualizando && this.firebaseId) {
       this.pessoaService.alterarPessoa(this.pessoa, this.firebaseId)
@@ -146,21 +150,6 @@ export class Pessoas_CadastroComponent implements OnInit{
           console.error('Erro ao salvar: ', err);
         });
     }
-
-
-//{idPessoa: NOVO, nome:'FELIPE FRANÇA BUENO (filho Denis)', idade:24, telefone_res: '', telefone_cel: '97576-9966', telefone_rec: '', email: 'felipe10bueno@hotmail.com', data_nascimento: '', comentarios: ''},
-//{idPessoa: NOVO, nome:'GILVANA DO NASCIMENTO(filha Luciana)', idade:17, telefone_res: '', telefone_cel: '96606-3117', telefone_rec: '', email: 'gilvanadonascimento@hotmail.com', data_nascimento: '', comentarios: ''},
-//{idPessoa: , nome:'ISA SIMONE', idade:41, telefone_res: '', telefone_cel: '99947-5583', telefone_rec: '', email: 'isasi.simone@gmail.com', data_nascimento: '', comentarios: ''},
-//{idPessoa: NOVO, nome:'LUCAS ESPINOSA DO AMARAL PEREIRA(sobrinho Waldir)', idade:16, telefone_res: '', telefone_cel: '99372-0615', telefone_rec: '', email: 'lucas.espinosa081108@gmail.com', data_nascimento: '', comentarios: ''},
-//{idPessoa: NOVO, nome:'LUIGI BIANCHINI OLIVEIRA(filho Luciana)', idade:16, telefone_res: '', telefone_cel: '94714-1372', telefone_rec: '', email: 'luigibianchini2008@gmail.com', data_nascimento: '', comentarios: ''},
-//{idPessoa: NOVA, nome:'MARCIA PEREIRA DA FONSECA (amiga Rosangela)', idade:63, telefone_res: '', telefone_cel: '', telefone_rec: '', email: 'mpfonse@yahoo.com.br', data_nascimento: '', comentarios: ''},
-//{idPessoa: , nome:'MELISSA BREE RAMOS DA SILVA(filha Rosilândia/José Maria) ', idade:19, telefone_res: '', telefone_cel: '95302-9051', telefone_rec: '', email: 'rosibree@gmail.com', data_nascimento: '', comentarios: ''},
-//{idPessoa: , nome:'SUELI GARCIA', idade: 0, telefone_res: '', telefone_cel: '99172-7497', telefone_rec: '', email: '', data_nascimento: '', comentarios: ''},
-
-    
-
-
-
   }
 
   async gerarId(){
