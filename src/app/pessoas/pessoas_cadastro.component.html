@@ -3,7 +3,11 @@
         <form class="mt-20" #pessoas_cadFrm="ngForm" (ngSubmit)="salvar()">
             <mat-card>
                 <mat-card-header fxLayoutAlign="center">
-                    <mat-card-title class="color-blue">Pessoa</mat-card-title>
+                    @if(atualizando){
+                        <mat-card-title class="color-blue label-foto">{{pessoa.nome}}<br>#{{pessoa.idPessoa}} </mat-card-title>
+                    }@else {
+                        <mat-card-title class="color-blue label-foto">Pessoa</mat-card-title>
+                    }
                 </mat-card-header>
                 <mat-card-content>
                     <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
