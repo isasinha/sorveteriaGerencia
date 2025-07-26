@@ -1,32 +1,43 @@
-<div fxLayout="row" fxLayoutAlign="center"  class="ml-230">
+<div fxLayout="row" fxLayoutAlign="center"  class="mt-40">
     <div fxLayout="column" fxFlex="30%">
-        <form class="mt-40" #loginFrm="ngForm" (ngSubmit)="logar()">
+        <form class="mt-40" #loginFrm="ngForm" (ngSubmit)="login()">
             <mat-card>
                 <mat-card-header>
                     <mat-card-title class="color-blue">Login</mat-card-title>
                 </mat-card-header>
                 <mat-card-content class="mt-60">
                     <mat-form-field class="full-width">
-                        <mat-label>Usuário: </mat-label>
+                        <mat-label>E-mail: </mat-label>
                         <input  type="text" 
                                 name="usuario"
-                                [(ngModel)]="login.usuario"
-                                placeholder="Seu usuário aqui" 
+                                [(ngModel)]="email"
+                                placeholder="Seu e-mail aqui" 
                                 matInput/>
                     </mat-form-field>
                     <mat-form-field class="full-width mt-60">
                         <mat-label>Senha: </mat-label>
-                        <input  type="text"                                         
+                        <input  [type]="esconderSenha ? 'password' : 'text'"                                         
                                 name="senha" 
-                                [(ngModel)]="login.senha"
+                                [(ngModel)]="senha"
                                 placeholder="Sua senha aqui" 
-                                    matInput/>
+                                matInput/>
+                        <button mat-icon-button
+                                matSuffix
+                                type="button"
+                                (click)="esconderSenha = !esconderSenha"
+                                [attr.aria-label]="'Mostrar ou esconder senha'"
+                                [attr.aria-pressed]="!esconderSenha">
+                            <mat-icon>{{ esconderSenha ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
                     </mat-form-field>
-                 </mat-card-content>                 
+                    <button mat-button color="primary" type="button" class="mt--20" (click)="esqueciSenha()">
+                        Esqueci minha senha
+                    </button>
+                </mat-card-content>
                 <mat-card-actions class="mt-60 mb-40" fxLayoutAlign="center">
                     <button mat-flat-button color="primary" fxFlex="40%"  type="submit">
                         Entre
-                    </button>                    
+                    </button>
                 </mat-card-actions>
             </mat-card>
         </form>

@@ -1,46 +1,33 @@
-import { Injectable } from '@angular/core';
-import { LoginModel } from './login.model';
+import { Injectable, inject } from '@angular/core';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, updatePassword, signOut } from '@angular/fire/auth';
+//import { LoginModel } from './login.model';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class LoginService {
 
-  constructor() { }
+  private auth = inject(Auth);
 
-  logar(){
-
-  }
-  
-  private pesquisar(): LoginModel{
-    const repositorio = {usuario: "MADOGUES", senha:"MADOGUES1951"}
-    if(repositorio){
-      const login = repositorio;
-      return login
-    }
-
-    const login: LoginModel = {};
-    return login;
-    
-  }
-  
-  buscarPorUsuario(usuario: string) : LoginModel | undefined{
-    const login = {usuario: "MADOGUES", senha:"MADOGUES1951"}
-    return login;
+  login(email: string, senha: string) {
+    return signInWithEmailAndPassword(this.auth, email, senha);
   }
 
-  
-    salvar(login: LoginModel){
-  
-    }
-  
-    alterar(login: LoginModel){
-  
-    }
-  
-    deletar(login: LoginModel){
-  
-    }
-  
+  cadastrar(email: string, senha: string) {
+    return createUserWithEmailAndPassword(this.auth, email, senha);
+  }
+
+  logout() {
+    return signOut(this.auth);
+  }
+
+  usuarioLogado() {
+    return this.auth.currentUser;
+  } 
+
+  async enviarEmailRedefinicaoSenha(email: string): Promise<void> {
+    await sendPasswordResetEmail(this.auth, email);
+  }
 
 }

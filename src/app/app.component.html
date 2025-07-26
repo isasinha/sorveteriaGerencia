@@ -1,6 +1,6 @@
   
-<div class="container_menu" >
-    <div class="menu">
+<div  class="container_menu" >
+    <div *ngIf="isLogado()" class="menu">
         <mat-toolbar class="widht-height-menu">
         
             <img src="assets/logo_fundo_azul2.png"/>
@@ -51,7 +51,7 @@
 
         
             <mat-toolbar-row>
-                <a routerLink="" class="decoration-none"> <!--(click)="logout()"-->
+                <a routerLink="" class="decoration-none" (click)="logout()">
                     <mat-icon class="example-icon">logout</mat-icon> 
                     <span>Sair</span>
                 </a>
