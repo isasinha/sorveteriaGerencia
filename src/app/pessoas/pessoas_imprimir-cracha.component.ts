@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PessoaModel } from './pessoa.model';
 import { PessoaService } from './pessoa.service';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
@@ -25,6 +26,7 @@ import { HostListener } from '@angular/core';
             MatGridListModule,
             MatListModule,
             MatButtonToggleModule,
+            MatProgressSpinnerModule,
             QRCodeComponent,
             RouterLink
           ],
@@ -62,7 +64,7 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
   cardTemp: any[] = [];
   mostrarBotaoTopo: boolean = false;
   mostrarBotaoFinal: boolean = true; 
-
+  carregando = true;
 
   constructor(
             private pessoaService: PessoaService,
@@ -86,20 +88,26 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
     }
     else{
       this.varios = true;
-      this.pessoaService.listarPessoas()
+      this.carregarDados();
+    }
+  }
+
+  carregarDados() {
+    this.pessoaService.listarPessoas()
       .subscribe({
         next: (response) => {
           this.cards = response.map(pessoa => ({
             ...pessoa,
             urlPagina: `https://sorveteria-perseveranca.web.app/pessoas_detalhe/${pessoa.firebaseId}`
           }));
-          this.cardTemp = this.cards.slice(0,12)
         },
         error: (err) => {
           console.error(err);
         }
-      });
-    }
+    });
+    setTimeout(() => {
+      this.carregando = false;
+    }, 300)
   }
 
   async alternarExibicao(event: MatButtonToggleChange) {
@@ -114,21 +122,21 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-imprimirCracha(): void {
-  const style = document.createElement('style');
-  style.setAttribute('id', 'print-orientation');
-  style.innerHTML = `
-    @page {
-      size: ${this.horizontal ? 'A4 landscape' : 'A4 portrait'};
-      margin: 5mm;
-    }
-  `;
-  document.head.appendChild(style);
+  imprimirCracha(): void {
+    const style = document.createElement('style');
+    style.setAttribute('id', 'print-orientation');
+    style.innerHTML = `
+      @page {
+        size: ${this.horizontal ? 'A4 landscape' : 'A4 portrait'};
+        margin: 5mm;
+      }
+    `;
+    document.head.appendChild(style);
 
-  setTimeout(() => {
-    window.print();
-    document.getElementById('print-orientation')?.remove();
-  }, 100);
-}
+    setTimeout(() => {
+      window.print();
+      document.getElementById('print-orientation')?.remove();
+    }, 100);
+  }
 
 }
