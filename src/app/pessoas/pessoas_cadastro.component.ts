@@ -1,3 +1,5 @@
+
+
 import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +17,7 @@ import { EquipeService } from '../equipes/equipe.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { BrasilapiService } from '../brasilapi.service';
-import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
+import { NgxMaskDirective, provideNgxMask, NgxMaskPipe} from 'ngx-mask';
 
 @Component({
   selector: 'app-pessoas_cadastro',
@@ -29,7 +31,7 @@ import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
             MatIconModule,
             MatButtonModule,
             MatSelectModule,
-            NgxMaskDirective
+            NgxMaskDirective,
           ],
   providers: [provideNgxMask()],
   templateUrl: './pessoas_cadastro.component.html',
@@ -88,6 +90,9 @@ export class Pessoas_CadastroComponent implements OnInit{
               this.funcoesNomes.push(funcaoCadastrada?.nome ?? '')
             }
           }
+          if (this.pessoa.data_nascimento){
+            this.calcularIdade()
+          }
         },
         error: (err) => {
           console.error('Erro ao buscar pessoa: ', err);
@@ -98,6 +103,32 @@ export class Pessoas_CadastroComponent implements OnInit{
       this.gerarId();
     }
   }
+
+
+//usar a função abaixo para edição em lote -> não chamar em OnInit, criar um botão específico
+
+  // funcaoUnica(){ 
+  //   let pessoasCada: PessoaModel[]
+  //   this.pessoaService.listarPessoas()
+  //   .subscribe({
+  //     next: (response) => {
+  //       pessoasCada = response;
+  //       for (const cadaPessoa of pessoasCada){
+  //         if (!cadaPessoa.telefone_res.includes("-") ){
+  //           cadaPessoa.telefone_res = this.formatarFone(cadaPessoa.telefone_res)
+  //         }
+  //         if (!cadaPessoa.telefone_cel.includes("-")){
+  //           cadaPessoa.telefone_cel = this.formatarFone(cadaPessoa.telefone_cel)
+  //         }
+  //         if (!cadaPessoa.telefone_rec.includes("-")){
+  //           cadaPessoa.telefone_rec = this.formatarFone(cadaPessoa.telefone_rec);
+  //         }
+  //         if(cadaPessoa.firebaseId)
+  //         this.pessoaService.alterarPessoa(cadaPessoa, cadaPessoa.firebaseId)          
+  //       }
+  //     }
+  //   });
+  // }
 
   carregarEquipes(){
     this.equipeService.listarEquipes().subscribe({
@@ -114,8 +145,8 @@ export class Pessoas_CadastroComponent implements OnInit{
   }
 
   atualizarFuncoes(event: MatSelectChange) {
-  this.funcoesNomes = event.value;
-}
+    this.funcoesNomes = event.value;
+  }
 
   async salvar() {
     if(!this.pessoa.imagem?.startsWith('data:image')){
@@ -128,6 +159,15 @@ export class Pessoas_CadastroComponent implements OnInit{
     for (const nome of this.funcoesNomes) {
       const funcaoCadastrada = this.funcoesCadastradas.find(e => e.nome === nome);
       this.pessoa.idFuncao.push(funcaoCadastrada?.idFuncao ?? 0)
+    }
+    if (this.pessoa.telefone_res){
+      this.pessoa.telefone_res = this.formatarFone(this.pessoa.telefone_res)
+    }
+    if (this.pessoa.telefone_cel){
+      this.pessoa.telefone_cel = this.formatarFone(this.pessoa.telefone_cel)
+    }
+    if (this.pessoa.telefone_rec){
+      this.pessoa.telefone_rec = this.formatarFone(this.pessoa.telefone_rec);
     }
     if (this.atualizando && this.firebaseId) {
       this.pessoaService.alterarPessoa(this.pessoa, this.firebaseId)
@@ -150,6 +190,52 @@ export class Pessoas_CadastroComponent implements OnInit{
           console.error('Erro ao salvar: ', err);
         });
     }
+  }
+
+  formatarFone(telefone: string): string {
+    let fone = telefone.replace(/\D/g, '');
+    if (fone.length === 10) {
+      return '(' + fone.substring(0, 2) + ') ' + fone.substring(2, 6) + '-' + fone.substring(6);
+    }
+    if (fone.length === 11) {
+      return '(' + fone.substring(0, 2) + ') ' + fone.substring(2, 7) + '-' + fone.substring(7);
+    }
+    else{
+      return telefone
+    }
+  }
+
+  formatarData(event: any): void {
+    let data = event.target.value.replace(/\D/g, '');
+    if (data.length >= 8) {
+      data = data.slice(0, 8);
+      const partes = [];
+      if (data.length >= 2) {
+        partes.push(data.slice(0, 2));
+      }
+      if (data.length >= 4) {
+        partes.push(data.slice(2, 4));
+      }
+      if (data.length > 4) {
+        partes.push(data.slice(4));
+      }
+      this.pessoa.data_nascimento = partes.join('/');
+      this.calcularIdade()
+    }
+  }
+    
+  calcularIdade(){    
+    const [dia, mes, ano] = this.pessoa.data_nascimento.split('/').map(Number);
+    const dataNasc = new Date(ano, mes - 1, dia); // mês começa do 0 (janeiro)
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - dataNasc.getFullYear();
+    const fezAniversarioEsteAno =
+      hoje.getMonth() > dataNasc.getMonth() ||
+      (hoje.getMonth() === dataNasc.getMonth() && hoje.getDate() >= dataNasc.getDate());
+    if (!fezAniversarioEsteAno) {
+      idade--;
+    }
+    this.pessoa.idade = idade  
   }
 
   async gerarId(){

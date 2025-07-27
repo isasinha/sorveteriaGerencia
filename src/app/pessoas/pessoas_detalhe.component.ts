@@ -91,7 +91,10 @@ export class Pessoas_DetalheComponent implements OnInit{
           this.equipeService.buscarNomeEquipe(this.pessoa?.idEquipe ?? 0)
           .then(nomeEquipe => this.nomeEquipe = nomeEquipe ?? '');          
           this.equipeService.buscarNomesFuncoes(this.pessoa?.idFuncao ?? [])
-          .then(nomesFuncoes => this.nomesFuncoes = nomesFuncoes ?? []);          
+          .then(nomesFuncoes => this.nomesFuncoes = nomesFuncoes ?? []);
+          if (this.pessoa.data_nascimento){
+            this.calcularIdade()
+          }     
         },
         error: (err) => {
           console.error('Erro ao buscar pessoa ou equipe: ', err);
@@ -106,6 +109,20 @@ export class Pessoas_DetalheComponent implements OnInit{
         console.error(err);
       }
     });
+  }
+
+  calcularIdade(){
+    const [dia, mes, ano] = this.pessoa.data_nascimento.split('/').map(Number);
+    const dataNasc = new Date(ano, mes - 1, dia); // mês começa do 0 (janeiro)
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - dataNasc.getFullYear();
+    const fezAniversarioEsteAno =
+      hoje.getMonth() > dataNasc.getMonth() ||
+      (hoje.getMonth() === dataNasc.getMonth() && hoje.getDate() >= dataNasc.getDate());
+    if (!fezAniversarioEsteAno) {
+      idade--;
+    }
+    this.pessoa.idade = idade
   }
 
   formataHora(hora:string){

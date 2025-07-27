@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatIconModule} from '@angular/material/icon'
 import { enableProdMode } from '@angular/core';
 import { LoginService } from './login/login.service';
+import { filter } from 'rxjs/operators';
 
 enableProdMode();
 
@@ -22,7 +23,13 @@ enableProdMode();
 export class AppComponent {
   title = 'sorveteriaGerencia';
 
-  constructor(private loginService: LoginService){}
+  constructor(private loginService: LoginService, router: Router){
+    router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        window.scrollTo(0, 0);
+      });
+  }
 
   async logout(){
     try {

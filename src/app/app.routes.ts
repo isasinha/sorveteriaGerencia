@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes, ExtraOptions } from '@angular/router';
 import { authGuard } from './login/auth.guard';
 import { DiaDaFestaComponent } from './dia-da-festa/dia-da-festa.component';
 import { DiaDaFesta_CadastroComponent } from './dia-da-festa/dia-da-festa_cadastro.component';
@@ -44,3 +44,6 @@ export const routes: Routes = [
     {path:'barracas_cadastro/:firebaseId', canActivate:[authGuard], component: Barracas_CadastroComponent },
     {path:'barracas_detalhe/:firebaseId', canActivate:[authGuard], component: Barracas_DetalheComponent },
 ];
+
+
+

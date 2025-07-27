@@ -6,20 +6,27 @@
             </mat-card-header>
             <mat-card-content>
                 <div fxLayout="row" fxLayoutAlign="start" fxLyoutGap="16px">
-                    <div fxLayout="column" fxFlex="50px" fxLayoutAlign="center" >
+                    <div fxLayout="column" fxFlex="99px" fxLayoutAlign="center" >
                         <button mat-icon-button class="img-card" fxFlex="50px" fxLayoutAlign="center" type="button" routerLink="/pessoas_cadastro" >
                             <mat-icon fontIcon="add" class="img-card color-font-icon" style="font-size: 50px;" fxLayoutAlign="center center"></mat-icon>
                         </button>
                         <mat-label fxLayoutAlign="center" class="label-foto color-font">Cadastrar pessoa</mat-label>
                     </div>
+                    <span class="spacer"></span>
+                    <mat-form-field class="mt-40" appearance="outline">
+                        <mat-label>Buscar por nome ou ID</mat-label>
+                        <input matInput placeholder="Digite nome ou ID" [(ngModel)]="filtro" (input)="filtrarLista()">
+                    </mat-form-field>
+                    <span class="spacer"></span>
+                    <!-- <div fxLayout="column" fxFlex="85px" fxLayoutAlign="center" > -->
+                    <div fxLayout="column" fxFlex="99px" fxLayoutAlign="center" >
+                        <mat-button-toggle-group name="alterarExibicao" aria-label="Alterar Exibição" [hideSingleSelectionIndicator]="true" value="grid" (change)="alternarExibicao($event)">
+                            <mat-button-toggle value="table"><mat-icon fontIcon="list"></mat-icon></mat-button-toggle>
+                            <mat-button-toggle value="grid"><mat-icon fontIcon="grid_view"></mat-icon></mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
                 </div>
-                <div fxLayout="row" fxLayoutAlign="end">
-                    <mat-button-toggle-group name="alterarExibicao" aria-label="Alterar Exibição" [hideSingleSelectionIndicator]="true" value="grid" (change)="alternarExibicao($event)">
-                        <mat-button-toggle value="table"><mat-icon fontIcon="list"></mat-icon></mat-button-toggle>
-                        <mat-button-toggle value="grid"><mat-icon fontIcon="grid_view"></mat-icon></mat-button-toggle>
-                    </mat-button-toggle-group>
-                </div><br>
-
+                <br>
                 <ng-container *ngIf="exibirEmGrade">
                     <mat-grid-list cols="6" rowHeight="400px">
                         <mat-grid-tile *ngFor="let card of cards">
@@ -63,17 +70,17 @@
                                 @if(card.sabado){
                                     <mat-icon fontIcon="check"></mat-icon>
                                 }
-                        </ng-container>
-                        <ng-container matColumnDef="domingo">
-                            <th mat-header-cell *matHeaderCellDef> Domingo </th>
-                            <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor">      
-                                @if(card.domingo){
-                                    <mat-icon fontIcon="check"></mat-icon>
-                                }
-                            </td>
-                        </ng-container>  
-                        <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>
-                        <tr mat-row *matRowDef="let row; columns: colunasTable;"></tr>
+                            </ng-container>
+                            <ng-container matColumnDef="domingo">
+                                <th mat-header-cell *matHeaderCellDef> Domingo </th>
+                                <td mat-cell *matCellDef="let card" [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor">      
+                                    @if(card.domingo){
+                                        <mat-icon fontIcon="check"></mat-icon>
+                                    }
+                                </td>
+                            </ng-container>  
+                            <tr mat-header-row *matHeaderRowDef="colunasTable"></tr>
+                            <tr mat-row *matRowDef="let row; columns: colunasTable;"></tr>
                     </table>
                 </ng-container>
 
@@ -89,7 +96,7 @@
                     <mat-icon fontIcon="print"></mat-icon>
                     Imprimir lista
                 </button>     
-
+                
             </mat-card-actions>
         </mat-card>
     </div>

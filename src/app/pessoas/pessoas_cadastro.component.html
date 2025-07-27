@@ -41,10 +41,12 @@
                         <div fxLayout="column" fxFlex="200px">
                             <mat-form-field class="full-width"  appearance="outline">
                                 <mat-label>Data de Nascimento: </mat-label>
-                                <input  type="date" 
+                                <input  type="text"
+                                        mask="d0/M0/0000"
                                         name="data_nascimento"
                                         [(ngModel)]="pessoa.data_nascimento"
-                                         matInput/>
+                                        (input)="formatarData($event)"
+                                        matInput/>
                             </mat-form-field>
                         </div>
                         <div fxLayout="column" fxFlex="200px" class="ml-35">
