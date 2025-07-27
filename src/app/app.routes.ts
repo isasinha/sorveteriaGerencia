@@ -30,6 +30,7 @@ export const routes: Routes = [
     {path:'pessoas_cadastro/:firebaseId', canActivate:[authGuard], component: Pessoas_CadastroComponent },
     {path:'pessoas_detalhe/:firebaseId', canActivate:[authGuard], component: Pessoas_DetalheComponent },
     {path:'pessoas_imprimircracha/:firebaseId', canActivate:[authGuard], component: Pessoas_ImprimirCrachaComponent },
+    {path:'pessoas_imprimircracha', canActivate:[authGuard], component: Pessoas_ImprimirCrachaComponent },
     {path:'pessoas_imprimirlista', canActivate:[authGuard], component: Pessoas_ImprimirListaComponent },
     {path:'equipes', canActivate:[authGuard], component: EquipesComponent },
     {path:'equipes_cadastro/:tipo', canActivate:[authGuard], component: Equipes_CadastroComponent },

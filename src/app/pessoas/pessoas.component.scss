@@ -24,3 +24,20 @@
 .spacer{
     flex: 1 1 auto;
 }
+
+
+.scroll-to-top {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-to-bottom {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

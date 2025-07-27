@@ -30,7 +30,7 @@
                 <ng-container *ngIf="exibirEmGrade">
                     <mat-grid-list cols="6" rowHeight="400px">
                         <mat-grid-tile *ngFor="let card of cards">
-                            <mat-card [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor" >
+                            <mat-card [routerLink]="['/pessoas_detalhe', card.firebaseId]" class="cursor ml-50" >
                                 <img mat-card-image class="img-card mt-20 mb-40"
                                     [src]="card.imagem"
                                     (error)="card.imagem = 'assets/sem_imagem.png'"
@@ -101,3 +101,11 @@
         </mat-card>
     </div>
 </div>
+
+<button mat-fab class="scroll-to-top" color="primary" *ngIf="mostrarBotaoTopo" (click)="scrollToTop()">
+  <mat-icon>arrow_upward</mat-icon>
+</button>
+
+<button mat-fab class="scroll-to-bottom" color="primary" *ngIf="mostrarBotaoFinal" (click)="scrollToBottom()">
+  <mat-icon>arrow_downward</mat-icon>
+</button>

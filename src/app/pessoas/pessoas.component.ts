@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { PessoaService } from './pessoa.service';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-pessoas',
@@ -34,17 +35,28 @@ import { PessoaService } from './pessoa.service';
 })
 export class PessoasComponent implements OnInit{
 
-  constructor(
-    private pessoaService: PessoaService,    
-    private route: ActivatedRoute,
-    private router: Router
-  ){}
-
+  @HostListener('window:scroll', [])
+  onScroll(): void {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    this.mostrarBotaoTopo = scrollTop > 300;
+    this.mostrarBotaoFinal = scrollTop + windowHeight < docHeight - 100;
+  }
+  
   cards: any
   exibirEmGrade: boolean = true;
   colunasTable: string[] = ["idPessoa", "nome",  "sexta", "sabado", "domingo"];
   filtro: string = '';
   cardsOriginal: any[] = [];
+  mostrarBotaoTopo: boolean = false;
+  mostrarBotaoFinal: boolean = true; 
+
+  constructor(
+    private pessoaService: PessoaService,    
+    private route: ActivatedRoute,
+    private router: Router
+  ){}
     
   ngOnInit(){
     this.pessoaService.listarPessoas()
@@ -52,7 +64,6 @@ export class PessoasComponent implements OnInit{
       next: (response) => {
         this.cardsOriginal = response;
         this.cards = response;
-        console.log(this.cards)
       },
       error: (err) => {
         console.error(err);
@@ -62,17 +73,23 @@ export class PessoasComponent implements OnInit{
 
   filtrarLista() {
     const termo = this.filtro.toLowerCase();
-
     this.cards = this.cardsOriginal.filter(card => {
       const nome = card.nome?.toLowerCase() ?? '';
       const id = String(card.idPessoa ?? '');
-
       return nome.includes(termo) || id.includes(termo);
     });
   }
   
   async alternarExibicao(event: MatButtonToggleChange) {
     this.exibirEmGrade = !this.exibirEmGrade   
+  }
+
+  scrollToBottom(): void {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
 }

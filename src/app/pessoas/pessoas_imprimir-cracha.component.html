@@ -1,12 +1,171 @@
-<div fxLayout="row" fxLayoutAlign="center" class="ml-230">
-    <div fxLayout="column" fxFlex="100%">
-        <mat-card>
-            <mat-card-header fxLayoutAlign="center">
-                <mat-card-title class="color-blue">Pessoas_imprimir-cracha</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
+<div *ngIf="!varios" fxLayout="row" fxLayoutAlign="center center" class="ml-230">
+    <div fxLayout="column" fxFlex="700px">
 
-            </mat-card-content>
-        </mat-card>
+        <div *ngIf="!horizontal" fxLayout="row" fxLayoutAlign="center" >
+            <div fxLayout="column" fxFlex="300px">
+                <mat-card  class="mt-40 card-vert">
+                    <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+                        <img src="assets/logo_fundo_azul2.png" width="250px" />
+                    </mat-card-header>
+                    <mat-card-content fxLayout="column" fxLayoutAlign="center center" class="pt-20 pb-20">
+                        <img mat-card-image class="img-card mb-20 mt-20"
+                        [src]="pessoa.imagem"
+                        style="max-width: 120px; max-height: 120px;"
+                        (error)="pessoa.imagem = 'assets/sem_imagem.png'">
+                        <mat-list-item fxLayoutAlign="center center" class="mt-20 text-center">
+                            <span matListItemTitle class="truncate-2-lines" style="font-size:x-large;" >{{ pessoa.nome }}</span>
+                        </mat-list-item>
+                        <mat-list-item fxLayoutAlign="center center" class="mt-20">
+                            <span matListItemTitle style="font-size: x-large;">#{{ pessoa.idPessoa }}</span>
+                        </mat-list-item>
+                        <div fxLayoutAlign="center center" >
+                            <qrcode 
+                                [qrdata]="urlPagina" 
+                                [width]="130" 
+                                [errorCorrectionLevel]="'M'">
+                            </qrcode>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+
+        <div *ngIf="horizontal" fxLayout="row" fxLayoutAlign="center">
+            <div fxLayout="column" fxFlex="500px">
+                <mat-card class="mt-40 card-hor">
+                    <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+                        <img src="assets/logo_fundo_azul2.png" width="200px" />
+                    </mat-card-header>
+                    <mat-card-content class="pt-20 pb-20">
+                        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+                            <img mat-card-image class="img-card"
+                                [src]="pessoa.imagem"
+                                style="max-width: 120px; max-height: 120px;"
+                                (error)="pessoa.imagem = 'assets/sem_imagem.png'">
+                            <qrcode 
+                                [qrdata]="urlPagina" 
+                                [width]="130" 
+                                [errorCorrectionLevel]="'M'">
+                            </qrcode>
+                        </div>
+                        <mat-list-item fxLayoutAlign="center center" class="mt-10 text-center">
+                            <span matListItemTitle class="truncate-2-lines" style="font-size:x-large;">{{ pessoa.nome }}</span>
+                        </mat-list-item>
+                        <mat-list-item fxLayoutAlign="center center" class="mt-10">
+                            <span matListItemTitle style="font-size:x-large;">#{{ pessoa.idPessoa }}</span>
+                        </mat-list-item>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+
+        <mat-card-actions class="mt-40 mb-20" fxLayout="column" fxLayoutAlign="center">
+            <div fxLayout="row" fxLayoutAlign="center" class="mb-40">
+                <mat-button-toggle-group name="alterarExibicao" aria-label="Alterar Exibição" [hideSingleSelectionIndicator]="true" [value]="horizontal ? 'horizontal' : 'vertical'" (change)="alternarExibicao($event)">
+                    <mat-button-toggle value="vertical"><mat-icon fontIcon="crop_portrait"></mat-icon></mat-button-toggle>
+                    <mat-button-toggle value="horizontal"><mat-icon fontIcon="crop_landscape"></mat-icon></mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+            <div fxLayout="row"  fxLayoutAlign="center">
+                <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" [routerLink]="['/pessoas_detalhe/', firebaseIdPessoa]">
+                    <mat-icon fontIcon="backspace"></mat-icon>
+                    Voltar
+                </button>  
+                <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="button" [routerLink]="['/pessoas_detalhe/', firebaseIdPessoa]">
+                    <mat-icon fontIcon="print"></mat-icon>
+                    Imprimir
+                </button>
+            </div>
+        </mat-card-actions>
     </div>
 </div>
+
+<div *ngIf="varios" fxLayout="row" fxLayoutAlign="center center" class="ml-230">
+    <div fxLayout="column" fxFlex="100%">
+
+        <div *ngIf="!horizontal" fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign="center center">
+            <div *ngFor="let card of cards" fxFlex="30%" fxLayoutAlign="center center">
+                <mat-card class="mt-40 card-vert">
+                    <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+                        <img src="assets/logo_fundo_azul2.png" width="200px" />
+                    </mat-card-header>
+                    <mat-card-content fxLayout="column" fxLayoutAlign="center center" class="pt-20 pb-20">
+                        <img mat-card-image class="img-card mb-20 mt-20"
+                            [src]="card.imagem"
+                            style="max-width: 120px; max-height: 120px;"
+                            (error)="card.imagem = 'assets/sem_imagem.png'">
+                        <mat-list-item fxLayoutAlign="center center" class="mt-20 text-center">
+                            <span matListItemTitle class="truncate-2-lines" style="font-size:x-large;">{{ card.nome }}</span>
+                        </mat-list-item>
+                        <mat-list-item fxLayoutAlign="center center" class="mt-20">
+                            <span matListItemTitle style="font-size:x-large;">#{{ card.idPessoa }}</span>
+                        </mat-list-item>
+                        <div fxLayoutAlign="center center" class="mt-20">
+                            <qrcode 
+                                [qrdata]="card.urlPagina" 
+                                [width]="130" 
+                                [errorCorrectionLevel]="'M'">
+                            </qrcode>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+
+        <div *ngIf="horizontal" fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign="center center">
+            <div *ngFor="let card of cards">
+                <mat-card class="mt-40 card-hor">
+                    <mat-card-header fxLayout="row" fxLayoutAlign="center center">
+                        <img src="assets/logo_fundo_azul2.png" width="200px" />
+                    </mat-card-header>
+                    <mat-card-content class="pt-20 pb-20">
+                        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
+                            <img mat-card-image class="img-card"
+                                [src]="card.imagem"
+                                style="max-width: 120px; max-height: 120px;"
+                                (error)="card.imagem = 'assets/sem_imagem.png'">
+                            <qrcode 
+                                [qrdata]="card.urlPagina" 
+                                [width]="130" 
+                                [errorCorrectionLevel]="'M'">
+                            </qrcode>
+                        </div>
+                        <mat-list-item fxLayoutAlign="center center" class="mt-10 text-center">
+                            <span matListItemTitle class="truncate-2-lines" style="font-size:x-large;">{{ card.nome }}</span>
+                        </mat-list-item>
+                        <mat-list-item fxLayoutAlign="center center" class="mt-10">
+                            <span matListItemTitle style="font-size:x-large;">#{{ card.idPessoa }}</span>
+                        </mat-list-item>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+
+        <mat-card-actions class="mt-40 mb-20" fxLayout="column" fxLayoutAlign="center">
+            <div fxLayout="row" fxLayoutAlign="center" class="mb-40">
+                <mat-button-toggle-group name="alterarExibicao" aria-label="Alterar Exibição" [hideSingleSelectionIndicator]="true" [value]="horizontal ? 'horizontal' : 'vertical'" (change)="alternarExibicao($event)">
+                    <mat-button-toggle value="vertical"><mat-icon fontIcon="crop_portrait"></mat-icon></mat-button-toggle>
+                    <mat-button-toggle value="horizontal"><mat-icon fontIcon="crop_landscape"></mat-icon></mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+            <div fxLayout="row"  fxLayoutAlign="center">
+                <button mat-flat-button class="ml-5" color="accent" fxFlex="40%" type="button" routerLink='/pessoas'>
+                    <mat-icon fontIcon="backspace"></mat-icon>
+                    Voltar
+                </button>  
+                <button mat-flat-button class="ml-35" color="primary" fxFlex="40%" type="button" routerLink='/pessoas'>
+                    <mat-icon fontIcon="print"></mat-icon>
+                    Imprimir
+                </button>
+            </div>
+        </mat-card-actions>
+    </div>
+</div>
+
+<button mat-fab class="scroll-to-top" color="primary" *ngIf="mostrarBotaoTopo" (click)="scrollToTop()">
+  <mat-icon>arrow_upward</mat-icon>
+</button>
+
+<button mat-fab class="scroll-to-bottom" color="primary" *ngIf="mostrarBotaoFinal" (click)="scrollToBottom()">
+  <mat-icon>arrow_downward</mat-icon>
+</button>

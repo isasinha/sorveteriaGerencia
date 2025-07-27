@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^20.0.5",
     "@angular/router": "^20.0.5",
     "@types/node": "^22.15.29",
+    "angularx-qrcode": "^20.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "firebase": "^11.9.1",
