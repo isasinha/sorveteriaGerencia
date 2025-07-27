@@ -9,7 +9,7 @@
     width: 100%;
     text-align: center;
     margin: 0 !important;
-    padding: 0 !important;
+    padding-top: 0 !important;
   }
 
   .cracha-vert {
@@ -96,6 +96,7 @@
   @page {
     size: A4;
     margin: 5mm;
+    padding: 5mm 0 0 0;
   }
 }
 

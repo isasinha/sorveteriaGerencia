@@ -89,7 +89,7 @@
         <div fxLayout="column" fxFlex="100%">
 
             <div *ngIf="!horizontal" fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign="center center">
-                <div *ngFor="let card of cards" fxFlex="45%" fxLayoutAlign="center center">
+                <div *ngFor="let card of cardTemp" fxFlex="45%" fxLayoutAlign="center center">
                     <mat-card class="mt-40 card-vert cracha-vert">
                         <mat-card-header fxLayout="row" fxLayoutAlign="center center">
                             <img src="assets/logo_fundo_azul2.png" width="200px" />
@@ -118,7 +118,7 @@
 
             <div *ngIf="horizontal" fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign="center center" id="cracha-container-hor">
             <!-- <div *ngIf="horizontal" id="cracha-container-hor"> -->
-                <div *ngFor="let card of cards" class="cracha-hor">
+                <div *ngFor="let card of cardTemp" class="cracha-hor">
                     <mat-card class="mt-40 card-hor">
                         <mat-card-header fxLayout="row" fxLayoutAlign="center center">
                             <img src="assets/logo_fundo_azul2.png" width="200px" />

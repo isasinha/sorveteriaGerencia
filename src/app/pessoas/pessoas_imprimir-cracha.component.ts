@@ -93,7 +93,7 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
             ...pessoa,
             urlPagina: `https://sorveteria-perseveranca.web.app/pessoas_detalhe/${pessoa.firebaseId}`
           }));
-          //this.cardTemp = this.cards.slice(0,12)
+          this.cardTemp = this.cards.slice(0,12)
         },
         error: (err) => {
           console.error(err);
