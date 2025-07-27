@@ -1,3 +1,104 @@
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #print-area {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .cracha-vert {
+    display: inline-flex;
+    vertical-align: top;
+    width: 8cm;
+    height: 12cm;
+    margin: 0.5cm;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    break-inside: avoid;
+  }
+
+  .cracha-hor {
+    display: inline-flex;
+    vertical-align: top;
+    height: 8cm !important;
+    width: 12cm !important;
+    //margin: 0.5cm;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+    break-inside: avoid;
+  }
+
+  #cracha-container-hor{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5cm;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card-vert {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    max-width: unset !important;
+    max-height: unset !important;
+    //margin: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .card-hor {
+    width: 100% !important;
+    height: 100% !important;
+    // min-width: unset !important;
+    // min-height: unset !important;
+    // max-width: unset !important;
+    // max-height: unset !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+  }
+
+  mat-card.mt-40 {
+    margin-top: 0 !important;
+  }
+
+  mat-card {
+    margin-top: 0 !important;
+  }
+
+  .ml-230 {
+    margin-left: 0 !important;
+  }
+
+  .nao-imprimir,
+  .scroll-to-top,
+  .scroll-to-bottom,
+  mat-card-actions,
+  button {
+    display: none !important;
+  }
+
+  * {
+    visibility: hidden;
+  }
+
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+
+  @page {
+    size: A4;
+    margin: 5mm;
+  }
+}
+
 .img-card{
     width: 120px;
     height: auto;

@@ -59,6 +59,7 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
   varios: boolean = false;
   horizontal: boolean = false;
   cards: any[] = [];
+  cardTemp: any[] = [];
   mostrarBotaoTopo: boolean = false;
   mostrarBotaoFinal: boolean = true; 
 
@@ -92,6 +93,7 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
             ...pessoa,
             urlPagina: `https://sorveteria-perseveranca.web.app/pessoas_detalhe/${pessoa.firebaseId}`
           }));
+          //this.cardTemp = this.cards.slice(0,12)
         },
         error: (err) => {
           console.error(err);
@@ -112,8 +114,21 @@ export class Pessoas_ImprimirCrachaComponent implements OnInit{
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  imprimirCracha(){
+imprimirCracha(): void {
+  const style = document.createElement('style');
+  style.setAttribute('id', 'print-orientation');
+  style.innerHTML = `
+    @page {
+      size: ${this.horizontal ? 'A4 landscape' : 'A4 portrait'};
+      margin: 5mm;
+    }
+  `;
+  document.head.appendChild(style);
 
-  }
+  setTimeout(() => {
+    window.print();
+    document.getElementById('print-orientation')?.remove();
+  }, 100);
+}
 
 }
