@@ -3,6 +3,16 @@
     height: auto;
 }
 
+@media (max-width: 599px) {
+  .label-foto {
+    font-size: 12px;
+  }
+
+  .color-font-icon, .color-red {
+    font-size: 24px !important;
+  }
+}
+
 .color-font-icon{
     color: #3e0ab9
 }
