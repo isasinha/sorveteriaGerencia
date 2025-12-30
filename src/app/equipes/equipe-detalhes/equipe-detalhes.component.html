@@ -1,0 +1,102 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="onClose()">×</button>
+    
+    @if (temAnterior()) {
+      <button class="btn-nav btn-anterior" (click)="onAnterior(); $event.stopPropagation()" title="Anterior">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    }
+    
+    @if (temProximo()) {
+      <button class="btn-nav btn-proximo" (click)="onProximo(); $event.stopPropagation()" title="Próximo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    }
+    
+    <div class="modal-header">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      <h2>{{ equipe().nome }}</h2>
+    </div>
+
+    <div class="modal-body">
+      <div class="section">
+        <h3>Informações da Equipe</h3>
+        <div class="details-grid">
+          <div class="detail-item">
+            <strong>ID:</strong>
+            <span>{{ equipe().idEquipe }}</span>
+          </div>
+          <div class="detail-item">
+            <strong>Nome:</strong>
+            <span>{{ equipe().nome }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h3>Pessoas Cadastradas ({{ pessoasDaEquipe().length }})</h3>
+        @if (pessoasDaEquipe().length === 0) {
+          <p class="empty-message">Nenhuma pessoa cadastrada nesta equipe.</p>
+        } @else {
+          <div class="pessoas-list">
+            @for (pessoa of pessoasDaEquipe(); track pessoa.id) {
+              <div class="pessoa-item" (click)="abrirDetalhesPessoa(pessoa)">
+                @if (pessoa.imagem) {
+                  <img [src]="pessoa.imagem" [alt]="pessoa.nome" class="pessoa-foto">
+                } @else {
+                  <div class="pessoa-foto-placeholder">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                  </div>
+                }
+                <div class="pessoa-info">
+                  <span class="pessoa-nome">{{ pessoa.nome }}</span>
+                  <span class="pessoa-id">#{{ pessoa.idPessoa }}</span>
+                  <span class="pessoa-equipes">{{ getNomesEquipes(pessoa.idEquipe) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-editar" (click)="onEditar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        Editar Equipe
+      </button>
+      <button class="btn-excluir" (click)="onExcluir()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        Excluir Equipe
+      </button>
+    </div>
+  </div>
+</div>
+
+@if (pessoaSelecionada()) {
+  <app-pessoa-detalhes
+    [pessoa]="pessoaSelecionada()!"
+    [totalPessoas]="0"
+    [indiceAtual]="0"
+    (close)="fecharDetalhesPessoa()" />
+}

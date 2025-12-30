@@ -1,0 +1,276 @@
+// Estilos para tela
+.loading, .error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
+.no-print {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+
+  .formato-selector {
+    display: flex;
+    gap: 5px;
+    background: white;
+    padding: 5px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-formato {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #f0f0f0;
+    color: #333;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    &:hover:not(.active) {
+      background: #e0e0e0;
+    }
+  }
+}
+
+.btn-imprimir, .btn-voltar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #0056b3;
+  }
+}
+
+.btn-voltar {
+  background: #6c757d;
+
+  &:hover {
+    background: #545b62;
+  }
+}
+
+.cracha-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 40px 20px;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+// Dimensões do crachá: 9,5cm x 6,5cm
+.cracha {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  
+  &.frente {
+    width: 380px;  // 9,5cm em pixels (aproximado para 96 DPI)
+    height: 260px; // 6,5cm em pixels
+  }
+  
+  &.verso {
+    width: 260px;  // 6,5cm
+    height: 380px; // 9,5cm
+  }
+}
+
+// Frente (Paisagem)
+.frente {
+  .cracha-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    .logo {
+      height: 40px;
+      object-fit: contain;
+      background: white;
+      padding: 5px;
+      border-radius: 4px;
+    }
+  }
+  
+  .cracha-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 20px 35px 20px;
+    height: calc(100% - 70px);
+    box-sizing: border-box;
+    
+    .info-section {
+      flex: 1;
+      
+      .nome {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+      }
+      
+      .id {
+        font-size: 18px;
+        color: #666;
+        margin: 0;
+        font-weight: 600;
+      }
+    }
+    
+    .qr-section {
+      .qr-code {
+        width: 120px;
+        height: 120px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 5px;
+        background: white;
+      }
+    }
+  }
+}
+
+// Verso (Retrato)
+.verso {
+  .cracha-header-verso {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    .logo-topo {
+      height: 35px;
+      object-fit: contain;
+      background: white;
+      padding: 5px;
+      border-radius: 4px;
+    }
+  }
+  
+  .cracha-content-verso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+    flex: 1;
+    
+    .qr-section-verso {
+      .qr-code-verso {
+        width: 140px;
+        height: 140px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 5px;
+        background: white;
+      }
+    }
+    
+    .info-section-verso {
+      text-align: center;
+      
+      .nome-verso {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+      }
+      
+      .id-verso {
+        font-size: 18px;
+        color: #666;
+        margin: 0;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Estilos de impressão
+@media print {
+  @page {
+    size: auto;
+    margin: 0;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .cracha-container {
+    padding: 0;
+    margin: 0;
+    background: white;
+    min-height: auto;
+    gap: 20px;
+  }
+  
+  .cracha {
+    box-shadow: none;
+    border: 1px solid #d0d0d0;
+    page-break-after: always;
+    page-break-inside: avoid;
+    
+    &.frente {
+      width: 9.5cm;
+      height: 6.5cm;
+    }
+    
+    &.verso {
+      width: 6.5cm;
+      height: 9.5cm;
+    }
+  }
+  
+  .cracha:last-child {
+    page-break-after: auto;
+  }
+}

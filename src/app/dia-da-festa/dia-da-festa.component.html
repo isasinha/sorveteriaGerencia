@@ -1,0 +1,252 @@
+<app-sidebar-layout>
+  <div class="dia-da-festa-container">
+    <header class="page-header">
+      <h1>Dia da Festa</h1>
+      <button class="btn-add" (click)="openForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Novo Dia da Festa
+      </button>
+    </header>
+
+    @if (successMessage()) {
+      <div class="success-message">
+        {{ successMessage() }}
+      </div>
+    }
+
+    <div class="selection-container">
+      <h2>Escolha o Dia e a Equipe</h2>
+      <div class="selection-fields">
+        <div class="form-group dia-group">
+          <label for="dia">Escolha o Dia da Festa <span class="required">*</span></label>
+          <div class="select-with-button">
+            <select 
+              id="dia" 
+              [ngModel]="diaSelecionado()" 
+              (ngModelChange)="diaSelecionado.set($event)"
+              name="dia"
+            >
+              <option value="">Selecione um dia</option>
+              @for (dia of diasOrdenados(); track dia.id) {
+                <option [value]="dia.idDia">
+                  {{ formatarDia(dia.dia) }} - {{ dia.dia_semana }} ({{ dia.hora_inicio }} - {{ dia.hora_fim }})
+                </option>
+              }
+            </select>
+            @if (diaSelecionado()) {
+              <button type="button" class="btn-edit-inline" (click)="editarDiaSelecionado()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Editar
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="form-group equipe-group">
+          <label for="equipe">Escolha a Equipe <span class="required">*</span></label>
+          <select 
+            id="equipe" 
+            [ngModel]="equipeSelecionada()" 
+            (ngModelChange)="equipeSelecionada.set($event)"
+            name="equipe"
+          >
+            <option value="">Selecione uma equipe</option>
+            <option value="todas">Todas as equipes</option>
+            @for (equipe of equipesOrdenadas(); track equipe.id) {
+              <option [value]="equipe.idEquipe">
+                {{ equipe.nome }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    @if (!diaSelecionado() || !equipeSelecionada()) {
+      <div class="info-notice">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <p>Selecione um dia e uma equipe para visualizar a escala de confirmações</p>
+      </div>
+    }
+
+    @if (diaSelecionado() && equipeSelecionada()) {
+      @if (carregandoEscala()) {
+        <div class="loading-escala">
+          <p>Carregando escala...</p>
+        </div>
+      } @else if (pessoas().length === 0) {
+        <div class="no-confirmacoes">
+          <p>Nenhuma confirmação encontrada para esta equipe neste dia.</p>
+        </div>
+      } @else {
+        <div class="escala-container">
+          <h2>Escala de Presença</h2>
+          
+          <div class="escala-legenda">
+            <div class="legenda-item">
+              <span class="legenda-cor verde"></span>
+              <span>Confirmado (equipe atual)</span>
+            </div>
+            @if (equipeSelecionada() !== 'todas') {
+              <div class="legenda-item">
+                <span class="legenda-cor azul"></span>
+                <span>Confirmado (mudou de equipe)</span>
+              </div>
+            }
+            <div class="legenda-item">
+              <span class="legenda-cor cinza"></span>
+              <span>Sem confirmação</span>
+            </div>
+          </div>
+
+          <div class="escala-scroll">
+            <div class="escala-grid">
+              <!-- Cabeçalho com horários -->
+              <div class="escala-header">
+                <div class="pessoa-header">Pessoa</div>
+                @for (horario of gerarHorarios(); track horario) {
+                  <div 
+                    class="horario-cell"
+                    [class.fora-festa]="isHorarioForaDaFesta(horario)"
+                  >{{ horario }}</div>
+                }
+              </div>
+
+              <!-- Linhas das pessoas -->
+              @for (pessoa of pessoas(); track pessoa.id) {
+                <div class="escala-row" [class.sem-confirmacao]="!temConfirmacao(pessoa)">
+                  <div 
+                    class="pessoa-cell"
+                    [title]="pessoa.nome + '\n' + getNomesEquipes(pessoa)"
+                  >
+                    <span class="pessoa-nome">{{ getPrimeiroNome(pessoa.nome) }}</span>
+                    <span class="pessoa-id">#{{ pessoa.idPessoa }}</span>
+                  </div>
+                  @for (horario of gerarHorarios(); track horario) {
+                    <div 
+                      class="periodo-cell"
+                      [class.fora-festa]="isHorarioForaDaFesta(horario)"
+                      [class.confirmado]="isPeriodoConfirmado(pessoa, horario) && pertenceAEquipeAtual(pessoa)"
+                      [class.confirmado-outra-equipe]="isPeriodoConfirmado(pessoa, horario) && !pertenceAEquipeAtual(pessoa)"
+                    ></div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeForm()">×</button>
+        
+        <div class="modal-header">
+          <h2>{{ diaEmEdicao() ? 'Editar Dia da Festa' : 'Novo Dia da Festa' }}</h2>
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="modal-body">
+            @if (erro()) {
+              <div class="error-message">
+                {{ erro() }}
+              </div>
+            }
+
+            <div class="form-group">
+              <label for="dia">Dia <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="dia" 
+                [ngModel]="dia()" 
+                (input)="aplicarMascaraData($event)"
+                (keydown)="bloquearNaoNumerico($event)"
+                name="dia"
+                placeholder="DD/MM/AAAA"
+                maxlength="10"
+                required
+              >
+              <small class="hint">Formato: DD/MM/AAAA</small>
+            </div>
+
+            <div class="form-group">
+              <label for="dia_semana">Dia da Semana <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="dia_semana" 
+                [ngModel]="dia_semana()" 
+                name="dia_semana"
+                placeholder="Preenchido automaticamente"
+                readonly
+                class="readonly"
+                required
+              >
+              <small class="hint">Calculado automaticamente a partir da data</small>
+            </div>
+
+            <div class="form-group">
+              <label for="hora_inicio">Hora de Início <span class="required">*</span></label>
+              <input 
+                type="time" 
+                id="hora_inicio" 
+                [ngModel]="hora_inicio()" 
+                (ngModelChange)="hora_inicio.set($event)"
+                name="hora_inicio"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="hora_fim">Hora de Fim <span class="required">*</span></label>
+              <input 
+                type="time" 
+                id="hora_fim" 
+                [ngModel]="hora_fim()" 
+                (ngModelChange)="hora_fim.set($event)"
+                name="hora_fim"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <div class="footer-left">
+              @if (diaEmEdicao()) {
+                <button type="button" class="btn-excluir" (click)="deletar()" [disabled]="salvando()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                  Excluir
+                </button>
+              }
+            </div>
+            <div class="footer-right">
+              <button type="button" class="btn-cancelar" (click)="closeForm()">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-salvar" [disabled]="salvando()">
+                {{ salvando() ? 'Salvando...' : (diaEmEdicao() ? 'Atualizar' : 'Salvar') }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</app-sidebar-layout>

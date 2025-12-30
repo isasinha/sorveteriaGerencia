@@ -1,0 +1,81 @@
+<div class="pessoa-view-container">
+  @if (loading()) {
+    <div class="loading">
+      <p>Carregando dados...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error">
+      <p>{{ error() }}</p>
+      <button class="btn-voltar" (click)="voltar()">Voltar para Pessoas</button>
+    </div>
+  }
+
+  @if (!loading() && !error() && pessoa()) {
+    <div class="header-section">
+      <button class="btn-voltar" (click)="voltar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Voltar
+      </button>
+    </div>
+
+    <div class="pessoa-content">
+        <div class="pessoa-header">
+          <div class="header-info">
+            @if (pessoa()!.imagem) {
+              <img [src]="pessoa()!.imagem" [alt]="pessoa()!.nome" class="pessoa-imagem">
+            } @else {
+              <div class="pessoa-imagem-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+            }
+            <div class="header-text">
+              <span class="pessoa-id"># {{ pessoa()!.idPessoa }}</span>
+              <h1>{{ pessoa()!.nome }}</h1>
+            </div>
+          </div>
+        </div>
+
+        @if (getCamposBasicos().length > 0) {
+          <div class="section">
+            <h2>Informações de Contato</h2>
+            <div class="info-grid">
+              @for (campo of getCamposBasicos(); track campo.key) {
+                <div class="info-item">
+                  <strong>{{ campo.label }}</strong>
+                  <span>{{ campo.value }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="section">
+          <h2>Informações Adicionais</h2>
+          <div class="info-grid">
+            @for (campo of getCamposAdicionais(); track campo.key) {
+              <div class="info-item">
+                <strong>{{ campo.label }}</strong>
+                @if (campo.key === 'idEquipe' && temMultiplasEquipes() && pessoa()!.idEquipe) {
+                  <ul class="equipes-list">
+                    @for (nomeEquipe of getNomesEquipes(); track nomeEquipe) {
+                      <li>{{ nomeEquipe }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <span>{{ campo.value }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+</div>

@@ -1,0 +1,96 @@
+@if (loading()) {
+  <div class="loading">
+    <p>Carregando dados...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="error">
+    <p>{{ error() }}</p>
+    <button class="btn-voltar" (click)="voltar()">Voltar</button>
+  </div>
+}
+
+@if (!loading() && !error() && pessoa()) {
+  <div class="no-print">
+    <div class="formato-selector">
+      <button 
+        class="btn-formato" 
+        [class.active]="formato() === 'paisagem'"
+        (click)="alternarFormato('paisagem')"
+        title="Paisagem (9,5x6,5cm)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="7" width="18" height="10" rx="1"></rect>
+        </svg>
+        Paisagem
+      </button>
+      <button 
+        class="btn-formato" 
+        [class.active]="formato() === 'retrato'"
+        (click)="alternarFormato('retrato')"
+        title="Retrato (6,5x9,5cm)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="7" y="3" width="10" height="18" rx="1"></rect>
+        </svg>
+        Retrato
+      </button>
+    </div>
+    <button class="btn-imprimir" (click)="imprimir()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      Imprimir Crachá
+    </button>
+    <button class="btn-voltar" (click)="voltar()">Voltar</button>
+  </div>
+
+  <div class="cracha-container">
+    @if (formato() === 'paisagem') {
+      <!-- Frente do Crachá (Paisagem) -->
+      <div class="cracha frente">
+        <div class="cracha-header">
+          <img src="/logo_fundo_azul2.png" alt="Logo 1" class="logo logo-esquerda" />
+          <img src="/logo_sorveteria_fundo_branco.png" alt="Logo 2" class="logo logo-direita" />
+        </div>
+        
+        <div class="cracha-content">
+          <div class="info-section">
+            <h2 class="nome">{{ pessoa()!.nome }}</h2>
+            <p class="id"># {{ pessoa()!.idPessoa }}</p>
+          </div>
+          
+          <div class="qr-section">
+            @if (qrCodeDataUrl()) {
+              <img [src]="qrCodeDataUrl()" alt="QR Code" class="qr-code" />
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (formato() === 'retrato') {
+      <!-- Verso do Crachá (Retrato) -->
+      <div class="cracha verso">
+        <div class="cracha-header-verso">
+          <img src="/logo_fundo_azul2.png" alt="Logo 1" class="logo logo-topo" />
+          <img src="/logo_sorveteria_fundo_branco.png" alt="Logo 2" class="logo logo-topo" />
+        </div>
+        
+        <div class="cracha-content-verso">
+          <div class="qr-section-verso">
+            @if (qrCodeDataUrl()) {
+              <img [src]="qrCodeDataUrl()" alt="QR Code" class="qr-code-verso" />
+            }
+          </div>
+          
+          <div class="info-section-verso">
+            <h2 class="nome-verso">{{ pessoa()!.nome }}</h2>
+            <p class="id-verso"># {{ pessoa()!.idPessoa }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}

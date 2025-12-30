@@ -1,0 +1,242 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="onClose()">×</button>
+    
+    <div class="modal-header">
+      <h2>{{ pessoaEmEdicao() ? 'Editar Pessoa' : 'Nova Pessoa' }}</h2>
+    </div>
+
+    <form class="modal-body" (ngSubmit)="onSubmit()">
+      @if (erro()) {
+        <div class="error-message">{{ erro() }}</div>
+      }
+
+      <div class="form-section">
+        <h3>Informações Básicas</h3>
+        
+        <div class="form-group required">
+          <label for="nome">Nome</label>
+          <input 
+            type="text" 
+            id="nome" 
+            [ngModel]="nome()" 
+            (ngModelChange)="nome.set($event)"
+            name="nome"
+            placeholder="Digite o nome completo"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            [ngModel]="email()" 
+            (ngModelChange)="email.set($event)"
+            name="email"
+            placeholder="exemplo@email.com"
+          >
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telefone_cel">Telefone Celular</label>
+            <input 
+              type="text" 
+              id="telefone_cel" 
+              [ngModel]="telefone_cel()" 
+              (input)="aplicarMascaraCelular($event)"
+              (keydown)="bloquearNaoNumerico($event)"
+              name="telefone_cel"
+              placeholder="(00) 00000-0000"
+              maxlength="15"
+              inputmode="numeric"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="telefone_rec">Telefone Recado</label>
+            <input 
+              type="text" 
+              id="telefone_rec" 
+              [ngModel]="telefone_rec()" 
+              (input)="aplicarMascaraTelefone($event, 'rec')"
+              (keydown)="bloquearNaoNumerico($event)"
+              name="telefone_rec"
+              placeholder="(00) 00000-0000 ou (00) 0000-0000"
+              maxlength="15"
+              inputmode="numeric"
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telefone_res">Telefone Residencial</label>
+            <input 
+              type="text" 
+              id="telefone_res" 
+              [ngModel]="telefone_res()" 
+              (input)="aplicarMascaraTelefone($event, 'res')"
+              (keydown)="bloquearNaoNumerico($event)"
+              name="telefone_res"
+              placeholder="(00) 0000-0000"
+              maxlength="14"
+              inputmode="numeric"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="data_nascimento">Data de Nascimento</label>
+            <input 
+              type="text" 
+              id="data_nascimento" 
+              [ngModel]="data_nascimento()" 
+              (input)="aplicarMascaraData($event)"
+              (keydown)="bloquearNaoNumerico($event)"
+              name="data_nascimento"
+              placeholder="DD/MM/AAAA"
+              maxlength="10"
+              inputmode="numeric"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="idade">Idade</label>
+            <input 
+              type="number" 
+              id="idade" 
+              [ngModel]="idade()" 
+              (ngModelChange)="idade.set($event)"
+              name="idade"
+              placeholder="Idade (calculada automaticamente)"
+              min="0"
+              max="150"
+              [readonly]="dataCompleta()"
+              [class.readonly]="dataCompleta()"
+            >
+            <small class="field-hint">
+              @if (dataCompleta()) {
+                Calculada automaticamente pela data de nascimento
+              } @else {
+                Preenchido automaticamente ao digitar a data de nascimento ou digite manualmente
+              }
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Informações Adicionais</h3>
+        
+        <div class="form-group">
+          <label>Equipe(s)</label>
+          <div class="equipes-container">
+            <div class="equipes-header" (click)="toggleEquipesExpandido()">
+              <span class="equipes-summary">
+                @if (equipesSelecionadas().size === 0) {
+                  Nenhuma equipe selecionada
+                } @else if (equipesSelecionadas().size === 1) {
+                  1 equipe selecionada
+                } @else {
+                  {{ equipesSelecionadas().size }} equipes selecionadas
+                }
+              </span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round"
+                [class.rotated]="equipesExpandido()"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            @if (equipesExpandido()) {
+              <div class="equipes-checkboxes">
+                @for (equipe of equipesOrdenadas(); track equipe.id) {
+                  <label class="checkbox-item">
+                    <input 
+                      type="checkbox"
+                      [checked]="equipe.idEquipe !== undefined && isEquipeSelecionada(equipe.idEquipe.toString())"
+                      (change)="equipe.idEquipe !== undefined && toggleEquipe(equipe.idEquipe.toString())"
+                    >
+                    <span>{{ equipe.nome }}</span>
+                  </label>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imagem">Foto</label>
+          <div class="image-upload-container">
+            @if (imagemPreview()) {
+              <div class="image-preview">
+                <img [src]="imagemPreview()" alt="Preview da foto">
+                <button type="button" class="btn-remove-image" (click)="removerImagem()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            } @else {
+              <div class="file-input-wrapper">
+                <input 
+                  type="file" 
+                  id="imagem" 
+                  name="imagem"
+                  accept="image/*"
+                  (change)="onFileSelected($event)"
+                  #fileInput
+                >
+                <label for="imagem" class="file-input-label">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>Clique para selecionar uma foto</span>
+                  <span class="file-hint">PNG, JPG ou GIF (máx. 2MB)</span>
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="comentarios">Comentários</label>
+          <textarea 
+            id="comentarios" 
+            [ngModel]="comentarios()" 
+            (ngModelChange)="comentarios.set($event)"
+            name="comentarios"
+            rows="4"
+            placeholder="Observações adicionais..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="onClose()" [disabled]="salvando()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="salvando()">
+          @if (salvando()) {
+            <span>Salvando...</span>
+          } @else {
+            <span>Salvar</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

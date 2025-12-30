@@ -1,0 +1,119 @@
+.sidebar-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: var(--color-sidebar-bg);
+  color: #ecf0f1;
+  padding: var(--spacing-xl) var(--spacing-xl) 100px var(--spacing-xl);
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.sidebar-logo {
+  margin-bottom: var(--spacing-3xl);
+  text-align: center;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .sorveteria-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 15px;
+    padding: var(--spacing-sm);
+    background-color: rgba(255, 255, 255, .1);
+    border-radius: var(--radius-xs);
+
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #ecf0f1;
+    }
+
+    img {
+      height: 45px;
+      width: auto;
+    }
+  }
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  display: block;
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: #ecf0f1;
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+  transition: background-color var(--transition);
+  margin-bottom: var(--spacing-sm);
+
+  &:hover {
+    background-color: var(--color-sidebar-hover);
+  }
+
+  &.active {
+    background-color: var(--color-sidebar-active);
+    font-weight: 600;
+  }
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: auto;
+  margin-bottom: var(--spacing-3xl);
+  background: transparent;
+  border: none;
+  color: #ecf0f1;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: background-color var(--transition);
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background-color: var(--color-danger);
+  }
+
+  &:active {
+    background-color: #c0392b;
+  }
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content {
+  margin-left: 270px;
+  flex: 1;
+  min-height: 100vh;
+  padding: var(--spacing-3xl);
+  background-color: var(--color-bg-page);
+  width: calc(100% - 270px);
+}

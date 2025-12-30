@@ -1,0 +1,190 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
+  padding: var(--spacing-xl);
+}
+
+.login-card {
+  background: var(--color-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .login-logo {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    color: var(--color-text-muted);
+    font-size: .95rem;
+  }
+}
+
+.login-form {
+  .error-message {
+    background-color: #fee;
+    color: #c33;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xl);
+    font-size: .9rem;
+    border-left: 4px solid var(--color-danger);
+    animation: slideDown var(--transition);
+  }
+
+  .form-group {
+    margin-bottom: var(--spacing-2xl);
+
+    label {
+      display: block;
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: var(--spacing-sm);
+      font-size: .9rem;
+    }
+
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      input {
+        padding-right: 48px;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: var(--spacing-md);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-text-muted);
+        transition: color var(--transition-fast), background-color var(--transition-fast);
+        border-radius: var(--radius-xs);
+
+        &:hover:not(:disabled) {
+          color: var(--color-secondary);
+          background-color: rgba(102, 126, 234, .1);
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+          opacity: .5;
+        }
+
+        svg {
+          display: block;
+        }
+      }
+    }
+
+    input {
+      width: 100%;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border: 2px solid var(--color-border-input);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      transition: all var(--transition);
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-secondary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, .1);
+      }
+
+      &::placeholder {
+        color: var(--color-text-placeholder);
+      }
+
+      &:disabled {
+        background-color: var(--color-bg-disabled);
+        cursor: not-allowed;
+        opacity: .6;
+      }
+    }
+  }
+
+  .login-button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, .4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: var(--color-text-light);
+      cursor: not-allowed;
+      transform: none;
+      opacity: .7;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .login-footer {
+    margin-top: var(--spacing-xl);
+    text-align: center;
+
+    .forgot-password {
+      color: var(--color-secondary);
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 500;
+      transition: text-decoration var(--transition-fast);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
