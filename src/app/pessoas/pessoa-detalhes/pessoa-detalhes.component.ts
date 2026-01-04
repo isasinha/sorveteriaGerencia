@@ -17,6 +17,7 @@ export class PessoaDetalhesComponent implements OnInit {
   pessoa = input.required<Pessoa>();
   totalPessoas = input<number>(0);
   indiceAtual = input<number>(0);
+  somenteVisualizacao = input<boolean>(false);
   close = output<void>();
   excluir = output<Pessoa>();
   editar = output<Pessoa>();

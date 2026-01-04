@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarLayoutComponent } from '../shared/layout/sidebar-layout.component';
 import { EquipesService, Equipe } from '../core/services/equipes.service';
+import { ConfirmacoesService } from '../core/services/confirmacoes.service';
+import { PessoasService } from '../core/services/pessoas.service';
 import { EquipeDetalhesComponent } from './equipe-detalhes/equipe-detalhes.component';
 import { EquipeFormComponent } from './equipe-form/equipe-form.component';
 
@@ -25,7 +27,11 @@ export class EquipesComponent implements OnInit {
   equipeEmEdicao = signal<Equipe | null>(null);
   successMessage = signal<string | null>(null);
 
-  constructor(private equipesService: EquipesService) {}
+  constructor(
+    private equipesService: EquipesService,
+    private confirmacoesService: ConfirmacoesService,
+    private pessoasService: PessoasService
+  ) {}
 
   async ngOnInit() {
     await this.carregarEquipes();
@@ -146,7 +152,9 @@ export class EquipesComponent implements OnInit {
   }
 
   async onExcluirEquipe(equipe: Equipe) {
-    const confirmacao = confirm(`Tem certeza que deseja excluir a equipe "${equipe.nome}"?`);
+    const mensagem = `⚠️ ATENÇÃO! ⚠️\n\nVocê está prestes a excluir a equipe "${equipe.nome}".\n\n❌ TODAS as confirmações de participação desta equipe serão CANCELADAS.\n👥 Pessoas desta equipe serão movidas para "Temporariamente sem equipe".\n\n⏳ Esta ação NÃO PODERÁ SER DESFEITA!\n\nDeseja realmente continuar?`;
+    
+    const confirmacao = confirm(mensagem);
     
     if (!confirmacao) {
       return;
@@ -154,6 +162,75 @@ export class EquipesComponent implements OnInit {
 
     try {
       if (equipe.id) {
+        // 1. Buscar ou criar equipe "Temporariamente sem equipe"
+        let equipes = await this.equipesService.getEquipes();
+        let equipeSemEquipe = equipes.find(e => e.nome === 'Temporariamente sem equipe');
+        
+        if (!equipeSemEquipe) {
+          // Criar equipe temporária
+          const proximoId = await this.equipesService.getProximoIdEquipe();
+          const novaEquipeTemp: Equipe = {
+            idEquipe: proximoId,
+            nome: 'Temporariamente sem equipe'
+          };
+          await this.equipesService.addEquipe(novaEquipeTemp);
+          
+          // Recarregar para obter o ID gerado
+          equipes = await this.equipesService.getEquipes();
+          equipeSemEquipe = equipes.find(e => e.nome === 'Temporariamente sem equipe');
+        }
+
+        // 2. Buscar todas as pessoas da equipe a ser excluída e atualizar seus cadastros
+        const todasPessoas = await this.pessoasService.getPessoas();
+        
+        // Filtrar pessoas que têm a equipe (mesmo que tenham outras)
+        const pessoasDaEquipe = todasPessoas.filter(p => {
+          if (!p.idEquipe) return false;
+          const equipesStr = p.idEquipe.toString();
+          const equipesArray = equipesStr.split(',').map(id => id.trim());
+          const equipeIdStr = equipe.idEquipe?.toString();
+          return equipesArray.includes(equipeIdStr || '');
+        });
+
+        for (const pessoa of pessoasDaEquipe) {
+          if (!pessoa.id) continue;
+          
+          // Obter array de equipes da pessoa
+          const equipesArray = pessoa.idEquipe!.toString().split(',').map(id => id.trim());
+          
+          // Remover o ID da equipe excluída
+          const novasEquipes = equipesArray.filter(id => id !== equipe.idEquipe?.toString());
+          
+          // Se ficou sem equipes, adicionar à equipe temporária
+          let novoIdEquipe: string;
+          if (novasEquipes.length === 0) {
+            if (equipeSemEquipe && equipeSemEquipe.idEquipe !== undefined && equipeSemEquipe.idEquipe !== null) {
+              novoIdEquipe = equipeSemEquipe.idEquipe.toString();
+            } else {
+              continue;
+            }
+          } else {
+            // Manter as equipes restantes
+            novoIdEquipe = novasEquipes.join(',');
+          }
+          
+          await this.pessoasService.updatePessoa(pessoa.id, {
+            idEquipe: novoIdEquipe
+          });
+        }
+
+        // 3. Excluir todas as confirmações relacionadas à equipe
+        const confirmacoes = await this.confirmacoesService.getConfirmacoes();
+        const confirmacoesParaExcluir = confirmacoes.filter(c => 
+          c.idEquipe?.toString() === equipe.idEquipe?.toString()
+        );
+        for (const conf of confirmacoesParaExcluir) {
+          if (conf.id) {
+            await this.confirmacoesService.deleteConfirmacao(conf.id);
+          }
+        }
+
+        // 4. Excluir a equipe
         await this.equipesService.deleteEquipe(equipe.id);
         await this.carregarEquipes();
         this.closeModal();

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SidebarLayoutComponent } from '../shared/layout/sidebar-layout.component';
 import { PessoasService, Pessoa } from '../core/services/pessoas.service';
+import { ConfirmacoesService } from '../core/services/confirmacoes.service';
 import { PessoaDetalhesComponent } from './pessoa-detalhes/pessoa-detalhes.component';
 import { PessoaFormComponent } from './pessoa-form/pessoa-form.component';
 
@@ -77,6 +78,7 @@ export class PessoasComponent implements OnInit {
 
   constructor(
     private pessoasService: PessoasService,
+    private confirmacoesService: ConfirmacoesService,
     private router: Router
   ) {}
 
@@ -115,7 +117,9 @@ export class PessoasComponent implements OnInit {
   }
 
   async onExcluirPessoa(pessoa: Pessoa): Promise<void> {
-    const confirmacao = confirm(`Tem certeza que deseja excluir ${pessoa.nome}?`);
+    const mensagem = `⚠️ ATENÇÃO! ⚠️\n\nVocê está prestes a excluir ${pessoa.nome}.\n\n❌ TODAS as confirmações de participação desta pessoa serão CANCELADAS.\n\n⏳ Esta ação NÃO PODERÁ SER DESFEITA!\n\nDeseja realmente continuar?`;
+    
+    const confirmacao = confirm(mensagem);
     
     if (!confirmacao) {
       return;
@@ -125,6 +129,17 @@ export class PessoasComponent implements OnInit {
       if (!pessoa.id) {
         this.error.set('Não foi possível excluir: ID inválido');
         return;
+      }
+
+      // Excluir todas as confirmações relacionadas à pessoa
+      const confirmacoes = await this.confirmacoesService.getConfirmacoes();
+      const confirmacoesParaExcluir = confirmacoes.filter(c => 
+        c.idPessoa?.toString() === pessoa.idPessoa?.toString()
+      );
+      for (const conf of confirmacoesParaExcluir) {
+        if (conf.id) {
+          await this.confirmacoesService.deleteConfirmacao(conf.id);
+        }
       }
 
       await this.pessoasService.deletePessoa(pessoa.id);
