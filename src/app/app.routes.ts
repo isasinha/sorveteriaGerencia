@@ -43,6 +43,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'tutorial',
+    loadComponent: () => import('./tutorial/tutorial.component').then(m => m.TutorialComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'

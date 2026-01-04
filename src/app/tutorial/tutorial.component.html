@@ -1,0 +1,62 @@
+<app-sidebar-layout>
+  <div class="tutorial-container">
+    <div class="tutorial-header">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+      </svg>
+      <h1>Tutorial do Sistema</h1>
+      <p>Aprenda a usar o sistema de gerenciamento da Sorveteria</p>
+    </div>
+
+    <div class="tutorial-tip">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>Dica: Use o botão de tela cheia para uma melhor visualização</span>
+    </div>
+
+    <div class="video-wrapper">
+      <video #videoPlayer controls controlsList="nodownload" preload="metadata">
+        <source src="/Tutorial_sorveteria-gerencia.mp4" type="video/mp4">
+        Seu navegador não suporta a reprodução de vídeos HTML5.
+      </video>
+    </div>
+
+    <div class="video-chapters">
+      <h2>Conteúdo do Tutorial</h2>
+      <ul class="chapters-list">
+        <li (click)="seekToTime(00)">
+          <span class="chapter-time">00:00</span>
+          <span class="chapter-title">Introdução e visão geral do sistema</span>
+        </li>
+        <li (click)="seekToTime(34)">
+          <span class="chapter-time">00:34</span>
+          <span class="chapter-title">Cadastro e manutenção de Dia da Festa</span>
+        </li>
+        <li (click)="seekToTime(69)">
+          <span class="chapter-time">01:09</span>
+          <span class="chapter-title">Cadastro e manutenção de Equipes</span>
+        </li>
+        <li (click)="seekToTime(90)">
+          <span class="chapter-time">01:30</span>
+          <span class="chapter-title">Cadastro e manutenção de Pessoas</span>
+        </li>
+        <li (click)="seekToTime(175)">
+          <span class="chapter-time">02:55</span>
+          <span class="chapter-title">Cadastro e manutenção de Confirmações</span>
+        </li>
+        <li (click)="seekToTime(323)">
+          <span class="chapter-time">05:23</span>
+          <span class="chapter-title">Visualização da escala</span>
+        </li>
+        <li (click)="seekToTime(405)">
+          <span class="chapter-time">06:45</span>
+          <span class="chapter-title">Dicas e encerramento</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</app-sidebar-layout>

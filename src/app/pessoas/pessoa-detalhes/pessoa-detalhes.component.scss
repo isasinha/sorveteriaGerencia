@@ -52,8 +52,7 @@
 
 .btn-nav {
   position: absolute;
-  top: 30%;
-  transform: translateY(-50%);
+  top: 135px;
   width: 48px;
   height: 48px;
   border: none;
@@ -70,7 +69,7 @@
   &:hover {
     background-color: rgba(102, 126, 234, 0.95);
     color: white;
-    transform: translateY(-50%) scale(1.15);
+    transform: scale(1.15);
   }
 
   svg {

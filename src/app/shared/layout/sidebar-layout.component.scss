@@ -74,13 +74,38 @@
   }
 }
 
+.tutorial-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: #ecf0f1;
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+  transition: background-color var(--transition);
+  margin-bottom: var(--spacing-sm);
+  margin-top: auto;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background-color: var(--color-sidebar-hover);
+  }
+
+  &.active {
+    background-color: var(--color-sidebar-active);
+    font-weight: 600;
+  }
+}
+
 .logout-button {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
-  margin-top: auto;
   margin-bottom: var(--spacing-3xl);
   background: transparent;
   border: none;
