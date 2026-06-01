@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PessoasService, Pessoa } from '../../core/services/pessoas.service';
 import { EquipesService, Equipe } from '../../core/services/equipes.service';
+import { UsuariosService } from '../../core/services/usuarios.service';
 import { deleteField } from 'firebase/firestore';
 
 @Component({
@@ -53,7 +54,7 @@ export class PessoaFormComponent implements OnInit {
     });
   });
 
-  constructor(private pessoasService: PessoasService, private equipesService: EquipesService) {
+  constructor(private pessoasService: PessoasService, private equipesService: EquipesService, private usuariosService: UsuariosService) {
     // Effect para carregar dados quando pessoa em edição mudar
     effect(() => {
       const pessoa = this.pessoaEmEdicao();
@@ -455,6 +456,13 @@ export class PessoaFormComponent implements OnInit {
 
         // Atualizar no Firestore
         await this.pessoasService.updatePessoa(pessoaEdit.id, pessoaAtualizada);
+
+        // Se o e-mail mudou, atualizar também no Auth e na coleção de logins
+        const emailAntigo = (pessoaEdit.email ?? '').trim();
+        const emailNovo = (pessoaAtualizada.email as string | undefined ?? '').trim();
+        if (emailAntigo && emailNovo && emailAntigo !== emailNovo) {
+          await this.usuariosService.atualizarEmailLogin(pessoaEdit.id, emailAntigo, emailNovo);
+        }
 
         // Emitir evento de sucesso
         this.pessoaAtualizada.emit({ ...pessoaEdit, ...pessoaAtualizada } as Pessoa);
