@@ -28,7 +28,7 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'dia-da-festa',
+    path: 'escala',
     loadComponent: () => import('./dia-da-festa/dia-da-festa.component').then(m => m.DiaDaFestaComponent),
     canActivate: [authGuard]
   },

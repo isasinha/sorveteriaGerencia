@@ -46,7 +46,7 @@ export class AuthService {
       );
       this.currentUser.set(userCredential.user);
       this.isAuthenticated.set(true);
-      this.router.navigate(['/dia-da-festa']);
+      this.router.navigate(['/escala']);
     } catch (error: any) {
       console.error('Erro ao fazer login:', error);
       throw this.handleAuthError(error);
