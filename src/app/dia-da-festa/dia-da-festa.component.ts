@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, signal, computed, OnInit, effect } 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarLayoutComponent } from '../shared/layout/sidebar-layout.component';
+import { TimeAutoMinutesDirective } from '../shared/time-auto-minutes.directive';
 import { DiaDaFestaService, DiaDaFesta } from '../core/services/dia-da-festa.service';
 import { EquipesService, Equipe } from '../core/services/equipes.service';
 import { ConfirmacoesService, Confirmacao } from '../core/services/confirmacoes.service';
@@ -11,7 +12,7 @@ import { PessoasService, Pessoa } from '../core/services/pessoas.service';
 @Component({
   selector: 'app-dia-da-festa',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarLayoutComponent],
+  imports: [CommonModule, FormsModule, SidebarLayoutComponent, TimeAutoMinutesDirective],
   templateUrl: './dia-da-festa.component.html',
   styleUrl: './dia-da-festa.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

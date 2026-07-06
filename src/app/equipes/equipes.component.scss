@@ -162,9 +162,10 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
 
-      &:nth-child(1) { width: 15%; }
-      &:nth-child(2) { width: 70%; }
-      &:nth-child(3) { width: 15%; }
+      &:nth-child(1) { width: 8%; }
+      &:nth-child(2) { width: 30%; }
+      &:nth-child(3) { width: 47%; }
+      &:nth-child(4) { width: 15%; }
     }
   }
 
@@ -191,6 +192,15 @@
         }
       }
     }
+  }
+
+  .itens-cell {
+    font-size: 0.85rem;
+    color: #555;
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .actions-cell {

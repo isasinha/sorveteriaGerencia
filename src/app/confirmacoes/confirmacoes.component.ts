@@ -3,6 +3,7 @@ import { Component, OnInit, signal, computed, ChangeDetectionStrategy } from '@a
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarLayoutComponent } from '../shared/layout/sidebar-layout.component';
+import { TimeAutoMinutesDirective } from '../shared/time-auto-minutes.directive';
 import { DiaDaFestaService, DiaDaFesta } from '../core/services/dia-da-festa.service';
 import { PessoasService, Pessoa } from '../core/services/pessoas.service';
 import { ConfirmacoesService, Confirmacao } from '../core/services/confirmacoes.service';
@@ -21,7 +22,7 @@ type ModoVisualizacao = 'por-dia' | 'por-pessoa' | 'por-equipe';
 @Component({
   selector: 'app-confirmacoes',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarLayoutComponent],
+  imports: [CommonModule, FormsModule, SidebarLayoutComponent, TimeAutoMinutesDirective],
   templateUrl: './confirmacoes.component.html',
   styleUrls: ['./confirmacoes.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

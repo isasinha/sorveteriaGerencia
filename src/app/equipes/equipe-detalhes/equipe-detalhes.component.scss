@@ -109,6 +109,7 @@
   padding: 32px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
 }
 
 .section {
@@ -308,6 +309,240 @@
     &:active {
       transform: translateY(0);
     }
+  }
+}
+
+// Seção de itens padrão
+.section-itens {
+  border-top: 2px solid #f0f0f0;
+  margin-top: 0;
+  padding-top: 8px;
+}
+
+.section-title-itens {
+  color: #2c3e50;
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3498db;
+  display: inline-block;
+}
+
+.novo-item-row,
+.dropdown-item-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.input-novo-item,
+.select-item {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  min-width: 0;
+
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+}
+
+.select-item {
+  cursor: pointer;
+  background: white;
+}
+
+.btn-add-item {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+}
+
+.itens-lista {
+  border: 1.5px solid #e1e8ed;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.lista-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  padding: 10px 14px 6px;
+  margin: 0;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.item-check,
+.item-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.12s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #f4f2ff;
+  }
+
+  .item-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #667eea;
+    flex-shrink: 0;
+  }
+
+  .item-nome {
+    font-size: 0.9rem;
+    color: #333;
+    flex: 1;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  &:hover .item-actions {
+    opacity: 1;
+  }
+
+  .input-edit-item {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1.5px solid #667eea;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+  }
+}
+
+.btn-item-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.btn-item-edit {
+    color: #3498db;
+    &:hover { background: #ebf5fb; }
+  }
+
+  &.btn-item-delete {
+    color: #e74c3c;
+    &:hover { background: #fdecea; }
+  }
+
+  &.btn-item-save {
+    color: #27ae60;
+    &:hover { background: #eafaf1; }
+  }
+
+  &.btn-item-cancel {
+    color: #7f8c8d;
+    &:hover { background: #f0f0f0; }
+  }
+}
+
+.itens-empty {
+  font-size: 0.875rem;
+  color: #aaa;
+  margin: 0 0 12px;
+  font-style: italic;
+}
+
+.itens-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.erro-itens {
+  font-size: 0.875rem;
+  color: #e74c3c;
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  background: #fdecea;
+  border-radius: 6px;
+  border-left: 3px solid #e74c3c;
+}
+
+.salvo-itens {
+  font-size: 0.875rem;
+  color: #27ae60;
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  background: #eafaf1;
+  border-radius: 6px;
+  border-left: 3px solid #27ae60;
+}
+
+.btn-salvar-itens {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
   }
 }
 

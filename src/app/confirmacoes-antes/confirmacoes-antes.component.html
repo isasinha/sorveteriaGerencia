@@ -1,0 +1,163 @@
+<app-sidebar-layout>
+  <div class="checkin-container">
+    <header class="page-header">
+      <h1>Confirmações (antes da festa) </h1>
+    </header>
+
+    @if (loading()) {
+      <div class="loading"><p>Carregando dados...</p></div>
+    } @else {
+      @if (anos().length === 0) {
+        <div class="empty-state"><p>Nenhum dia da festa cadastrado.</p></div>
+      } @else {
+
+        <!-- 1. Seletor de ano -->
+        <div class="year-selector">
+          @for (ano of anos(); track ano) {
+            <button class="year-tab" [class.active]="anoSelecionado() === ano" (click)="selecionarAno(ano)">
+              {{ ano }}
+            </button>
+          }
+        </div>
+
+        @if (diasDoAno().length === 0) {
+          <div class="empty-state"><p>Nenhum dia cadastrado para {{ anoSelecionado() }}.</p></div>
+        } @else {
+
+          <!-- 2. Busca compartilhada -->
+          <div class="search-section">
+            <div class="dropdown-wrapper">
+              <div class="dropdown-trigger" [class.open]="dropdownAberto()">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  class="search-input"
+                  type="text"
+                  placeholder="Buscar pessoa pelo nome..."
+                  [value]="busca()"
+                  (input)="setBusca($any($event.target).value)"
+                  (focus)="abrirDropdown()"
+                  (blur)="fecharDropdown()"
+                />
+                @if (busca()) {
+                  <button class="btn-clear" (mousedown)="$event.preventDefault()" (click)="limparSelecao()" title="Limpar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                }
+              </div>
+
+              @if (dropdownAberto()) {
+                <div class="dropdown-list" (mousedown)="$event.preventDefault()">
+                  @if (pessoasFiltradas().length === 0) {
+                    <div class="dropdown-empty">Nenhuma pessoa encontrada</div>
+                  }
+                  @for (pessoa of pessoasFiltradas(); track pessoa.id) {
+                    <div class="dropdown-item" (click)="selecionarPessoa(pessoa)">
+                      {{ pessoa.nome }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- 3. Colunas por dia -->
+          <div class="dias-grid">
+            @for (dia of diasDoAno(); track dia.id) {
+              <div class="dia-column">
+                <div class="dia-header">
+                  <h2 class="dia-semana">{{ dia.dia_semana }}</h2>
+                  <p class="dia-data">{{ formatarDia(dia.dia) }}</p>
+                  <p class="dia-horario">{{ dia.hora_inicio }} – {{ dia.hora_fim }}</p>
+                  <span class="stat-badge">{{ contarPresencas(dia.idDia!) }} pessoas</span>
+                </div>
+
+                <div class="col-body">
+                  @if (!pessoaSelecionada()) {
+                    <div class="col-placeholder">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <p>Selecione uma pessoa</p>
+                    </div>
+                  } @else {
+                    @for (entrada of getEntradas(dia.idDia!); track entrada.seq) {
+                      <div class="entrada-card" [class.saved]="entrada.presencaId">
+                        <div class="entrada-header">
+                          <span class="entrada-num">{{ entrada.seq }}ª entrada</span>
+                          @if (entrada.presencaId) {
+                            <span class="entrada-saved">✓ salvo</span>
+                          }
+                          <button
+                            type="button"
+                            class="btn-excluir-entrada"
+                            (click)="excluirEntrada(dia.idDia!, entrada.seq)"
+                            title="Excluir entrada"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                          </button>
+                        </div>
+
+                        <div class="form-fields">
+                          <div class="form-group">
+                            <label>Chegada</label>
+                            <input
+                              type="time"
+                              [value]="entrada.horaChegada"
+                              (change)="setHoraChegada(dia.idDia!, entrada.seq, $any($event.target).value)"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label>Saída</label>
+                            <input
+                              type="time"
+                              [value]="entrada.horaSaida"
+                              (change)="setHoraSaida(dia.idDia!, entrada.seq, $any($event.target).value)"
+                              [disabled]="!entrada.horaChegada"
+                              [min]="entrada.horaChegada"
+                            />
+                            @if (avisoCheckout() === dia.idDia + '-' + entrada.seq) {
+                              <span class="aviso-checkout">Saída não pode ser menor que a chegada</span>
+                            }
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label>Equipe</label>
+                          <select
+                            [ngModel]="entrada.idEquipe"
+                            (ngModelChange)="setEquipe(dia.idDia!, entrada.seq, $event)"
+                            [name]="'equipe-' + dia.idDia + '-' + entrada.seq"
+                          >
+                            <option value="">Sem equipe</option>
+                            @for (equipe of equipes(); track equipe.id) {
+                              <option [value]="equipe.id">{{ equipe.nome }}</option>
+                            }
+                          </select>
+                        </div>
+
+                        <button
+                          class="btn-salvar"
+                          (click)="salvarEntrada(dia.idDia!, entrada.seq)"
+                          [disabled]="isSalvando(dia.idDia!, entrada.seq) || !entrada.horaChegada || !entrada.idEquipe || avisoCheckout() === dia.idDia + '-' + entrada.seq"
+                        >
+                          {{ isSalvando(dia.idDia!, entrada.seq) ? 'Salvando...' : 'Salvar' }}
+                        </button>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+</app-sidebar-layout>

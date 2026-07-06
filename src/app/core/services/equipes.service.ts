@@ -8,6 +8,7 @@ export interface Equipe {
   id?: string;
   idEquipe?: string | number;
   nome: string;
+  itensPadrao?: string[]; // ids dos itens padrão
 }
 
 @Injectable({

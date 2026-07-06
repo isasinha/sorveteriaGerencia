@@ -6,6 +6,7 @@ import { SidebarLayoutComponent } from '../shared/layout/sidebar-layout.componen
 import { EquipesService, Equipe } from '../core/services/equipes.service';
 import { ConfirmacoesService } from '../core/services/confirmacoes.service';
 import { PessoasService } from '../core/services/pessoas.service';
+import { ItensService, Item } from '../core/services/itens.service';
 import { EquipeDetalhesComponent } from './equipe-detalhes/equipe-detalhes.component';
 import { EquipeFormComponent } from './equipe-form/equipe-form.component';
 
@@ -19,6 +20,7 @@ import { EquipeFormComponent } from './equipe-form/equipe-form.component';
 })
 export class EquipesComponent implements OnInit {
   equipes = signal<Equipe[]>([]);
+  todosItens = signal<Item[]>([]);
   searchTerm = signal<string>('');
   sortBy = signal<'nome' | 'id'>('nome');
   selectedEquipe = signal<Equipe | null>(null);
@@ -30,11 +32,14 @@ export class EquipesComponent implements OnInit {
   constructor(
     private equipesService: EquipesService,
     private confirmacoesService: ConfirmacoesService,
-    private pessoasService: PessoasService
+    private pessoasService: PessoasService,
+    private itensService: ItensService
   ) {}
 
   async ngOnInit() {
     await this.carregarEquipes();
+    const itens = await this.itensService.getItens();
+    this.todosItens.set(itens.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' })));
   }
 
   async carregarEquipes() {
@@ -44,6 +49,15 @@ export class EquipesComponent implements OnInit {
     } catch (error) {
       console.error('Erro ao carregar equipes:', error);
     }
+  }
+
+  itensNomesDeEquipe(equipe: Equipe): string {
+    if (!equipe.itensPadrao?.length) return '—';
+    return (equipe.itensPadrao
+      .map(id => this.todosItens().find(i => i.id === id)?.nome)
+      .filter((n): n is string => !!n)
+      .sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }))
+      .join(', ')) || '—';
   }
 
   // Função para normalizar strings (remover acentos)
@@ -149,6 +163,14 @@ export class EquipesComponent implements OnInit {
   async onEquipeAtualizada() {
     await this.carregarEquipes();
     this.showSuccessMessage('Equipe atualizada com sucesso!');
+  }
+
+  async onEquipeItensSalvos(equipeAtualizada: Equipe) {
+    // Recarrega a lista para manter a memória em sincronia com o Firestore
+    await this.carregarEquipes();
+    // Atualiza selectedEquipe com os dados novos para evitar que o effect resete os checkboxes
+    const fresh = this.equipes().find(e => e.id === equipeAtualizada.id);
+    if (fresh) this.selectedEquipe.set(fresh);
   }
 
   async onExcluirEquipe(equipe: Equipe) {

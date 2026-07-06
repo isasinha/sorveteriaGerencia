@@ -72,6 +72,18 @@
     background-color: var(--color-sidebar-active);
     font-weight: 600;
   }
+
+  // Variante teal para o menu Check-in
+  &.nav-link--teal {
+    &:hover {
+      background-color: rgba(17, 153, 142, 0.25);
+    }
+
+    &.active {
+      background-color: rgba(17, 153, 142, 0.45);
+      font-weight: 600;
+    }
+  }
 }
 
 .tutorial-link {

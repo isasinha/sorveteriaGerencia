@@ -1,39 +1,117 @@
-<div class="modal-overlay" (click)="onClose()">
+﻿<div class="modal-overlay" (click)="onClose()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="modal-close" (click)="onClose()">×</button>
-    
+
     <div class="modal-header">
-      <h2>{{ equipeEmEdicao() ? 'Editar Equipe' : 'Nova Equipe' }}</h2>
+      <h2>{{ equipeEmEdicao() ? "Editar Equipe" : "Nova Equipe" }}</h2>
     </div>
 
     <form (ngSubmit)="onSubmit()">
       <div class="modal-body">
         @if (erro()) {
-          <div class="error-message">
-            {{ erro() }}
-          </div>
+          <div class="error-message">{{ erro() }}</div>
         }
 
+        <!-- Nome da equipe -->
         <div class="form-group">
           <label for="nome">Nome da Equipe <span class="required">*</span></label>
-          <input 
-            type="text" 
-            id="nome" 
-            [ngModel]="nome()" 
+          <input
+            type="text"
+            id="nome"
+            [ngModel]="nome()"
             (ngModelChange)="nome.set($event)"
             name="nome"
             placeholder="Digite o nome da equipe"
             required
-          >
+          />
+        </div>
+
+        <!-- Seção de itens padrão -->
+        <div class="section-itens">
+          <h3 class="section-title">Itens padrão da equipe</h3>
+
+          <!-- Lista explícita com checkboxes -->
+          @if (todosItens().length > 0) {
+            <div class="itens-lista">
+              <p class="lista-label">Marque os itens padrão desta equipe:</p>
+              @for (item of todosItens(); track item.id) {
+                @if (editandoItemId() === item.id) {
+                  <div class="item-edit-row">
+                    <input
+                      type="checkbox"
+                      [checked]="isItemSelecionado(item.id!)"
+                      (change)="toggleItem(item.id!)"
+                      class="item-checkbox"
+                    />
+                    <input
+                      type="text"
+                      class="input-edit-item"
+                      [ngModel]="editandoItemNome()"
+                      (ngModelChange)="editandoItemNome.set($event)"
+                      (keydown.enter)="$event.preventDefault(); salvarEdicaoItem()"
+                      (keydown.escape)="cancelarEdicaoItem()"
+                      name="editItem"
+                    />
+                    <button type="button" class="btn-item-action btn-item-save" (click)="salvarEdicaoItem()" title="Salvar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                    <button type="button" class="btn-item-action btn-item-cancel" (click)="cancelarEdicaoItem()" title="Cancelar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                } @else {
+                  <div class="item-check">
+                    <input
+                      type="checkbox"
+                      [checked]="isItemSelecionado(item.id!)"
+                      (change)="toggleItem(item.id!)"
+                      class="item-checkbox"
+                    />
+                    <span class="item-nome">{{ item.nome }}</span>
+                    <div class="item-actions">
+                      <button type="button" class="btn-item-action btn-item-edit" (click)="editarItem(item)" title="Editar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      </button>
+                      <button type="button" class="btn-item-action btn-item-delete" (click)="excluirItem(item)" title="Excluir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          } @else {
+            <p class="itens-empty">Nenhum item cadastrado ainda. Crie o primeiro abaixo.</p>
+          }
+
+          <!-- Criar novo item -->
+          <div class="novo-item-row">
+            <input
+              type="text"
+              class="input-novo-item"
+              placeholder="Nome do novo item..."
+              [ngModel]="novoItemNome()"
+              (ngModelChange)="novoItemNome.set($event)"
+              name="novoItem"
+              (keydown.enter)="$event.preventDefault(); criarNovoItem()"
+            />
+            <button
+              type="button"
+              class="btn-add-item"
+              (click)="criarNovoItem()"
+              [disabled]="!novoItemNome().trim() || adicionandoItem()"
+            >
+              {{ adicionandoItem() ? "..." : "+ Criar item" }}
+            </button>
+          </div>
+
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-cancelar" (click)="onClose()">
-          Cancelar
-        </button>
+        <button type="button" class="btn-cancelar" (click)="onClose()">Cancelar</button>
         <button type="submit" class="btn-salvar" [disabled]="salvando()">
-          {{ salvando() ? 'Salvando...' : (equipeEmEdicao() ? 'Atualizar' : 'Salvar') }}
+          {{ salvando() ? "Salvando..." : (equipeEmEdicao() ? "Atualizar" : "Salvar") }}
         </button>
       </div>
     </form>
