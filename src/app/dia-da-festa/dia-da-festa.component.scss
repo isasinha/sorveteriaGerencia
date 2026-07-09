@@ -340,9 +340,10 @@
     gap: 12px;
   }
 
-  .btn-cancelar {
+  .btn-cancelar,
+  .btn-excluir,
+  .btn-salvar {
     padding: 10px 24px;
-    background-color: #95a5a6;
     color: white;
     border: none;
     border-radius: 6px;
@@ -350,6 +351,10 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
+  }
+
+  .btn-cancelar {
+    background-color: #95a5a6;
 
     &:hover {
       background-color: #7f8c8d;
@@ -360,15 +365,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 24px;
     background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
 
     svg {
       flex-shrink: 0;
@@ -388,15 +385,7 @@
   }
 
   .btn-salvar {
-    padding: 10px 24px;
     background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
       background-color: #229954;
