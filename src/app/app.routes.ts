@@ -1,6 +1,6 @@
 // Baseado em: https://angular.dev/guide/routing
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { authGuard, tiGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -60,7 +60,7 @@ export const routes: Routes = [
   {
     path: 'usuarios',
     loadComponent: () => import('./usuarios/usuarios.component').then(m => m.UsuariosComponent),
-    canActivate: [authGuard]
+    canActivate: [tiGuard]
   },
   {
     path: '',

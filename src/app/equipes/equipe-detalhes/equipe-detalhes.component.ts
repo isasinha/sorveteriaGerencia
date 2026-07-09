@@ -81,7 +81,7 @@ export class EquipeDetalhesComponent implements OnInit {
   async carregarPessoas() {
     try {
       const pessoas = await this.pessoasService.getPessoas();
-      this.pessoas.set(pessoas);
+      this.pessoas.set(pessoas.filter(p => p.ativo !== false));
     } catch (error) {
       console.error('Erro ao carregar pessoas:', error);
     }

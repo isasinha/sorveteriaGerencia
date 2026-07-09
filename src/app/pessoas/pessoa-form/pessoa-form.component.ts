@@ -34,6 +34,8 @@ export class PessoaFormComponent implements OnInit {
   comentarios = signal<string>('');
   imagem = signal<string>('');
   imagemPreview = signal<string | null>(null);
+  recepcao = signal<boolean>(false);
+  ativo = signal<boolean>(true);
   equipes = signal<Equipe[]>([]);
 
   salvando = signal<boolean>(false);
@@ -78,6 +80,8 @@ export class PessoaFormComponent implements OnInit {
         
         this.comentarios.set(pessoa.comentarios || '');
         this.imagem.set(pessoa.imagem || '');
+        this.recepcao.set(pessoa.recepcao ?? false);
+        this.ativo.set(pessoa.ativo !== false);
         if (pessoa.imagem && pessoa.imagem !== '/sem_imagem.png') {
           this.imagemPreview.set(pessoa.imagem);
         }
@@ -450,6 +454,8 @@ export class PessoaFormComponent implements OnInit {
         }
         
         pessoaAtualizada.comentarios = this.comentarios().trim() || (deleteField() as any);
+        pessoaAtualizada.recepcao = this.recepcao();
+        pessoaAtualizada.ativo = this.ativo();
         
         // Imagem: usar padrão se não houver valor
         pessoaAtualizada.imagem = this.imagem().trim() || '/sem_imagem.png';
@@ -507,6 +513,8 @@ export class PessoaFormComponent implements OnInit {
       if (this.comentarios().trim()) {
         novaPessoa.comentarios = this.comentarios().trim();
       }
+      novaPessoa.recepcao = this.recepcao();
+      novaPessoa.ativo = this.ativo();
       
       // Imagem: usar padrão se não houver valor
       novaPessoa.imagem = this.imagem().trim() || '/sem_imagem.png';

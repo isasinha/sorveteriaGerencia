@@ -162,6 +162,36 @@
     font-style: italic;
   }
 
+  .hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: #7f8c8d;
+  }
+
+  .checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 0;
+
+    input[type="checkbox"] {
+      width: auto;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      accent-color: #3498db;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+  }
+
   textarea {
     resize: vertical;
     font-family: inherit;

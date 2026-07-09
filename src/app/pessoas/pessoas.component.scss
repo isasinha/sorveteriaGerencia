@@ -1,6 +1,20 @@
 @use '../../variables' as *;
 @use '../../mixins' as *;
 
+.badge-inativo {
+  display: inline-block;
+  background-color: #adb5bd;
+  color: white;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  margin-left: 6px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
 .pessoas-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -248,6 +262,11 @@ h1 {
         transition: background-color 0.2s ease;
         cursor: pointer;
 
+        &:has(.badge-inativo) {
+          opacity: 0.7;
+          background-color: #f9f9f9;
+        }
+
         &:hover {
           background-color: #f8f9fa;
         }
@@ -362,6 +381,12 @@ h1 {
   position: relative;
   cursor: pointer;
 
+  &.inativo {
+    opacity: 0.65;
+    border-left-color: #adb5bd;
+    background-color: #f1f1f1;
+  }
+
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -376,6 +401,20 @@ h1 {
     font-size: 0.65rem;
     font-weight: 600;
     margin-bottom: 8px;
+  }
+
+  .badge-inativo {
+    display: inline-block;
+    background-color: #adb5bd;
+    color: white;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    margin-left: 4px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
   }
 
   .pessoa-imagem {

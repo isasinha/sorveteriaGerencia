@@ -26,7 +26,7 @@
 
           <!-- 2. Busca compartilhada -->
           <div class="search-section">
-            <div class="dropdown-wrapper">
+              <div class="dropdown-wrapper">
               <div class="dropdown-trigger" [class.open]="dropdownAberto()">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
@@ -137,7 +137,7 @@
                           >
                             <option value="">Sem equipe</option>
                             @for (equipe of equipes(); track equipe.id) {
-                              <option [value]="equipe.id">{{ equipe.nome }}</option>
+                              <option [value]="equipe.idEquipe">{{ equipe.nome }}</option>
                             }
                           </select>
                         </div>

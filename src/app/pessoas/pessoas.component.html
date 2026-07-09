@@ -80,6 +80,15 @@
           </div>
         </div>
 
+        <div class="sort-container">
+          <label>Status:</label>
+          <div class="sort-buttons">
+            <button class="sort-button" [class.active]="filtroAtivo() === 'ativos'" (click)="filtroAtivo.set('ativos')">Ativos</button>
+            <button class="sort-button" [class.active]="filtroAtivo() === 'inativos'" (click)="filtroAtivo.set('inativos')">Inativos</button>
+            <button class="sort-button" [class.active]="filtroAtivo() === 'todos'" (click)="filtroAtivo.set('todos')">Todos</button>
+          </div>
+        </div>
+
         <div class="view-container">
           <label>Visualização:</label>
           <div class="view-buttons">
@@ -122,9 +131,12 @@
           @if (viewMode() === 'cards') {
             <div class="pessoas-list">
               @for (pessoa of pessoasFiltradas(); track pessoa.id) {
-                <div class="pessoa-card" (click)="openPessoaDetails(pessoa)">
+                <div class="pessoa-card" [class.inativo]="pessoa.ativo === false" (click)="openPessoaDetails(pessoa)">
                   @if (pessoa.idPessoa) {
                     <span class="pessoa-id"># {{ pessoa.idPessoa }}</span>
+                  }
+                  @if (pessoa.ativo === false) {
+                    <span class="badge-inativo">Inativo</span>
                   }
                   @if (pessoa.imagem) {
                     <img [src]="pessoa.imagem" [alt]="pessoa.nome" class="pessoa-imagem">
@@ -171,7 +183,12 @@
                         }
                       </td>
                       <td (click)="openPessoaDetails(pessoa)">{{ pessoa.idPessoa || '-' }}</td>
-                      <td (click)="openPessoaDetails(pessoa)">{{ pessoa.nome }}</td>
+                      <td (click)="openPessoaDetails(pessoa)">
+                        {{ pessoa.nome }}
+                        @if (pessoa.ativo === false) {
+                          <span class="badge-inativo">Inativo</span>
+                        }
+                      </td>
                       <td class="actions-cell">
                         <button class="btn-edit" (click)="openEditForm(pessoa); $event.stopPropagation()" title="Editar">
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -21,6 +21,7 @@ export class PessoasComponent implements OnInit {
   pessoas = signal<Pessoa[]>([]);
   searchTerm = signal<string>('');
   sortBy = signal<'nome' | 'id'>('nome');
+  filtroAtivo = signal<'ativos' | 'inativos' | 'todos'>('ativos');
   viewMode = signal<'cards' | 'list'>('cards');
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
@@ -46,8 +47,13 @@ export class PessoasComponent implements OnInit {
   pessoasFiltradas = computed(() => {
     const term = this.normalizeString(this.searchTerm().trim());
     let result = this.pessoas();
+
+    // Filtro ativo/inativo
+    const filtro = this.filtroAtivo();
+    if (filtro === 'ativos') result = result.filter(p => p.ativo !== false);
+    else if (filtro === 'inativos') result = result.filter(p => p.ativo === false);
     
-    // Filtrar
+    // Filtrar por busca
     if (term) {
       result = result.filter(pessoa => 
         this.normalizeString(pessoa.nome || '').includes(term) ||

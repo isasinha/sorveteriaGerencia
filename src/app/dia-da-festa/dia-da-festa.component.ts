@@ -6,7 +6,7 @@ import { SidebarLayoutComponent } from '../shared/layout/sidebar-layout.componen
 import { TimeAutoMinutesDirective } from '../shared/time-auto-minutes.directive';
 import { DiaDaFestaService, DiaDaFesta } from '../core/services/dia-da-festa.service';
 import { EquipesService, Equipe } from '../core/services/equipes.service';
-import { ConfirmacoesService, Confirmacao } from '../core/services/confirmacoes.service';
+import { PresencaService, Presenca } from '../core/services/presenca.service';
 import { PessoasService, Pessoa } from '../core/services/pessoas.service';
 
 @Component({
@@ -37,7 +37,8 @@ export class DiaDaFestaComponent implements OnInit {
   equipeSelecionada = signal<string>('');
   
   // Escala visual
-  confirmacoes = signal<Confirmacao[]>([]);
+  presencas = signal<Presenca[]>([]);
+  presencasReais = signal<Presenca[]>([]);
   pessoas = signal<Pessoa[]>([]);
   carregandoEscala = signal<boolean>(false);
 
@@ -65,7 +66,7 @@ export class DiaDaFestaComponent implements OnInit {
   constructor(
     private diaDaFestaService: DiaDaFestaService,
     private equipesService: EquipesService,
-    private confirmacoesService: ConfirmacoesService,
+    private presencaService: PresencaService,
     private pessoasService: PessoasService
   ) {
     // Effect para carregar escala quando dia ou equipe mudarem
@@ -75,7 +76,8 @@ export class DiaDaFestaComponent implements OnInit {
       if (dia && equipe) {
         this.carregarEscala();
       } else {
-        this.confirmacoes.set([]);
+        this.presencas.set([]);
+        this.presencasReais.set([]);
         this.pessoas.set([]);
       }
     });
@@ -207,12 +209,11 @@ export class DiaDaFestaComponent implements OnInit {
       this.salvando.set(true);
       this.erro.set(null);
 
-      // Excluir todas as confirmações relacionadas ao dia
-      const confirmacoes = await this.confirmacoesService.getConfirmacoes();
-      const confirmacoesParaExcluir = confirmacoes.filter(c => c.idDia === diaEdit.idDia);
-      for (const conf of confirmacoesParaExcluir) {
-        if (conf.id) {
-          await this.confirmacoesService.deleteConfirmacao(conf.id);
+      // Excluir todas as confirmações antes relacionadas ao dia
+      const confirmacoesParaExcluir = await this.presencaService.getConfirmacoesAntesByDia(diaEdit.idDia!);
+      for (const p of confirmacoesParaExcluir) {
+        if (p.id) {
+          await this.presencaService.deleteConfirmacaoAntes(p.id);
         }
       }
 
@@ -347,12 +348,11 @@ export class DiaDaFestaComponent implements OnInit {
     const confirmacao = confirm(mensagem);
     if (confirmacao && dia.id) {
       try {
-        // Excluir todas as confirmações relacionadas ao dia
-        const confirmacoes = await this.confirmacoesService.getConfirmacoes();
-        const confirmacoesParaExcluir = confirmacoes.filter(c => c.idDia === dia.idDia);
-        for (const conf of confirmacoesParaExcluir) {
-          if (conf.id) {
-            await this.confirmacoesService.deleteConfirmacao(conf.id);
+        // Excluir todas as confirmações antes relacionadas ao dia
+        const confirmacoesParaExcluir = await this.presencaService.getConfirmacoesAntesByDia(dia.idDia!);
+        for (const p of confirmacoesParaExcluir) {
+          if (p.id) {
+            await this.presencaService.deleteConfirmacaoAntes(p.id);
           }
         }
 
@@ -421,33 +421,33 @@ export class DiaDaFestaComponent implements OnInit {
 
       console.log('Carregando escala para:', { idDia, equipeSelecionada });
 
-      // Buscar todas as confirmações do dia
-      const todasConfirmacoes = await this.confirmacoesService.getConfirmacoesByDia(idDia);
-      console.log('Todas confirmações do dia:', todasConfirmacoes);
+      // Buscar confirmações antes do dia
+      const confirmacoes = await this.presencaService.getConfirmacoesAntesByDia(idDia);
+      console.log('Confirmações antes do dia:', confirmacoes);
       
       // Filtrar confirmações pela equipe selecionada (se não for 'todas')
-      const confirmacoesEquipe = equipeSelecionada === 'todas' 
-        ? todasConfirmacoes
-        : todasConfirmacoes.filter(c => {
+      const presencasEquipe = equipeSelecionada === 'todas' 
+        ? confirmacoes
+        : confirmacoes.filter(c => {
             const idConfEquipe = Number(c.idEquipe);
             const idEquipe = Number(equipeSelecionada);
             return idConfEquipe === idEquipe;
           });
-      console.log('Confirmações da equipe:', confirmacoesEquipe);
+      console.log('Confirmações da equipe:', presencasEquipe);
       
-      // Buscar IDs únicos das pessoas que confirmaram
-      const idsComConfirmacao = new Set(confirmacoesEquipe.map(c => String(c.idPessoa)));
-      console.log('IDs com confirmação:', Array.from(idsComConfirmacao));
+      // Buscar IDs únicos das pessoas que têm presença
+      const idsComConfirmacao = new Set(presencasEquipe.map(c => String(c.idPessoa)));
+      console.log('IDs com presença:', Array.from(idsComConfirmacao));
       
-      // Buscar todas as pessoas
-      const todasPessoas = await this.pessoasService.getPessoas();
+      // Buscar todas as pessoas ativas
+      const todasPessoas = (await this.pessoasService.getPessoas()).filter(p => p.ativo !== false);
       
       let pessoasParaExibir: Pessoa[];
       
       if (equipeSelecionada === 'todas') {
         // Se for "todas", mostrar todas as pessoas (com e sem confirmação)
-        const pessoasQueConfirmaram = todasPessoas.filter(p => idsComConfirmacao.has(String(p.idPessoa)));
-        const pessoasQueNaoConfirmaram = todasPessoas.filter(p => !idsComConfirmacao.has(String(p.idPessoa)));
+        const pessoasQueConfirmaram = todasPessoas.filter(p => idsComConfirmacao.has(String(p.id)));
+        const pessoasQueNaoConfirmaram = todasPessoas.filter(p => !idsComConfirmacao.has(String(p.id)));
         
         // Ordenar cada grupo
         pessoasQueConfirmaram.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
@@ -467,7 +467,7 @@ export class DiaDaFestaComponent implements OnInit {
         console.log('Tipo do ID selecionado:', typeof equipeSelecionada, equipeSelecionada);
         
         // Pessoas que confirmaram para esta equipe
-        const pessoasQueConfirmaram = todasPessoas.filter(p => idsComConfirmacao.has(String(p.idPessoa)));
+        const pessoasQueConfirmaram = todasPessoas.filter(p => idsComConfirmacao.has(String(p.id)));
         console.log('Pessoas que confirmaram:', pessoasQueConfirmaram.map(p => `${p.nome} (equipe: ${p.idEquipe})`));
         
         // Pessoas cadastradas na equipe - debug completo
@@ -503,8 +503,8 @@ export class DiaDaFestaComponent implements OnInit {
         console.log('Pessoas cadastradas na equipe:', pessoasDaEquipe.map(p => `${p.nome}`));
         
         // Combinar os dois grupos (sem duplicar)
-        const idsPessoasJaIncluidas = new Set(pessoasQueConfirmaram.map(p => String(p.idPessoa)));
-        const pessoasDaEquipeSemConfirmacao = pessoasDaEquipe.filter(p => !idsPessoasJaIncluidas.has(String(p.idPessoa)));
+        const idsPessoasJaIncluidas = new Set(pessoasQueConfirmaram.map(p => String(p.id)));
+        const pessoasDaEquipeSemConfirmacao = pessoasDaEquipe.filter(p => !idsPessoasJaIncluidas.has(String(p.id)));
         
         // Função auxiliar para verificar se pessoa pertence à equipe
         const pertenceAEquipe = (pessoa: Pessoa): boolean => {
@@ -545,8 +545,12 @@ export class DiaDaFestaComponent implements OnInit {
       
       console.log('Total de pessoas para exibir:', pessoasParaExibir.length);
       
-      this.confirmacoes.set(confirmacoesEquipe);
+      this.presencas.set(presencasEquipe);
       this.pessoas.set(pessoasParaExibir);
+
+      // Buscar presenças reais do dia (todas, sem filtro de equipe)
+      const todasPresencasReais = await this.presencaService.getPresencasByDia(idDia);
+      this.presencasReais.set(todasPresencasReais);
     } catch (error) {
       console.error('Erro ao carregar escala:', error);
     } finally {
@@ -562,20 +566,25 @@ export class DiaDaFestaComponent implements OnInit {
     let inicioMinutos = this.converterHoraParaMinutos(diaInfo.hora_inicio);
     let fimMinutos = this.converterHoraParaMinutos(diaInfo.hora_fim);
 
-    // Verificar confirmações para pegar horários reais (pode ter pessoas chegando antes/saindo depois)
-    const confirmacoes = this.confirmacoes();
-    if (confirmacoes.length > 0) {
-      confirmacoes.forEach(conf => {
-        const confInicio = this.converterHoraParaMinutos(conf.horaInicio);
-        const confFim = this.converterHoraParaMinutos(conf.horaFim);
-        
-        // Pegar o menor início e o maior fim
-        if (confInicio < inicioMinutos) {
-          inicioMinutos = confInicio;
-        }
-        if (confFim > fimMinutos) {
-          fimMinutos = confFim;
-        }
+    // Verificar presenças para pegar horários reais (pode ter pessoas chegando antes/saindo depois)
+    const presencas = this.presencas();
+    if (presencas.length > 0) {
+      presencas.forEach(conf => {
+        const confInicio = this.converterHoraParaMinutos(conf.horaChegada);
+        const confFim = this.converterHoraParaMinutos(conf.horaSaida);
+        if (confInicio < inicioMinutos) inicioMinutos = confInicio;
+        if (confFim > fimMinutos) fimMinutos = confFim;
+      });
+    }
+
+    // Também considerar presenças reais
+    const presencasReais = this.presencasReais();
+    if (presencasReais.length > 0) {
+      presencasReais.forEach(conf => {
+        const confInicio = this.converterHoraParaMinutos(conf.horaChegada);
+        const confFim = this.converterHoraParaMinutos(conf.horaSaida);
+        if (confInicio < inicioMinutos) inicioMinutos = confInicio;
+        if (confFim > fimMinutos) fimMinutos = confFim;
       });
     }
 
@@ -603,24 +612,45 @@ export class DiaDaFestaComponent implements OnInit {
   }
 
   isPeriodoConfirmado(pessoa: Pessoa, horarioInicio: string): boolean {
-    const confirmacoesPessoa = this.confirmacoes().filter(
-      c => String(c.idPessoa) === String(pessoa.idPessoa)
+    const presencasPessoa = this.presencas().filter(
+      c => String(c.idPessoa) === String(pessoa.id)
     );
 
     const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
     const fimMinutos = inicioMinutos + 30;
 
-    return confirmacoesPessoa.some(conf => {
-      const confInicio = this.converterHoraParaMinutos(conf.horaInicio);
-      const confFim = this.converterHoraParaMinutos(conf.horaFim);
+    return presencasPessoa.some(conf => {
+      const confInicio = this.converterHoraParaMinutos(conf.horaChegada);
+      const confFim = this.converterHoraParaMinutos(conf.horaSaida);
       
-      // Verifica se o período de 30 min está dentro da confirmação
+      // Verifica se o período de 30 min está dentro da presença
       return inicioMinutos >= confInicio && fimMinutos <= confFim;
     });
   }
 
   temConfirmacao(pessoa: Pessoa): boolean {
-    return this.confirmacoes().some(c => String(c.idPessoa) === String(pessoa.idPessoa));
+    return this.presencas().some(c => String(c.idPessoa) === String(pessoa.id));
+  }
+
+  temPresenca(pessoa: Pessoa): boolean {
+    return this.presencasReais().some(c => String(c.idPessoa) === String(pessoa.id));
+  }
+
+  temDados(pessoa: Pessoa): boolean {
+    return this.temPresenca(pessoa) || this.temConfirmacao(pessoa);
+  }
+
+  isPeriodoPresente(pessoa: Pessoa, horarioInicio: string): boolean {
+    const presencasPessoa = this.presencasReais().filter(
+      c => String(c.idPessoa) === String(pessoa.id)
+    );
+    const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
+    const fimMinutos = inicioMinutos + 30;
+    return presencasPessoa.some(conf => {
+      const confInicio = this.converterHoraParaMinutos(conf.horaChegada);
+      const confFim = this.converterHoraParaMinutos(conf.horaSaida);
+      return inicioMinutos >= confInicio && fimMinutos <= confFim;
+    });
   }
 
   pertenceAEquipeAtual(pessoa: Pessoa): boolean {
@@ -637,6 +667,79 @@ export class DiaDaFestaComponent implements OnInit {
     }
     
     return Number(pessoa.idEquipe) === idEquipe;
+  }
+
+  equipeConfirmacaoEhPropria(pessoa: Pessoa, horarioInicio: string): boolean {
+    const idEquipePessoa = String(pessoa.idEquipe ?? '');
+    const presencasPessoa = this.presencas().filter(
+      c => String(c.idPessoa) === String(pessoa.id)
+    );
+    const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
+    const fimMinutos = inicioMinutos + 30;
+    const noPeriodo = presencasPessoa.filter(c => {
+      const ini = this.converterHoraParaMinutos(c.horaChegada);
+      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      return inicioMinutos >= ini && fimMinutos <= fim;
+    });
+    if (noPeriodo.length === 0) return false;
+    return noPeriodo.some(c => this.pessoaEstaNaEquipe(idEquipePessoa, String(c.idEquipe)));
+  }
+
+  equipePresencaEhPropria(pessoa: Pessoa, horarioInicio: string): boolean {
+    const idEquipePessoa = String(pessoa.idEquipe ?? '');
+    const presencasPessoa = this.presencasReais().filter(
+      c => String(c.idPessoa) === String(pessoa.id)
+    );
+    const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
+    const fimMinutos = inicioMinutos + 30;
+    const noPeriodo = presencasPessoa.filter(c => {
+      const ini = this.converterHoraParaMinutos(c.horaChegada);
+      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      return inicioMinutos >= ini && fimMinutos <= fim;
+    });
+    if (noPeriodo.length === 0) return false;
+    return noPeriodo.some(c => this.pessoaEstaNaEquipe(idEquipePessoa, String(c.idEquipe)));
+  }
+
+  private pessoaEstaNaEquipe(idEquipePessoa: string, idEquipeRegistro: string): boolean {
+    if (!idEquipePessoa || !idEquipeRegistro) return false;
+    if (idEquipePessoa.includes(',') || idEquipePessoa.includes(' ')) {
+      const equipes = idEquipePessoa.split(/[,\s]+/).map(e => e.trim()).filter(e => e);
+      return equipes.some(e => String(e) === String(idEquipeRegistro) || Number(e) === Number(idEquipeRegistro));
+    }
+    return String(idEquipePessoa) === String(idEquipeRegistro) || Number(idEquipePessoa) === Number(idEquipeRegistro);
+  }
+
+  getEquipeNomeConfirmacao(pessoa: Pessoa, horarioInicio: string): string {
+    const presencasPessoa = this.presencas().filter(
+      c => String(c.idPessoa) === String(pessoa.id)
+    );
+    const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
+    const fimMinutos = inicioMinutos + 30;
+    const noPeriodo = presencasPessoa.find(c => {
+      const ini = this.converterHoraParaMinutos(c.horaChegada);
+      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      return inicioMinutos >= ini && fimMinutos <= fim;
+    });
+    if (!noPeriodo) return '';
+    const equipe = this.equipes().find(e => String(e.idEquipe) === String(noPeriodo.idEquipe));
+    return equipe ? equipe.nome : `Equipe ${noPeriodo.idEquipe}`;
+  }
+
+  getEquipeNomePresenca(pessoa: Pessoa, horarioInicio: string): string {
+    const presencasPessoa = this.presencasReais().filter(
+      c => String(c.idPessoa) === String(pessoa.id)
+    );
+    const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
+    const fimMinutos = inicioMinutos + 30;
+    const noPeriodo = presencasPessoa.find(c => {
+      const ini = this.converterHoraParaMinutos(c.horaChegada);
+      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      return inicioMinutos >= ini && fimMinutos <= fim;
+    });
+    if (!noPeriodo) return '';
+    const equipe = this.equipes().find(e => String(e.idEquipe) === String(noPeriodo.idEquipe));
+    return equipe ? equipe.nome : `Equipe ${noPeriodo.idEquipe}`;
   }
 
   getNomesEquipes(pessoa: Pessoa): string {
@@ -668,5 +771,17 @@ export class DiaDaFestaComponent implements OnInit {
     const fimFesta = this.converterHoraParaMinutos(diaInfo.hora_fim);
 
     return horarioMinutos < inicioFesta || horarioMinutos >= fimFesta;
+  }
+
+  isHorarioInicioFesta(horario: string): boolean {
+    const diaInfo = this.getDiaSelecionadoInfo();
+    if (!diaInfo) return false;
+    return this.converterHoraParaMinutos(horario) === this.converterHoraParaMinutos(diaInfo.hora_inicio);
+  }
+
+  isHorarioFimFesta(horario: string): boolean {
+    const diaInfo = this.getDiaSelecionadoInfo();
+    if (!diaInfo) return false;
+    return this.converterHoraParaMinutos(horario) === this.converterHoraParaMinutos(diaInfo.hora_fim);
   }
 }

@@ -1,5 +1,5 @@
 // Baseado em: https://angular.dev/guide/components
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -23,7 +23,16 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+    // Reage reativamente ao erro de permissão (funciona mesmo sem recriar o componente)
+    effect(() => {
+      const erro = this.authService.erroPermissao();
+      if (erro) {
+        this.error.set(erro);
+        this.authService.erroPermissao.set(null);
+      }
+    });
+  }
 
   togglePasswordVisibility(): void {
     this.showPassword.set(!this.showPassword());

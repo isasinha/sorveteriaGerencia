@@ -176,6 +176,32 @@
         </div>
 
         <div class="form-group">
+          <label class="checkbox-inline">
+            <input
+              type="checkbox"
+              [ngModel]="ativo()"
+              (ngModelChange)="ativo.set($event)"
+              name="ativo"
+            >
+            Cadastro ativo
+          </label>
+          <small class="hint">Pessoas inativas não aparecem nas listas de seleção</small>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-inline">
+            <input
+              type="checkbox"
+              [ngModel]="recepcao()"
+              (ngModelChange)="recepcao.set($event)"
+              name="recepcao"
+            >
+            Perfil de Recepção
+          </label>
+          <small class="hint">Permite que esta pessoa faça login na aplicação</small>
+        </div>
+
+        <div class="form-group">
           <label for="imagem">Foto</label>
           <div class="image-upload-container">
             @if (imagemPreview()) {

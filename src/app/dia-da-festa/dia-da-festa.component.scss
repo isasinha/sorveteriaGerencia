@@ -492,8 +492,16 @@
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
+    &.verde-claro {
+      background: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
+    }
+
     &.azul {
       background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    &.azul-claro {
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
     }
 
     &.cinza {
@@ -557,16 +565,79 @@
     background: #f8f9fa;
   }
 
-  &.sem-confirmacao {
-    opacity: 0.6;
-    
+  &.nome-row {
     .pessoa-cell {
-      background: #f9f9f9;
-      font-style: italic;
+      padding: 8px 12px 2px;
+      vertical-align: bottom;
+      border-top: 2px solid #b8b8b8;
     }
-    
+
     .periodo-cell {
-      background: #f9f9f9;
+      background: white;
+      height: 6px;
+      border-top: 2px solid #b8b8b8;
+      // box-shadow cobre os 1px de border-spacing entre células
+      box-shadow: 2px 0 0 0 white;
+    }
+  }
+
+  &.presenca-row {
+    .label-cell {
+      background: white;
+      padding: 2px 8px;
+      vertical-align: middle;
+
+      .row-label {
+        display: block;
+        font-size: 0.65rem;
+        color: var(--color-text-muted);
+        font-style: italic;
+        text-align: right;
+      }
+    }
+
+    .periodo-cell {
+      height: 28px;
+    }
+  }
+
+  &.confirmacao-row {
+    .label-cell {
+      background: white;
+      padding: 2px 8px 8px;
+      vertical-align: middle;
+      border-bottom: 2px solid #b8b8b8;
+
+      .row-label {
+        display: block;
+        font-size: 0.65rem;
+        color: var(--color-text-muted);
+        font-style: italic;
+        text-align: right;
+      }
+    }
+
+    .periodo-cell {
+      height: 14px;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 2px solid #b8b8b8;
+    }
+  }
+
+  // Sem confirmação nem presença: todas as 3 linhas ficam cinza
+  &.sem-dados {
+    .pessoa-cell,
+    .label-cell {
+      background: #f0f0f0;
+    }
+
+    .periodo-cell {
+      background: #f0f0f0;
+    }
+
+    &.nome-row .periodo-cell {
+      background: #f0f0f0;
+      box-shadow: 2px 0 0 0 #f0f0f0;
     }
   }
 
@@ -604,32 +675,36 @@
     height: 30px;
     transition: all 0.2s ease;
 
-    &.fora-festa {
-      background: #f3f4f6;
-    }
-
     &.confirmado {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-
-      &.fora-festa {
-        background: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
-        opacity: 0.7;
-      }
     }
 
     &.confirmado-outra-equipe {
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    &.presente {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    &.presente-outra-equipe {
       background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-
-      &.fora-festa {
-        background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
-        opacity: 0.7;
-      }
     }
 
     &:hover {
       opacity: 0.85;
+    }
+
+    &.inicio-festa {
+      border-left: 2px solid #b8b8b8;
+    }
+
+    &.fim-festa {
+      border-left: 2px solid #b8b8b8;
     }
   }
 }

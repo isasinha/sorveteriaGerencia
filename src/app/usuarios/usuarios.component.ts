@@ -59,7 +59,7 @@ export class UsuariosComponent implements OnInit {
       logins.forEach(l => loginMap.set(l.email.toLowerCase(), l));
 
       const pessoasComEmail = pessoas
-        .filter(p => !!p.email?.trim())
+        .filter(p => !!p.email?.trim() && p.ativo !== false)
         .map(p => {
           const login = loginMap.get(p.email!.toLowerCase());
           return {

@@ -58,7 +58,9 @@ export class ConfirmacoesAntesComponent implements OnInit {
 
   pessoasFiltradas = computed(() => {
     const termo = this.busca().trim().toLowerCase();
-    const lista = [...this.todasPessoas()].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+    let lista = [...this.todasPessoas()].filter(p => p.ativo !== false);
+
+    lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
     if (!termo) return lista;
     return lista.filter(p => p.nome.toLowerCase().includes(termo));
   });
@@ -96,7 +98,7 @@ export class ConfirmacoesAntesComponent implements OnInit {
 
   private async carregarAno(ano: number): Promise<void> {
     this.anoSelecionado.set(ano);
-    const presencas = await this.presencaService.getPresencasByAno(ano);
+    const presencas = await this.presencaService.getConfirmacoesAntesByAno(ano);
     this.presencas.set(presencas);
     const pessoa = this.pessoaSelecionada();
     if (pessoa) this.preencherEntradasDaPessoa(pessoa);
@@ -211,8 +213,8 @@ export class ConfirmacoesAntesComponent implements OnInit {
     if (!entrada) return;
     if (!confirm(`Excluir a ${seq}ª entrada?`)) return;
     if (entrada.presencaId) {
-      await this.presencaService.deletePresenca(entrada.presencaId);
-      const presencas = await this.presencaService.getPresencasByAno(this.anoSelecionado());
+      await this.presencaService.deleteConfirmacaoAntes(entrada.presencaId);
+      const presencas = await this.presencaService.getConfirmacoesAntesByAno(this.anoSelecionado());
       this.presencas.set(presencas);
     }
     this.entradasPorDia.update(e => {
@@ -233,7 +235,7 @@ export class ConfirmacoesAntesComponent implements OnInit {
 
     this.salvando.set(`${idDia}-${seq}`);
     try {
-      const savedId = await this.presencaService.savePresenca({
+      const savedId = await this.presencaService.saveConfirmacaoAntes({
         id: entrada.presencaId,
         idPessoa,
         idDia,
@@ -243,7 +245,7 @@ export class ConfirmacoesAntesComponent implements OnInit {
         horaSaida: entrada.horaSaida,
         idEquipe: entrada.idEquipe
       });
-      const presencas = await this.presencaService.getPresencasByAno(this.anoSelecionado());
+      const presencas = await this.presencaService.getConfirmacoesAntesByAno(this.anoSelecionado());
       this.presencas.set(presencas);
       this.entradasPorDia.update(e => {
         let lista = (e[idDia] ?? []).map(x => x.seq === seq ? { ...x, presencaId: savedId } : x);

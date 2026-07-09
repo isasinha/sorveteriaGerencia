@@ -63,7 +63,9 @@ export class PresencaComponent implements OnInit {
 
   pessoasFiltradas = computed(() => {
     const termo = this.busca().trim().toLowerCase();
-    const lista = [...this.todasPessoas()].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+    let lista = [...this.todasPessoas()].filter(p => p.ativo !== false);
+
+    lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
     if (!termo) return lista;
     return lista.filter(p => p.nome.toLowerCase().includes(termo));
   });

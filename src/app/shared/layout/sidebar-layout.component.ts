@@ -12,7 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidebarLayoutComponent {
-  private authService = inject(AuthService);
+  authService = inject(AuthService);
 
   onLogout(): void {
     this.authService.logout();

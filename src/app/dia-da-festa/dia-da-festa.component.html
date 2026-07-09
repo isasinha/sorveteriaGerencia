@@ -95,18 +95,25 @@
           <div class="escala-legenda">
             <div class="legenda-item">
               <span class="legenda-cor verde"></span>
-              <span>Confirmado (equipe atual)</span>
+              <span>Presente (equipe atual)</span>
             </div>
-            @if (equipeSelecionada() !== 'todas') {
-              <div class="legenda-item">
-                <span class="legenda-cor azul"></span>
-                <span>Confirmado (mudou de equipe)</span>
-              </div>
-            }
             <div class="legenda-item">
+              <span class="legenda-cor azul"></span>
+              <span>Presente (outra equipe)</span>
+            </div>
+            <div class="legenda-item">
+              <span class="legenda-cor verde-claro"></span>
+              <span>Confirmado antes (equipe atual)</span>
+            </div>
+
+            <div class="legenda-item">
+              <span class="legenda-cor azul-claro"></span>
+              <span>Confirmado antes (outra equipe)</span>
+            </div>
+            <!-- <div class="legenda-item">
               <span class="legenda-cor cinza"></span>
               <span>Sem confirmação</span>
-            </div>
+            </div> -->
           </div>
 
           <div class="escala-scroll">
@@ -124,7 +131,8 @@
 
               <!-- Linhas das pessoas -->
               @for (pessoa of pessoas(); track pessoa.id) {
-                <div class="escala-row" [class.sem-confirmacao]="!temConfirmacao(pessoa)">
+                <!-- Linha 1: Nome -->
+                <div class="escala-row nome-row" [class.sem-dados]="!temDados(pessoa)">
                   <div 
                     class="pessoa-cell"
                     [title]="pessoa.nome + '\n' + getNomesEquipes(pessoa)"
@@ -133,11 +141,38 @@
                     <span class="pessoa-id">#{{ pessoa.idPessoa }}</span>
                   </div>
                   @for (horario of gerarHorarios(); track horario) {
+                    <div class="periodo-cell"></div>
+                  }
+                </div>
+                <!-- Linha 2: Presença real -->
+                <div class="escala-row presenca-row" [class.sem-dados]="!temDados(pessoa)">
+                  <div class="pessoa-cell label-cell">
+                    <span class="row-label">Presente</span>
+                  </div>
+                  @for (horario of gerarHorarios(); track horario) {
                     <div 
                       class="periodo-cell"
-                      [class.fora-festa]="isHorarioForaDaFesta(horario)"
-                      [class.confirmado]="isPeriodoConfirmado(pessoa, horario) && pertenceAEquipeAtual(pessoa)"
-                      [class.confirmado-outra-equipe]="isPeriodoConfirmado(pessoa, horario) && !pertenceAEquipeAtual(pessoa)"
+                      [class.presente]="isPeriodoPresente(pessoa, horario) && equipePresencaEhPropria(pessoa, horario)"
+                      [class.presente-outra-equipe]="isPeriodoPresente(pessoa, horario) && !equipePresencaEhPropria(pessoa, horario)"
+                      [class.inicio-festa]="isHorarioInicioFesta(horario)"
+                      [class.fim-festa]="isHorarioFimFesta(horario)"
+                      [title]="isPeriodoPresente(pessoa, horario) ? getEquipeNomePresenca(pessoa, horario) : ''"
+                    ></div>
+                  }
+                </div>
+                <!-- Linha 3: Confirmação antes da festa -->
+                <div class="escala-row confirmacao-row" [class.sem-dados]="!temDados(pessoa)">
+                  <div class="pessoa-cell label-cell">
+                    <span class="row-label">Planejado</span>
+                  </div>
+                  @for (horario of gerarHorarios(); track horario) {
+                    <div 
+                      class="periodo-cell"
+                      [class.confirmado]="isPeriodoConfirmado(pessoa, horario) && equipeConfirmacaoEhPropria(pessoa, horario)"
+                      [class.confirmado-outra-equipe]="isPeriodoConfirmado(pessoa, horario) && !equipeConfirmacaoEhPropria(pessoa, horario)"
+                      [class.inicio-festa]="isHorarioInicioFesta(horario)"
+                      [class.fim-festa]="isHorarioFimFesta(horario)"
+                      [title]="isPeriodoConfirmado(pessoa, horario) ? getEquipeNomeConfirmacao(pessoa, horario) : ''"
                     ></div>
                   }
                 </div>
