@@ -47,12 +47,12 @@
   }
 }
 
-.selection-container {
+.selection-container,
+.info-container {
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 32px;
-  margin-bottom: 30px;
 
   h2 {
     font-size: 1.5rem;
@@ -61,6 +61,10 @@
     padding-bottom: 16px;
     border-bottom: 2px solid #e1e8ed;
   }
+}
+
+.selection-container {
+  margin-bottom: 30px;
 
   .selection-fields {
     display: grid;
@@ -151,19 +155,7 @@
 }
 
 .info-container {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 32px;
   animation: fadeIn 0.3s ease;
-
-  h2 {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin: 0 0 24px 0;
-    padding-bottom: 16px;
-    border-bottom: 2px solid #e1e8ed;
-  }
 
   .info-cards {
     display: grid;
