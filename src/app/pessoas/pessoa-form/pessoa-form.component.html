@@ -189,16 +189,19 @@
         </div>
 
         <div class="form-group">
-          <label class="checkbox-inline">
-            <input
-              type="checkbox"
-              [ngModel]="recepcao()"
-              (ngModelChange)="recepcao.set($event)"
-              name="recepcao"
-            >
-            Perfil de Recepção
-          </label>
-          <small class="hint">Permite que esta pessoa faça login na aplicação</small>
+          <label for="voluntario_desde">Voluntário desde</label>
+          <input 
+            type="text" 
+            id="voluntario_desde" 
+            [ngModel]="voluntario_desde()" 
+            (input)="aplicarMascaraVoluntarioDesde($event)"
+            (keydown)="bloquearNaoNumerico($event)"
+            name="voluntario_desde"
+            placeholder="DD/MM/AAAA"
+            maxlength="10"
+            inputmode="numeric"
+          >
+          <small class="field-hint">Preenchido automaticamente na primeira presença, se vazio</small>
         </div>
 
         <div class="form-group">

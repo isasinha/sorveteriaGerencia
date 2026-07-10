@@ -17,8 +17,8 @@ export interface Pessoa {
   telefone_res?: string;
   idEquipe?: string;
   comentarios?: string;
-  recepcao?: boolean;
   ativo?: boolean;
+  voluntario_desde?: string;
 }
 
 @Injectable({

@@ -124,10 +124,12 @@ export class AuthService {
       }
 
       const pessoa = pessoaSnap.data();
-      console.log('verificarPermissao: recepcao=', pessoa['recepcao'], 'idEquipe=', pessoa['idEquipe']);
-      if (pessoa['recepcao'] === true) return true;
+      console.log('verificarPermissao: idEquipe=', pessoa['idEquipe']);
 
-      return this.verificarEquipeTIComDados(pessoa['idEquipe']);
+      const isTI = await this.verificarEquipeNomeComDados(pessoa['idEquipe'], 'TI');
+      if (isTI) return true;
+
+      return this.verificarEquipeNomeComDados(pessoa['idEquipe'], 'Recepção');
     } catch (e) {
       console.error('verificarPermissao erro:', e);
       return false;
@@ -142,27 +144,34 @@ export class AuthService {
       const pessoaSnap = await getDoc(doc(db, 'pessoas', pessoaId));
       if (!pessoaSnap.exists()) return false;
 
-      return this.verificarEquipeTIComDados(pessoaSnap.data()['idEquipe']);
+      return this.verificarEquipeNomeComDados(pessoaSnap.data()['idEquipe'], 'TI');
     } catch (e) {
       console.error('verificarEquipeTI erro:', e);
       return false;
     }
   }
 
-  private async verificarEquipeTIComDados(idEquipePessoa: any): Promise<boolean> {
+  private normalizeNome(s: string): string {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+
+  private async verificarEquipeNomeComDados(idEquipePessoa: any, nomeEquipe: string): Promise<boolean> {
     if (!idEquipePessoa) return false;
 
-    const equipesSnap = await getDocs(
-      query(collection(db, 'equipes'), where('nome', '==', 'TI'))
-    );
+    const equipesSnap = await getDocs(collection(db, 'equipes'));
     if (equipesSnap.empty) return false;
 
-    const tiDoc = equipesSnap.docs[0];
-    const tiId = String(tiDoc.data()['idEquipe'] ?? tiDoc.id);
+    const nomeNorm = this.normalizeNome(nomeEquipe);
+    const equipeDoc = equipesSnap.docs.find(d =>
+      this.normalizeNome(String(d.data()['nome'] ?? '')) === nomeNorm
+    );
+    if (!equipeDoc) return false;
+
+    const equipeId = String(equipeDoc.data()['idEquipe'] ?? equipeDoc.id);
 
     const equipesStr = String(idEquipePessoa);
     const equipes = equipesStr.split(/[,\s]+/).map(e => e.trim()).filter(e => e);
-    return equipes.includes(tiId) || equipes.includes(tiDoc.id);
+    return equipes.includes(equipeId) || equipes.includes(equipeDoc.id);
   }
 
   private handleAuthError(error: any): Error {

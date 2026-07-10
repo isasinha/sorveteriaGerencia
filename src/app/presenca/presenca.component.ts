@@ -373,6 +373,15 @@ export class PresencaComponent implements OnInit {
         }
         return { ...e, [idDia]: lista };
       });
+      if (!pessoa.voluntario_desde && pessoa.id && entrada.horaChegada) {
+        const diaFesta = this.diasDaFesta().find(d => d.idDia === idDia);
+        if (diaFesta?.dia) {
+          await this.pessoasService.updatePessoa(pessoa.id, { voluntario_desde: diaFesta.dia });
+          const pessoaAtualizada = { ...pessoa, voluntario_desde: diaFesta.dia };
+          this.todasPessoas.update(ps => ps.map(p => p.id === pessoa.id ? pessoaAtualizada : p));
+          this.pessoaSelecionada.set(pessoaAtualizada);
+        }
+      }
     } finally {
       this.salvando.set(null);
     }

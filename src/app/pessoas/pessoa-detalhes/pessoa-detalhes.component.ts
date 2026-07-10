@@ -168,10 +168,12 @@ export class PessoaDetalhesComponent implements OnInit {
 
   getCamposAdicionais(): { label: string; value: any; key: string }[] {
     const p = this.pessoa();
-    return [
+    const campos: { label: string; value: any; key: string }[] = [
       { label: 'Equipe(s)', value: this.getNomeEquipe(), key: 'idEquipe' },
-      { label: 'Comentários', value: p.comentarios || '-', key: 'comentarios' },
+      { label: 'Voluntário desde', value: p.voluntario_desde, key: 'voluntario_desde' },
+      { label: 'Comentários', value: p.comentarios || '-', key: 'comentarios' }
     ];
+    return campos;
   }
 
   private formatarLabel(key: string): string {

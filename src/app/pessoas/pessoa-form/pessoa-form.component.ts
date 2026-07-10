@@ -34,8 +34,8 @@ export class PessoaFormComponent implements OnInit {
   comentarios = signal<string>('');
   imagem = signal<string>('');
   imagemPreview = signal<string | null>(null);
-  recepcao = signal<boolean>(false);
   ativo = signal<boolean>(true);
+  voluntario_desde = signal<string>('');
   equipes = signal<Equipe[]>([]);
 
   salvando = signal<boolean>(false);
@@ -66,8 +66,14 @@ export class PessoaFormComponent implements OnInit {
         this.telefone_cel.set(pessoa.telefone_cel || '');
         this.telefone_rec.set(pessoa.telefone_rec || '');
         this.telefone_res.set(pessoa.telefone_res || '');
-        this.data_nascimento.set(pessoa.data_nascimento || '');
-        this.idade.set(pessoa.idade?.toString() || '');
+        const dataNasc = pessoa.data_nascimento || '';
+        this.data_nascimento.set(dataNasc);
+        if (dataNasc.length === 10) {
+          const idadeCalculada = this.calcularIdade(dataNasc);
+          this.idade.set(idadeCalculada !== null ? idadeCalculada.toString() : (pessoa.idade?.toString() || ''));
+        } else {
+          this.idade.set(pessoa.idade?.toString() || '');
+        }
         this.idEquipe.set(pessoa.idEquipe || '');
         
         // Carregar equipes selecionadas
@@ -80,8 +86,8 @@ export class PessoaFormComponent implements OnInit {
         
         this.comentarios.set(pessoa.comentarios || '');
         this.imagem.set(pessoa.imagem || '');
-        this.recepcao.set(pessoa.recepcao ?? false);
         this.ativo.set(pessoa.ativo !== false);
+        this.voluntario_desde.set(pessoa.voluntario_desde || '');
         if (pessoa.imagem && pessoa.imagem !== '/sem_imagem.png') {
           this.imagemPreview.set(pessoa.imagem);
         }
@@ -260,6 +266,16 @@ export class PessoaFormComponent implements OnInit {
     } else {
       this.idade.set('');
     }
+  }
+
+  aplicarMascaraVoluntarioDesde(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let valor = input.value.replace(/\D/g, '');
+    if (valor.length <= 8) {
+      valor = valor.replace(/(\d{2})(\d)/, '$1/$2');
+      valor = valor.replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+    }
+    this.voluntario_desde.set(valor);
   }
 
   calcularIdade(dataNascimento: string): number | null {
@@ -454,8 +470,8 @@ export class PessoaFormComponent implements OnInit {
         }
         
         pessoaAtualizada.comentarios = this.comentarios().trim() || (deleteField() as any);
-        pessoaAtualizada.recepcao = this.recepcao();
         pessoaAtualizada.ativo = this.ativo();
+        pessoaAtualizada.voluntario_desde = this.voluntario_desde().trim() || (deleteField() as any);
         
         // Imagem: usar padrão se não houver valor
         pessoaAtualizada.imagem = this.imagem().trim() || '/sem_imagem.png';
@@ -513,7 +529,9 @@ export class PessoaFormComponent implements OnInit {
       if (this.comentarios().trim()) {
         novaPessoa.comentarios = this.comentarios().trim();
       }
-      novaPessoa.recepcao = this.recepcao();
+      if (this.voluntario_desde().trim()) {
+        novaPessoa.voluntario_desde = this.voluntario_desde().trim();
+      }
       novaPessoa.ativo = this.ativo();
       
       // Imagem: usar padrão se não houver valor
