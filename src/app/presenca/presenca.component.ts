@@ -44,6 +44,7 @@ export class PresencaComponent implements OnInit {
   dropdownAberto = signal(false);
   pessoaSelecionada = signal<Pessoa | null>(null);
   entradasPorDia = signal<Record<number, EntradaLocal[]>>({});
+  listasAbertas = signal<Record<number, boolean>>({});
 
   anos = computed(() => {
     const set = new Set<number>();
@@ -306,6 +307,23 @@ export class PresencaComponent implements OnInit {
       this.presencas().filter(p => p.idDia === idDia).map(p => String(p.idPessoa))
     );
     return pessoas.size;
+  }
+
+  toggleLista(idDia: number): void {
+    this.listasAbertas.update(m => ({ ...m, [idDia]: !m[idDia] }));
+  }
+
+  isListaAberta(idDia: number): boolean {
+    return !!this.listasAbertas()[idDia];
+  }
+
+  getPessoasParaDia(idDia: number): Pessoa[] {
+    const ids = new Set(
+      this.presencas().filter(p => p.idDia === idDia).map(p => String(p.idPessoa))
+    );
+    return this.todasPessoas()
+      .filter(p => ids.has(String(p.id ?? p.idPessoa)))
+      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   }
 
   nomeEquipe(idEquipe: string): string {

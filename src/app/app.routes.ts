@@ -37,11 +37,6 @@ export const routes: Routes = [
     loadComponent: () => import('./equipes/equipes.component').then(m => m.EquipesComponent),
     canActivate: [authGuard]
   },
-  // {
-  //   path: 'confirmacoes',
-  //   loadComponent: () => import('./confirmacoes/confirmacoes.component').then(m => m.ConfirmacoesComponent),
-  //   canActivate: [authGuard]
-  // },
   {
     path: 'confirmacoes-antes',
     loadComponent: () => import('./confirmacoes-antes/confirmacoes-antes.component').then(m => m.ConfirmacoesAntesComponent),

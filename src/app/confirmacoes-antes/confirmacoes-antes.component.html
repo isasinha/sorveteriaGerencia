@@ -1,7 +1,7 @@
 <app-sidebar-layout>
   <div class="checkin-container">
     <header class="page-header">
-      <h1>Confirmações (antes da festa) </h1>
+      <h1>Planejamento</h1>
     </header>
 
     @if (loading()) {
@@ -79,13 +79,26 @@
 
                 <div class="col-body">
                   @if (!pessoaSelecionada()) {
-                    <div class="col-placeholder">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                      </svg>
-                      <p>Selecione uma pessoa</p>
-                    </div>
+                    @if (isListaAberta(dia.idDia!)) {
+                      <div class="pessoas-lista-wrap">
+                        <button class="btn-lista-toggle" (click)="toggleLista(dia.idDia!)">Ocultar lista</button>
+                        <ul class="pessoas-lista">
+                          @for (pessoa of getPessoasParaDia(dia.idDia!); track pessoa.id) {
+                            <li (click)="selecionarPessoa(pessoa)">{{ pessoa.nome }}</li>
+                          }
+                        </ul>
+                      </div>
+                    } @else {
+                      <div class="col-placeholder">
+                        <p>Selecione uma pessoa</p>
+                        @if (contarPresencas(dia.idDia!) > 0) {
+                          <p>ou</p>
+                          <button class="btn-lista-toggle" (click)="toggleLista(dia.idDia!)">
+                            Ver lista de planejados ({{ contarPresencas(dia.idDia!) }})
+                          </button>
+                        }
+                      </div>
+                    }
                   } @else {
                     @for (entrada of getEntradas(dia.idDia!); track entrada.seq) {
                       <div class="entrada-card" [class.saved]="entrada.presencaId">

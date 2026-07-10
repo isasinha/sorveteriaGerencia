@@ -246,6 +246,53 @@
   }
 }
 
+.btn-lista-toggle {
+  background: none;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: var(--color-secondary, #5a6a8a);
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #f0f4ff;
+    border-color: #a8b8d8;
+  }
+}
+
+.pessoas-lista-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.pessoas-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  li {
+    padding: 0.4rem 0.65rem;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background: #f8f9fa;
+    border: 1px solid #ebebeb;
+    transition: background 0.12s;
+
+    &:hover {
+      background: #e8f0fd;
+      border-color: #b8cce8;
+    }
+  }
+}
+
 // Card de entrada
 .entrada-card {
   background: #fafafa;
