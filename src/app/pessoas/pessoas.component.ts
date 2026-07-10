@@ -268,6 +268,19 @@ export class PessoasComponent implements OnInit {
     }
   }
 
+  imprimirFichasMultiplas(): void {
+    const ids = Array.from(this.pessoasSelecionadas());
+    if (ids.length > 0) {
+      this.router.navigate(['/fichas'], { queryParams: { ids: ids.join(',') } });
+    }
+  }
+
+  imprimirFicha(pessoa: Pessoa): void {
+    if (pessoa.id) {
+      window.open(`/ficha/${pessoa.id}`, '_blank');
+    }
+  }
+
   closePessoaDetails(): void {
     this.selectedPessoa.set(null);
   }

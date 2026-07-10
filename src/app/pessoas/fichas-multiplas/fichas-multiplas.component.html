@@ -1,0 +1,134 @@
+@if (loading()) {
+  <div class="loading"><p>Gerando fichas...</p></div>
+}
+
+@if (error()) {
+  <div class="error">
+    <p>{{ error() }}</p>
+    <button class="btn-voltar" (click)="voltar()">Voltar</button>
+  </div>
+}
+
+@if (!loading() && !error()) {
+  <div class="no-print">
+    <div class="toolbar">
+      <h2>{{ pessoas().length }} Ficha(s) para Impressão</h2>
+      <div class="toolbar-buttons">
+        <button class="btn-imprimir" (click)="imprimir()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Imprimir Todos
+        </button>
+        <button class="btn-voltar" (click)="voltar()">Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fichas-container">
+    @for (p of pessoas(); track p.id) {
+      <div class="ficha-page">
+        <div class="ficha">
+          <div class="ficha-header">
+            <img src="/logo_fundo_azul2.png" alt="Logo" class="logo" />
+            <div class="ficha-titulo">
+              <h2>FICHA DO VOLUNTÁRIO</h2>
+              <p class="ficha-id"># {{ p.idPessoa }}</p>
+            </div>
+            <img src="/logo_sorveteria_fundo_branco.png" alt="Logo Sorveteria" class="logo" />
+          </div>
+
+          <div class="ficha-corpo">
+            <!-- Nome -->
+            <div class="campo campo-nome">
+              <span class="label">Nome:</span>
+              <span class="valor-nome">{{ p.nome }}</span>
+            </div>
+
+            <div class="campos-grid">
+              <!-- Equipe -->
+              <div class="campo">
+                <span class="label">Equipe(s):</span>
+                @if (p.equipeNome) {
+                  <span class="valor">{{ p.equipeNome }}</span>
+                } @else {
+                  <span class="vazio"></span>
+                }
+              </div>
+
+              <!-- Voluntário desde -->
+              <div class="campo">
+                <span class="label">Voluntário desde:</span>
+                @if (p.voluntario_desde) {
+                  <span class="valor">{{ p.voluntario_desde }}</span>
+                } @else {
+                  <span class="vazio"></span>
+                }
+              </div>
+
+              <!-- Nascimento | Celular -->
+              <div class="campo">
+                <span class="label">Nascimento:</span>
+                @if (p.data_nascimento) {
+                  <span class="valor">{{ p.data_nascimento }}</span>
+                } @else {
+                  <span class="vazio"></span>
+                }
+              </div>
+
+              <div class="campo">
+                <span class="label">Celular:</span>
+                @if (p.telefone_cel) {
+                  <span class="valor">{{ p.telefone_cel }}</span>
+                } @else {
+                  <span class="vazio"></span>
+                }
+              </div>
+
+              <!-- Tel Recado | Tel Residencial -->
+              <div class="campo">
+                <span class="label">Tel Recado:</span>
+                @if (p.telefone_rec) {
+                  <span class="valor">{{ p.telefone_rec }}</span>
+                } @else {
+                  <span class="vazio"></span>
+                }
+              </div>
+
+              <div class="campo">
+                <span class="label">Tel Residencial:</span>
+                @if (p.telefone_res) {
+                  <span class="valor">{{ p.telefone_res }}</span>
+                } @else {
+                  <span class="vazio"></span>
+                }
+              </div>
+
+              <!-- Email -->
+              <div class="campo campo-largo">
+                <span class="label">Email:</span>
+                @if (p.email) {
+                  <span class="valor">{{ p.email }}</span>
+                } @else {
+                  <span class="vazio vazio-largo"></span>
+                }
+              </div>
+            </div>
+
+            <!-- Comentários -->
+            <div class="campo-comentarios">
+              <span class="label">Comentários:</span>
+              @if (p.comentarios) {
+                <div class="comentarios-preenchido">{{ p.comentarios }}</div>
+              } @else {
+                <div class="caixa-vazia-comentarios"></div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}

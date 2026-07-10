@@ -207,7 +207,7 @@ export class PresencaComponent implements OnInit {
       const todasEntradas = e[idDia] ?? [];
       const lista = todasEntradas.map(x => {
         if (x.seq !== seq) return x;
-        const equipe = this.equipes().find(eq => eq.id === value);
+        const equipe = this.equipes().find(eq => String(eq.idEquipe) === String(value));
         const anterior = todasEntradas.find(a => a.seq === seq - 1);
         const novosItens: Record<string, ItemStatus> = {};
         for (const idItem of equipe?.itensPadrao ?? []) {
@@ -228,7 +228,7 @@ export class PresencaComponent implements OnInit {
   }
 
   getItensDeEntrada(entrada: EntradaLocal): Item[] {
-    const equipe = this.equipes().find(e => e.id === entrada.idEquipe);
+    const equipe = this.equipes().find(e => String(e.idEquipe) === String(entrada.idEquipe));
     if (!equipe?.itensPadrao?.length) return [];
     return this.todosItens().filter(i => equipe.itensPadrao!.includes(i.id!));
   }

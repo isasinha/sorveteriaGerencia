@@ -1,0 +1,312 @@
+.loading, .error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
+.no-print {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 24px;
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      color: #333;
+    }
+  }
+
+  .toolbar-buttons {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.btn-imprimir,
+.btn-voltar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+
+  &:hover { background: #0056b3; }
+}
+
+.btn-voltar {
+  background: #6c757d;
+  &:hover { background: #545b62; }
+}
+
+.fichas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 40px 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.ficha-page {
+  width: 210mm;
+}
+
+// ===== FICHA =====
+.ficha {
+  background: white;
+  width: 210mm;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.ficha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-top: 4px solid #667eea;
+  border-bottom: 1.5px solid #dee2e6;
+
+  .logo {
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .ficha-titulo {
+    text-align: center;
+    color: #333;
+
+    h2 {
+      margin: 0 0 2px 0;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ficha-id {
+      margin: 0;
+      font-size: 12px;
+      color: #667eea;
+      font-weight: 700;
+    }
+  }
+}
+
+.ficha-corpo {
+  padding: 16px 20px;
+}
+
+.campo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 14px;
+
+  .label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    white-space: nowrap;
+    min-width: 130px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .valor {
+    font-size: 14px;
+    color: #222;
+    font-weight: 500;
+  }
+
+  .valor-nome {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+  }
+}
+
+.campo-nome {
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e0e0e0;
+
+  .label {
+    font-size: 13px;
+    min-width: 60px;
+  }
+}
+
+.campos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+}
+
+.campo-largo {
+  grid-column: 1 / -1;
+}
+
+.vazio {
+  display: inline-block;
+  border-bottom: 1.5px solid #999;
+  min-width: 160px;
+  height: 1.4em;
+}
+
+.vazio-pequeno {
+  min-width: 70px;
+}
+
+.vazio-largo {
+  min-width: 260px;
+}
+
+.campo-comentarios {
+  margin-top: 20px;
+
+  .label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .comentarios-preenchido {
+    border: 1.5px solid #999;
+    border-radius: 4px;
+    padding: 10px 12px;
+    min-height: 100px;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .caixa-vazia-comentarios {
+    border: 1.5px dashed #aaa;
+    border-radius: 4px;
+    min-height: 100px;
+    background: repeating-linear-gradient(
+      transparent,
+      transparent 23px,
+      #ddd 23px,
+      #ddd 24px
+    );
+  }
+}
+
+// ===== IMPRESSÃO =====
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .fichas-container {
+    padding: 0;
+    background: white;
+    gap: 0;
+  }
+
+  // Sem page-break forçado — o navegador decide quantas fichas cabem na página
+  .ficha-page {
+    width: 100%;
+    margin-bottom: 6mm;
+  }
+
+  .ficha {
+    box-shadow: none;
+    width: 100%;
+    min-height: 0 !important;
+    height: auto !important;
+    border-radius: 0;
+    // Não divide a ficha no meio — se não couber, pula para próxima página
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-bottom: 1.5px dashed #bbb;
+    padding-bottom: 4mm;
+  }
+
+  .ficha-header {
+    border-top-color: #667eea;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+
+    .logo {
+      height: 24px;
+      filter: grayscale(60%);
+    }
+  }
+
+  // Versão compacta para impressão (cabeça mais densa)
+  .ficha-corpo {
+    padding: 10px 16px;
+  }
+
+  .campo {
+    margin-bottom: 7px;
+
+    .label {
+      font-size: 10px;
+      min-width: 110px;
+    }
+
+    .valor, .valor-nome {
+      font-size: 12px;
+    }
+
+    .valor-nome {
+      font-size: 14px;
+    }
+  }
+
+  .campo-nome {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+
+  .campo-comentarios {
+    margin-top: 8px;
+
+    .caixa-vazia-comentarios,
+    .comentarios-preenchido {
+      min-height: 52px;
+    }
+
+    .comentarios-preenchido {
+      font-size: 11px;
+    }
+  }
+}

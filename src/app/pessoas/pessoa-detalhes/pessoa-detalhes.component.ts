@@ -68,6 +68,13 @@ export class PessoaDetalhesComponent implements OnInit {
     }
   }
 
+  onImprimirFicha(): void {
+    const pessoa = this.pessoa();
+    if (pessoa.id) {
+      window.open(`/ficha/${pessoa.id}`, '_blank');
+    }
+  }
+
   onAnterior(): void {
     this.anterior.emit();
   }

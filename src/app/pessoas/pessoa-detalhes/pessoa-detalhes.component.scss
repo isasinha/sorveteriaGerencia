@@ -368,6 +368,36 @@
     }
   }
 
+  .btn-ficha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #198754;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background-color: #146c43;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
   .btn-excluir {
     display: flex;
     align-items: center;

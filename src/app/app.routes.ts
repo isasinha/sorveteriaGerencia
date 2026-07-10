@@ -28,6 +28,21 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'ficha/:id',
+    loadComponent: () => import('./pessoas/ficha/ficha.component').then(m => m.FichaComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'fichas',
+    loadComponent: () => import('./pessoas/fichas-multiplas/fichas-multiplas.component').then(m => m.FichasMultiplasComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'relatorios',
+    loadComponent: () => import('./relatorios/relatorios.component').then(m => m.RelatoriosComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'escala',
     loadComponent: () => import('./dia-da-festa/dia-da-festa.component').then(m => m.DiaDaFestaComponent),
     canActivate: [authGuard]

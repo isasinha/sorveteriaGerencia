@@ -1,0 +1,160 @@
+<app-sidebar-layout>
+  <div class="relatorios-container">
+    <div class="header-container">
+      <h1>Relatórios</h1>
+      <div class="header-actions no-print">
+        <button class="btn-pdf" (click)="gerarPDF()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          Baixar PDF
+        </button>
+        <button class="btn-excel" (click)="exportarCSV()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Exportar Excel (CSV)
+        </button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading"><p>Carregando dados...</p></div>
+    }
+
+    @if (!loading()) {
+      <!-- FILTROS -->
+      <div class="filtros-container no-print">
+        <div class="filtro-grupo">
+          <label>Ano</label>
+          <div class="btn-group">
+            <button
+              class="btn-filtro"
+              [class.active]="anoSelecionado() === null"
+              (click)="carregarTodosAnos()">
+              Todos
+            </button>
+            @for (ano of anos(); track ano) {
+              <button
+                class="btn-filtro"
+                [class.active]="anoSelecionado() === ano"
+                (click)="carregarAno(ano)">
+                {{ ano }}
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (diasDoAno().length > 0) {
+          <div class="filtro-grupo">
+            <label>Dia</label>
+            <select [ngModel]="idDiaSelecionado()" (ngModelChange)="idDiaSelecionado.set($event ? +$event : null)">
+              <option [ngValue]="null">Todos os dias</option>
+              @for (dia of diasDoAno(); track dia.idDia) {
+                <option [ngValue]="dia.idDia">{{ formatarDia(dia) }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="filtro-grupo">
+          <label>Equipe</label>
+          <select [ngModel]="idEquipeSelecionada()" (ngModelChange)="idEquipeSelecionada.set($event)">
+            <option value="">Todas as equipes</option>
+            @for (equipe of equipes(); track equipe.id) {
+              <option [value]="equipe.idEquipe">{{ equipe.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filtro-grupo">
+          <label>Status</label>
+          <div class="btn-group">
+            <button class="btn-filtro" [class.active]="filtroStatus() === 'todos'" (click)="filtroStatus.set('todos')">Todos</button>
+            <button class="btn-filtro" [class.active]="filtroStatus() === 'confirmados'" (click)="filtroStatus.set('confirmados')">Só confirmados</button>
+            <button class="btn-filtro" [class.active]="filtroStatus() === 'presentes'" (click)="filtroStatus.set('presentes')">Só presentes</button>
+          </div>
+        </div>
+
+        <div class="filtro-grupo filtro-grupo-sort">
+          <label>Ordenação</label>
+          <div class="sort-chips">
+            @for (key of sortOrdem(); track key; let i = $index) {
+              <div class="sort-chip sort-chip-ativo">
+                <span class="sort-num">{{ i + 1 }}</span>
+                <span class="sort-label">{{ getSortLabel(key) }}</span>
+                <button class="sort-btn" (click)="moverSortKey(i, -1)" [disabled]="i === 0" title="Subir">&#8593;</button>
+                <button class="sort-btn" (click)="moverSortKey(i, 1)" [disabled]="i === sortOrdem().length - 1" title="Descer">&#8595;</button>
+                <button class="sort-btn sort-btn-remover" (click)="removerSortKey(key)" title="Remover">×</button>
+              </div>
+            }
+            @for (key of sortKeysDisponiveis(); track key) {
+              <div class="sort-chip sort-chip-inativo" (click)="adicionarSortKey(key)">
+                + {{ getSortLabel(key) }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      @if (carregandoDados()) {
+        <div class="loading"><p>Carregando registros...</p></div>
+      }
+
+      @if (!carregandoDados()) {
+        <!-- CABEÇALHO DO RELATÓRIO IMPRESSO -->
+        <div class="print-header">
+          <img src="/logo_fundo_azul2.png" alt="Logo" class="print-logo" />
+          <div class="print-titulo">
+            <h2>Relatório de Voluntários</h2>
+            <p>
+              @if (anoSelecionado()) { Ano: {{ anoSelecionado() }} · }
+              {{ linhasFiltradas().length }} registro(s)
+            </p>
+          </div>
+          <img src="/logo_sorveteria_fundo_branco.png" alt="Logo Sorveteria" class="print-logo" />
+        </div>
+
+        <div class="resultado-info no-print">
+          <span>{{ linhasFiltradas().length }} registro(s) encontrado(s)</span>
+        </div>
+
+        @if (linhasFiltradas().length === 0) {
+          <p class="sem-dados">Nenhum registro encontrado para os filtros selecionados.</p>
+        } @else {
+          <div class="table-wrapper">
+            <table class="tabela-relatorio">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Equipe</th>
+                  <th>Dia</th>
+                  <th>Hora Planejamento</th>
+                  <th>Hora Presença</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (linha of linhasFiltradas(); track linha.pessoaId + '-' + linha.idDia) {
+                  <tr>
+                    <td class="td-nome">{{ linha.nome }}</td>
+                    <td>{{ linha.equipeNome }}</td>
+                    <td class="td-dia">{{ linha.diaLabel }}</td>
+                    <td class="td-hora">{{ linha.horaPlanejamento || '—' }}</td>
+                    <td class="td-hora">{{ linha.horaPresenca || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+    }
+  </div>
+</app-sidebar-layout>

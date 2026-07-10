@@ -1,0 +1,120 @@
+@if (loading()) {
+  <div class="loading"><p>Carregando dados...</p></div>
+}
+
+@if (error()) {
+  <div class="error">
+    <p>{{ error() }}</p>
+    <button class="btn-voltar" (click)="voltar()">Voltar</button>
+  </div>
+}
+
+@if (!loading() && !error() && pessoa()) {
+  <div class="no-print">
+    <button class="btn-imprimir" (click)="imprimir()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      Imprimir Ficha
+    </button>
+    <button class="btn-voltar" (click)="voltar()">Voltar</button>
+  </div>
+
+  <div class="fichas-container">
+    <div class="ficha-page">
+      <div class="ficha">
+        <div class="ficha-header">
+          <img src="/logo_fundo_azul2.png" alt="Logo" class="logo" />
+          <div class="ficha-titulo">
+            <h2>FICHA DO VOLUNTÁRIO</h2>
+            <p class="ficha-id"># {{ pessoa()!.idPessoa }}</p>
+          </div>
+          <img src="/logo_sorveteria_fundo_branco.png" alt="Logo Sorveteria" class="logo" />
+        </div>
+
+        <div class="ficha-corpo">
+          <div class="campo campo-nome">
+            <span class="label">Nome:</span>
+            <span class="valor-nome">{{ pessoa()!.nome }}</span>
+          </div>
+
+          <div class="campos-grid">
+            <div class="campo">
+              <span class="label">Equipe(s):</span>
+              @if (getNomesEquipes()) {
+                <span class="valor">{{ getNomesEquipes() }}</span>
+              } @else {
+                <span class="vazio"></span>
+              }
+            </div>
+
+            <div class="campo">
+              <span class="label">Voluntário desde:</span>
+              @if (pessoa()!.voluntario_desde) {
+                <span class="valor">{{ pessoa()!.voluntario_desde }}</span>
+              } @else {
+                <span class="vazio"></span>
+              }
+            </div>
+
+            <div class="campo">
+              <span class="label">Nascimento:</span>
+              @if (pessoa()!.data_nascimento) {
+                <span class="valor">{{ pessoa()!.data_nascimento }}</span>
+              } @else {
+                <span class="vazio"></span>
+              }
+            </div>
+
+            <div class="campo">
+              <span class="label">Celular:</span>
+              @if (pessoa()!.telefone_cel) {
+                <span class="valor">{{ pessoa()!.telefone_cel }}</span>
+              } @else {
+                <span class="vazio"></span>
+              }
+            </div>
+
+            <div class="campo">
+              <span class="label">Tel Recado:</span>
+              @if (pessoa()!.telefone_rec) {
+                <span class="valor">{{ pessoa()!.telefone_rec }}</span>
+              } @else {
+                <span class="vazio"></span>
+              }
+            </div>
+
+            <div class="campo">
+              <span class="label">Tel Residencial:</span>
+              @if (pessoa()!.telefone_res) {
+                <span class="valor">{{ pessoa()!.telefone_res }}</span>
+              } @else {
+                <span class="vazio"></span>
+              }
+            </div>
+
+            <div class="campo campo-largo">
+              <span class="label">Email:</span>
+              @if (pessoa()!.email) {
+                <span class="valor">{{ pessoa()!.email }}</span>
+              } @else {
+                <span class="vazio vazio-largo"></span>
+              }
+            </div>
+          </div>
+
+          <div class="campo-comentarios">
+            <span class="label">Comentários:</span>
+            @if (pessoa()!.comentarios) {
+              <div class="comentarios-preenchido">{{ pessoa()!.comentarios }}</div>
+            } @else {
+              <div class="caixa-vazia-comentarios"></div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
