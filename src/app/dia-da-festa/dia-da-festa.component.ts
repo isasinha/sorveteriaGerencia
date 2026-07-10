@@ -421,23 +421,25 @@ export class DiaDaFestaComponent implements OnInit {
 
       console.log('Carregando escala para:', { idDia, equipeSelecionada });
 
-      // Buscar confirmações antes do dia
-      const confirmacoes = await this.presencaService.getConfirmacoesAntesByDia(idDia);
-      console.log('Confirmações antes do dia:', confirmacoes);
-      
-      // Filtrar confirmações pela equipe selecionada (se não for 'todas')
-      const presencasEquipe = equipeSelecionada === 'todas' 
+      // Buscar confirmações e presenças reais em paralelo
+      const [confirmacoes, todasPresencasReais] = await Promise.all([
+        this.presencaService.getConfirmacoesAntesByDia(idDia),
+        this.presencaService.getPresencasByDia(idDia)
+      ]);
+
+      // Filtrar confirmações e presenças pela equipe selecionada
+      const presencasEquipe = equipeSelecionada === 'todas'
         ? confirmacoes
-        : confirmacoes.filter(c => {
-            const idConfEquipe = Number(c.idEquipe);
-            const idEquipe = Number(equipeSelecionada);
-            return idConfEquipe === idEquipe;
-          });
-      console.log('Confirmações da equipe:', presencasEquipe);
-      
-      // Buscar IDs únicos das pessoas que têm presença
+        : confirmacoes.filter(c => Number(c.idEquipe) === Number(equipeSelecionada));
+
+      const presencasReaisEquipe = equipeSelecionada === 'todas'
+        ? todasPresencasReais
+        : todasPresencasReais.filter(c => Number(c.idEquipe) === Number(equipeSelecionada));
+
+      // IDs com confirmação (antes) e com presença real (durante)
       const idsComConfirmacao = new Set(presencasEquipe.map(c => String(c.idPessoa)));
-      console.log('IDs com presença:', Array.from(idsComConfirmacao));
+      const idsComPresenca = new Set(presencasReaisEquipe.map(c => String(c.idPessoa)));
+      const idsComDados = new Set([...idsComConfirmacao, ...idsComPresenca]);
       
       // Buscar todas as pessoas ativas
       const todasPessoas = (await this.pessoasService.getPessoas()).filter(p => p.ativo !== false);
@@ -445,111 +447,51 @@ export class DiaDaFestaComponent implements OnInit {
       let pessoasParaExibir: Pessoa[];
       
       if (equipeSelecionada === 'todas') {
-        // Se for "todas", mostrar todas as pessoas (com e sem confirmação)
-        const pessoasQueConfirmaram = todasPessoas.filter(p => idsComConfirmacao.has(String(p.id)));
-        const pessoasQueNaoConfirmaram = todasPessoas.filter(p => !idsComConfirmacao.has(String(p.id)));
-        
-        // Ordenar cada grupo
-        pessoasQueConfirmaram.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-        pessoasQueNaoConfirmaram.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-        
-        // Concatenar: com confirmação primeiro, depois sem
-        pessoasParaExibir = [...pessoasQueConfirmaram, ...pessoasQueNaoConfirmaram];
-        
-        console.log('Pessoas com confirmação:', pessoasQueConfirmaram.length);
-        console.log('Pessoas sem confirmação:', pessoasQueNaoConfirmaram.length);
+        const pessoasComDados = todasPessoas.filter(p => idsComDados.has(String(p.id)));
+        const pessoasSemDados = todasPessoas.filter(p => !idsComDados.has(String(p.id)));
+
+        pessoasComDados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+        pessoasSemDados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+        pessoasParaExibir = [...pessoasComDados, ...pessoasSemDados];
       } else {
-        // Se for equipe específica:
-        // 1. Pessoas que confirmaram para esta equipe (independente da equipe atual)
-        // 2. Pessoas que pertencem à equipe (mesmo sem confirmação)
         const idEquipe = Number(equipeSelecionada);
-        console.log('Filtrando pessoas da equipe:', idEquipe);
-        console.log('Tipo do ID selecionado:', typeof equipeSelecionada, equipeSelecionada);
-        
-        // Pessoas que confirmaram para esta equipe
-        const pessoasQueConfirmaram = todasPessoas.filter(p => idsComConfirmacao.has(String(p.id)));
-        console.log('Pessoas que confirmaram:', pessoasQueConfirmaram.map(p => `${p.nome} (equipe: ${p.idEquipe})`));
-        
-        // Pessoas cadastradas na equipe - debug completo
-        console.log('Verificando todas as pessoas:');
-        todasPessoas.forEach(p => {
-          console.log(`  - ${p.nome}: idEquipe = "${p.idEquipe}" (tipo: ${typeof p.idEquipe})`);
-        });
-        
-        const pessoasDaEquipe = todasPessoas.filter(p => {
-          if (!p.idEquipe) return false;
-          
-          // Converter idEquipe para string e verificar se contém a equipe selecionada
-          const equipesStr = String(p.idEquipe);
-          
-          // Se for múltiplas equipes (separadas por vírgula ou espaço)
-          if (equipesStr.includes(',') || equipesStr.includes(' ')) {
-            const equipes = equipesStr.split(/[,\s]+/).map(e => e.trim()).filter(e => e);
-            const match = equipes.some(e => Number(e) === idEquipe || e === String(idEquipe));
-            if (match) {
-              console.log(`  ✓ ${p.nome} pertence à equipe ${idEquipe} (equipes: ${equipesStr})`);
-            }
-            return match;
-          }
-          
-          // Se for equipe única
-          const idPessoaEquipe = Number(p.idEquipe);
-          const match = idPessoaEquipe === idEquipe;
-          if (match) {
-            console.log(`  ✓ ${p.nome} pertence à equipe ${idEquipe}`);
-          }
-          return match;
-        });
-        console.log('Pessoas cadastradas na equipe:', pessoasDaEquipe.map(p => `${p.nome}`));
-        
-        // Combinar os dois grupos (sem duplicar)
-        const idsPessoasJaIncluidas = new Set(pessoasQueConfirmaram.map(p => String(p.id)));
-        const pessoasDaEquipeSemConfirmacao = pessoasDaEquipe.filter(p => !idsPessoasJaIncluidas.has(String(p.id)));
-        
-        // Função auxiliar para verificar se pessoa pertence à equipe
+
         const pertenceAEquipe = (pessoa: Pessoa): boolean => {
           if (!pessoa.idEquipe) return false;
           const equipesStr = String(pessoa.idEquipe);
-          
           if (equipesStr.includes(',') || equipesStr.includes(' ')) {
             const equipes = equipesStr.split(/[,\s]+/).map(e => e.trim()).filter(e => e);
             return equipes.some(e => Number(e) === idEquipe || e === String(idEquipe));
           }
-          
           return Number(pessoa.idEquipe) === idEquipe;
         };
-        
-        // Separar pessoas que confirmaram em: da equipe e de outras equipes
-        const pessoasComConfirmacaoDaEquipe = pessoasQueConfirmaram.filter(p => pertenceAEquipe(p));
-        const pessoasComConfirmacaoOutrasEquipes = pessoasQueConfirmaram.filter(p => !pertenceAEquipe(p));
-        
-        console.log('Pessoas COM confirmação da equipe:', pessoasComConfirmacaoDaEquipe.map(p => p.nome));
-        console.log('Pessoas COM confirmação de outras equipes:', pessoasComConfirmacaoOutrasEquipes.map(p => p.nome));
-        console.log('Pessoas SEM confirmação da equipe:', pessoasDaEquipeSemConfirmacao.map(p => p.nome));
-        
-        // Ordenar cada grupo por nome
-        pessoasComConfirmacaoDaEquipe.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-        pessoasComConfirmacaoOutrasEquipes.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-        pessoasDaEquipeSemConfirmacao.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-        
-        // Concatenar: com confirmação (equipe atual) + com confirmação (outras equipes) + sem confirmação
+
+        const pessoasComDadosDaEquipe = todasPessoas.filter(p =>
+          idsComDados.has(String(p.id)) && pertenceAEquipe(p)
+        );
+        const pessoasComDadosOutrasEquipes = todasPessoas.filter(p =>
+          idsComDados.has(String(p.id)) && !pertenceAEquipe(p)
+        );
+        const pessoasDaEquipeSemDados = todasPessoas.filter(p =>
+          !idsComDados.has(String(p.id)) && pertenceAEquipe(p)
+        );
+
+        pessoasComDadosDaEquipe.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+        pessoasComDadosOutrasEquipes.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+        pessoasDaEquipeSemDados.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
         pessoasParaExibir = [
-          ...pessoasComConfirmacaoDaEquipe,
-          ...pessoasComConfirmacaoOutrasEquipes,
-          ...pessoasDaEquipeSemConfirmacao
+          ...pessoasComDadosDaEquipe,
+          ...pessoasComDadosOutrasEquipes,
+          ...pessoasDaEquipeSemDados
         ];
-        
-        console.log('Total pessoas com confirmação:', pessoasQueConfirmaram.length);
-        console.log('Total pessoas sem confirmação:', pessoasDaEquipeSemConfirmacao.length);
       }
       
       console.log('Total de pessoas para exibir:', pessoasParaExibir.length);
       
       this.presencas.set(presencasEquipe);
       this.pessoas.set(pessoasParaExibir);
-
-      // Buscar presenças reais do dia (todas, sem filtro de equipe)
-      const todasPresencasReais = await this.presencaService.getPresencasByDia(idDia);
       this.presencasReais.set(todasPresencasReais);
     } catch (error) {
       console.error('Erro ao carregar escala:', error);
@@ -620,10 +562,8 @@ export class DiaDaFestaComponent implements OnInit {
     const fimMinutos = inicioMinutos + 30;
 
     return presencasPessoa.some(conf => {
-      const confInicio = this.converterHoraParaMinutos(conf.horaChegada);
-      const confFim = this.converterHoraParaMinutos(conf.horaSaida);
-      
-      // Verifica se o período de 30 min está dentro da presença
+      const confInicio = this.arredondar30(this.converterHoraParaMinutos(conf.horaChegada));
+      const confFim = this.confFimEfetivo(conf.horaSaida);
       return inicioMinutos >= confInicio && fimMinutos <= confFim;
     });
   }
@@ -647,8 +587,8 @@ export class DiaDaFestaComponent implements OnInit {
     const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
     const fimMinutos = inicioMinutos + 30;
     return presencasPessoa.some(conf => {
-      const confInicio = this.converterHoraParaMinutos(conf.horaChegada);
-      const confFim = this.converterHoraParaMinutos(conf.horaSaida);
+      const confInicio = this.arredondar30(this.converterHoraParaMinutos(conf.horaChegada));
+      const confFim = this.confFimEfetivo(conf.horaSaida);
       return inicioMinutos >= confInicio && fimMinutos <= confFim;
     });
   }
@@ -677,8 +617,8 @@ export class DiaDaFestaComponent implements OnInit {
     const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
     const fimMinutos = inicioMinutos + 30;
     const noPeriodo = presencasPessoa.filter(c => {
-      const ini = this.converterHoraParaMinutos(c.horaChegada);
-      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      const ini = this.arredondar30(this.converterHoraParaMinutos(c.horaChegada));
+      const fim = this.confFimEfetivo(c.horaSaida);
       return inicioMinutos >= ini && fimMinutos <= fim;
     });
     if (noPeriodo.length === 0) return false;
@@ -693,8 +633,8 @@ export class DiaDaFestaComponent implements OnInit {
     const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
     const fimMinutos = inicioMinutos + 30;
     const noPeriodo = presencasPessoa.filter(c => {
-      const ini = this.converterHoraParaMinutos(c.horaChegada);
-      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      const ini = this.arredondar30(this.converterHoraParaMinutos(c.horaChegada));
+      const fim = this.confFimEfetivo(c.horaSaida);
       return inicioMinutos >= ini && fimMinutos <= fim;
     });
     if (noPeriodo.length === 0) return false;
@@ -717,8 +657,8 @@ export class DiaDaFestaComponent implements OnInit {
     const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
     const fimMinutos = inicioMinutos + 30;
     const noPeriodo = presencasPessoa.find(c => {
-      const ini = this.converterHoraParaMinutos(c.horaChegada);
-      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      const ini = this.arredondar30(this.converterHoraParaMinutos(c.horaChegada));
+      const fim = this.confFimEfetivo(c.horaSaida);
       return inicioMinutos >= ini && fimMinutos <= fim;
     });
     if (!noPeriodo) return '';
@@ -733,8 +673,8 @@ export class DiaDaFestaComponent implements OnInit {
     const inicioMinutos = this.converterHoraParaMinutos(horarioInicio);
     const fimMinutos = inicioMinutos + 30;
     const noPeriodo = presencasPessoa.find(c => {
-      const ini = this.converterHoraParaMinutos(c.horaChegada);
-      const fim = this.converterHoraParaMinutos(c.horaSaida);
+      const ini = this.arredondar30(this.converterHoraParaMinutos(c.horaChegada));
+      const fim = this.confFimEfetivo(c.horaSaida);
       return inicioMinutos >= ini && fimMinutos <= fim;
     });
     if (!noPeriodo) return '';
@@ -760,6 +700,15 @@ export class DiaDaFestaComponent implements OnInit {
     });
     
     return nomesEquipes.join(', ');
+  }
+
+  private arredondar30(minutos: number): number {
+    return Math.round(minutos / 30) * 30;
+  }
+
+  private confFimEfetivo(horaSaida: string): number {
+    if (!horaSaida) return 24 * 60;
+    return this.arredondar30(this.converterHoraParaMinutos(horaSaida));
   }
 
   isHorarioForaDaFesta(horario: string): boolean {

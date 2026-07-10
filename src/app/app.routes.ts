@@ -38,8 +38,8 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'confirmacoes-antes',
-    loadComponent: () => import('./confirmacoes-antes/confirmacoes-antes.component').then(m => m.ConfirmacoesAntesComponent),
+    path: 'planejamento',
+    loadComponent: () => import('./planejamento/planejamento.component').then(m => m.PlanejamentoComponent),
     canActivate: [authGuard]
   },
   {

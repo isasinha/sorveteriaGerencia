@@ -17,14 +17,14 @@ interface EntradaLocal {
 }
 
 @Component({
-  selector: 'app-confirmacoes-antes',
+  selector: 'app-planejamento',
   standalone: true,
   imports: [CommonModule, FormsModule, SidebarLayoutComponent, TimeAutoMinutesDirective],
-  templateUrl: './confirmacoes-antes.component.html',
-  styleUrl: './confirmacoes-antes.component.scss',
+  templateUrl: './planejamento.component.html',
+  styleUrl: './planejamento.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfirmacoesAntesComponent implements OnInit {
+export class PlanejamentoComponent implements OnInit {
   private diasDaFesta = signal<DiaDaFesta[]>([]);
   private todasPessoas = signal<Pessoa[]>([]);
   private presencas = signal<Presenca[]>([]);

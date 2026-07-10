@@ -333,6 +333,8 @@ $gradiente: linear-gradient(135deg, #{$cor1} 0%, #{$cor2} 100%);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.3rem;
+
+    .required { color: #e53935; margin-left: 2px; }
   }
 
   input[type="time"],
